@@ -2,8 +2,11 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.model.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.Role;
+
 public class UserDTO {
 	
+	private Role role;
 	private String username;
     private String password;
     private String email;
@@ -16,8 +19,9 @@ public class UserDTO {
     public UserDTO() {}
 
 	
-	 public UserDTO(String username, String password, String email,
+	 public UserDTO(Role role,String username, String password, String email,
              String firstName, String lastName, String profileImagePath, LocalDateTime lastLogin) {
+  this.role = role;
   this.username = username;
   this.password = password;
   this.email = email;
@@ -84,5 +88,14 @@ public void setLastLogin(LocalDateTime lastLogin) {
   this.lastLogin = lastLogin;
 }
 
+
+public Role getRole() {
+	return role;
+}
+
+
+public void setRole(Role role) {
+	this.role = role;
+}
 
 }

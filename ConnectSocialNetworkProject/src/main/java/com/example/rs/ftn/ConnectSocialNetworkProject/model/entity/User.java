@@ -4,11 +4,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DiscriminatorOptions;
+
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.Role;
 
 @Entity
 @Table (name = "users")
@@ -16,6 +25,10 @@ public class User {
 	   @Id
 	   @Column(nullable = false, unique = true)
 	   private String username;
+	   
+	   @Column(nullable = false)
+	   @Enumerated(EnumType.STRING)
+	   private Role role;
 	   
 	   @Column(nullable = false, unique = false)
 	   private String password;
@@ -55,9 +68,10 @@ public class User {
 	   
 	   public User() {}
 
-	public User(String username, String password, String email, String firstName, String lastName,
+	public User(Role role,String username, String password, String email, String firstName, String lastName,
 			String profileImagePath, LocalDateTime lastLogin) {
 		super();
+		this.role = role;
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -163,8 +177,21 @@ public class User {
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
-	
-	
 
+	public Role getRole() {
+		return role;
+	}
 
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public List<Ban> getBans() {
+		return bans;
+	}
+
+	public void setBans(List<Ban> bans) {
+		this.bans = bans;
+	}
+	
 }

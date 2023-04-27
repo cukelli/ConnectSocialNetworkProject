@@ -1,5 +1,6 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class UserService {
 		}
 		
 		  public User addUser(User user) {
+			   
 		        if (userRepo.existsById(user.getUsername())) {
 		            throw new IllegalArgumentException("Username " + user.getUsername() + " already exists");
 		        }
