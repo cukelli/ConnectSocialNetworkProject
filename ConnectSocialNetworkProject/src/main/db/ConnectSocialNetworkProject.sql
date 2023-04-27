@@ -1,0 +1,2 @@
+create schema ConnectSocialNetworkProject
+use  ConnectSocialNetworkProject
