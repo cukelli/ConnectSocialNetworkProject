@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.security;
 
 import java.util.Date;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,6 +40,9 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        
+        
+        
         return createToken(claims, userDetails.getUsername());
     }
 

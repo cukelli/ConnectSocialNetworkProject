@@ -10,8 +10,12 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 @Repository
 public interface UserRepo extends JpaRepository<User,String> {
 	
-	void deleteEUserByUsername(String username);
+	void deleteUserByUsername(String username);
 
     Optional<User> findUserByUsername(String username);
+
+    Optional<User> findUserByUsernameAndPassword(String username,String password);
+
+    
 
 }

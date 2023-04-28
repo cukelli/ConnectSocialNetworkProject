@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
+import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.UserLogin;
+import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
@@ -21,14 +26,23 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 public class UserController {
 	
 	private final UserService userService;
+	private final JwtUtil jwtUtil;
 	
-	public UserController(UserService userService) {
+	public UserController(UserService userService,JwtUtil jwtUtil) {
 		this.userService = userService;
+		this.jwtUtil = jwtUtil;
 	}
 	
 	
 	@GetMapping("/all")
-	public ResponseEntity<List<User>> getAllUsers() {
+	public ResponseEntity<List<User>> getAllUsers(Authentication authentication) {
+		System.out.println(authentication.getName());
+		String username = authentication.getName();
+		User userLogged = userService.findOne(username);
+		System.out.println(userLogged.getRole().toString());
+		if (!userLogged.getRole().toString().equals("ADMIN")) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
+		}
 		List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
 
@@ -54,10 +68,19 @@ public class UserController {
 		
 	}
 	
+	
 	@DeleteMapping("/delete/{username}")
 	public ResponseEntity<?> deleteUser(@PathVariable("username") String username) {
 		 userService.remove(username);
 		return new ResponseEntity<>(HttpStatus.OK);
+		
+	}
+	
+	@PostMapping("/login")
+	public String login(@RequestBody UserLogin userLogin) {
+		System.out.println(userLogin.getUsername());
+		User loggedUser = userService.findOneByUsernameAndPassword(userLogin.getUsername(),userLogin.getPassword());
+		return jwtUtil.generateToken((UserDetails) userLogin);
 		
 	}
 
