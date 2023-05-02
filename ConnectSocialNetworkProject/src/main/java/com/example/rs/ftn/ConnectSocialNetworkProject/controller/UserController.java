@@ -2,6 +2,7 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.util.List;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
+import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.JwtReturn;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.UserLogin;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
@@ -77,10 +80,12 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	public String login(@RequestBody UserLogin userLogin) {
+	@ResponseBody
+	public JwtReturn login(@RequestBody UserLogin userLogin) {
 		System.out.println(userLogin.getUsername());
 		User loggedUser = userService.findOneByUsernameAndPassword(userLogin.getUsername(),userLogin.getPassword());
-		return jwtUtil.generateToken((UserDetails) userLogin);
+		String token = jwtUtil.generateToken((UserDetails) userLogin);
+		return new JwtReturn(token);
 		
 	}
 
