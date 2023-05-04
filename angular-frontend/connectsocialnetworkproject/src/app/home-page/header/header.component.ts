@@ -11,10 +11,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router
   ){}
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    console.log('Test');
   }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    console.log('Test');
   }
 
   navigateTo(link: string){
