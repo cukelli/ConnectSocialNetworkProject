@@ -12,6 +12,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { HeaderRegisteredUserComponent } from './header-registered-user/header-registered-user.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { FeedComponent } from './feed/feed.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { FeedComponent } from './feed/feed.component';
     RegistrationComponent,
     HeaderRegisteredUserComponent,
     UserProfileComponent,
-    FeedComponent
+    FeedComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
