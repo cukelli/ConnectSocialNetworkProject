@@ -9,19 +9,27 @@
 
 <div class="margin">
 <div class="justify-content-center">
-<form>
+<form [formGroup]="registrationForm">
 
 <div class="d-flex justify-content-center">
 
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputFirstName"> First name </label>
-        <input type="text" class="form-control" id="inputfirstName" placeholder="First name">
+        <input type="text" formControlName="firstName" class="form-control" id="inputfirstName" placeholder="First name">
+
+        <!--<div *ngIf="registrationForm.get('firstName')?.invalid && (registrationForm.get('firstName')?.touched || registrationForm.get('firstName')?.dirty)">
+            <div class="alert alert-danger">{{ errorMessages.firstName }}</div>
+            <div class="alert alert-danger" *ngIf="registrationForm.get('firstName')?.errors?.['required']">First name is required
+            </div>
+        </div> -->
     </div>
+
     <div class="form-group col-md-6">
         <label for="inputLastName">Last name</label>
-        <input type="text" class="form-control" id="inputLastName" placeholder="Last name">
-    </div>
+        <input type="text" formControlName="lastName" class="form-control" id="inputLastName" placeholder="Last name">
+    </div>    
+    
 </div>
 
 </div>
@@ -29,11 +37,11 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputUsername"> Username </label>
-        <input type="text" class="form-control" id="inputUsername" placeholder="Username">
+        <input type="text" formControlName="username" class="form-control" id="inputUsername" placeholder="Username">
     </div>
     <div class="form-group col-md-6">
         <label for="inputEmail">Email</label>
-        <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+        <input type="email" formControlName="email"  class="form-control" id="inputEmail" placeholder="Email">
     </div>
 </div>
 </div>
@@ -42,7 +50,7 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputPassword"> Password </label>
-        <input type="password" class="form-control" id="inputPassword" placeholder="Enter your password">
+        <input type="password"  formControlName="password" class="form-control" id="inputPassword" placeholder="Enter your password">
     </div>
     <div class="form-group col-md-6">
         <label for="inputPasswordRepeat">Repeat password</label>
@@ -52,7 +60,7 @@
 </div>
 
 <div class="d-flex justify-content-center">
-<button type="submit" class="btn btn-primary">Register</button>
+<button type="submit" class="btn btn-primary" (click)="submitForm()">Register</button>
 </div>
 
 </form>

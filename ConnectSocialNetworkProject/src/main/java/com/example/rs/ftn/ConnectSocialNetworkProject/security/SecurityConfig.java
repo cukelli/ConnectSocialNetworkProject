@@ -3,6 +3,8 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,7 +14,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity //spring zna da je ovo klasa koja se odnosi na security konfiguraciju
 public class SecurityConfig {
 	
+	@Bean
+	public PasswordEncoder passwordEncoder()
+	{
+	    return new BCryptPasswordEncoder();
+	}
+	
 	private final JwtAthFilter jwtAuthFilter;
+	
 	
 	public SecurityConfig(JwtAthFilter jwtAthFilter) {
 		this.jwtAuthFilter = jwtAthFilter;
@@ -24,7 +33,7 @@ public class SecurityConfig {
 		http
 		.cors().and().csrf().disable()
 		.authorizeRequests().
-		antMatchers("/user/login").permitAll()
+		antMatchers("/user/login","/user/registration").permitAll()
 		.anyRequest().
 		authenticated().
 		and().

@@ -42,6 +42,9 @@ public class User {
 	   @Column(nullable = false, unique = false)
 	   private String lastName;
 	   
+	   @Column(nullable = false, unique = false)
+	   private String user_type;
+	   
 	   @Column(nullable = true, unique = false)
 	   private String profileImagePath;
 	   
@@ -79,6 +82,7 @@ public class User {
 		this.lastName = lastName;
 		this.profileImagePath = profileImagePath;
 		this.lastLogin = lastLogin;
+		this.user_type="user";
 	}
 
 	public String getUsername() {

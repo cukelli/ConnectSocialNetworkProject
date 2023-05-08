@@ -12,8 +12,6 @@ import { AuthorizationService } from '../authorization.service';
 })
 export class LoginComponent implements OnInit 
 {
-
-
   form!: FormGroup;
   constructor(private fb: FormBuilder, private loginService: BackendServiceService,private router:
     Router, authService: AuthorizationService) {

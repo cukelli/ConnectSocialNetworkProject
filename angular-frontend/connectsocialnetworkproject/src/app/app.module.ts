@@ -13,6 +13,8 @@ import { HeaderRegisteredUserComponent } from './header-registered-user/header-r
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { FeedComponent } from './feed/feed.component';
 import { FooterComponent } from './footer/footer.component';
+import { RegistrationSuccesfulComponent } from './registration-succesful/registration-succesful.component';
+import { ChangePasswordComponent } from './user-profile/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { FooterComponent } from './footer/footer.component';
     HeaderRegisteredUserComponent,
     UserProfileComponent,
     FeedComponent,
-    FooterComponent
+    FooterComponent,
+    RegistrationSuccesfulComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
