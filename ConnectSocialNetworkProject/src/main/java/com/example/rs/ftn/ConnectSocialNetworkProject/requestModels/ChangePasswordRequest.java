@@ -4,11 +4,13 @@ public class ChangePasswordRequest {
 	
 	    private String oldPassword;
 	    private String newPassword;
+	    private String repeatNewPassword;
 	    
-		public ChangePasswordRequest(String oldPassword, String newPassword) {
+		public ChangePasswordRequest(String oldPassword, String newPassword, String repeatNewPassword) {
 			super();
 			this.oldPassword = oldPassword;
 			this.newPassword = newPassword;
+			this.repeatNewPassword = repeatNewPassword;
 		}
 
 		public String getOldPassword() {
@@ -25,7 +27,16 @@ public class ChangePasswordRequest {
 
 		public void setNewPassword(String newPassword) {
 			this.newPassword = newPassword;
-		}	
+		}
+
+		public String getRepeatNewPassword() {
+			return repeatNewPassword;
+		}
+
+		public void setRepeatNewPassword(String repeatNewPassword) {
+			this.repeatNewPassword = repeatNewPassword;
+		}
+		
 }
 
 

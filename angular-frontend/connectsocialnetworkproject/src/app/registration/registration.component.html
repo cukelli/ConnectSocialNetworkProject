@@ -16,18 +16,13 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputFirstName"> First name </label>
-        <input type="text" formControlName="firstName" class="form-control" id="inputfirstName" placeholder="First name">
-
-        <!--<div *ngIf="registrationForm.get('firstName')?.invalid && (registrationForm.get('firstName')?.touched || registrationForm.get('firstName')?.dirty)">
-            <div class="alert alert-danger">{{ errorMessages.firstName }}</div>
-            <div class="alert alert-danger" *ngIf="registrationForm.get('firstName')?.errors?.['required']">First name is required
-            </div>
-        </div> -->
+        <input type="text" formControlName="firstName" class="form-control" id="inputfirstName" placeholder="First name" required>
     </div>
+    
 
     <div class="form-group col-md-6">
         <label for="inputLastName">Last name</label>
-        <input type="text" formControlName="lastName" class="form-control" id="inputLastName" placeholder="Last name">
+        <input type="text" formControlName="lastName" class="form-control" id="inputLastName" placeholder="Last name" required>
     </div>    
     
 </div>
@@ -37,11 +32,11 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputUsername"> Username </label>
-        <input type="text" formControlName="username" class="form-control" id="inputUsername" placeholder="Username">
-    </div>
+        <input type="text" formControlName="username" class="form-control" id="inputUsername" placeholder="Username" required>
+    </div>    
     <div class="form-group col-md-6">
         <label for="inputEmail">Email</label>
-        <input type="email" formControlName="email"  class="form-control" id="inputEmail" placeholder="Email">
+        <input type="email" formControlName="email"  class="form-control" id="inputEmail" placeholder="Email" required>
     </div>
 </div>
 </div>
@@ -50,19 +45,24 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="inputPassword"> Password </label>
-        <input type="password"  formControlName="password" class="form-control" id="inputPassword" placeholder="Enter your password">
+        <input type="password"  formControlName="password" class="form-control" id="inputPassword" placeholder="Enter your password" required>
     </div>
     <div class="form-group col-md-6">
         <label for="inputPasswordRepeat">Repeat password</label>
-        <input type="password" class="form-control" id="inputRepeatPassword" placeholder="Repeat password">
+        <input type="password" formControlName="repeatPassword" class="form-control" id="inputRepeatPassword" placeholder="Repeat password" required>
     </div>
 </div>
 </div>
 
 <div class="d-flex justify-content-center">
-<button type="submit" class="btn btn-primary" (click)="submitForm()">Register</button>
+<button type="submit" class="btn btn-primary" (click)="submitForm()"
+[disabled]="registrationForm.invalid || registrationForm.value.password !== registrationForm.value.repeatPassword">Register</button>
 </div>
-
+<br>
+<div class="d-flex justify-content-center">
+<div #backendError id="backendError" class="alert alert-danger">
+</div>
+</div>
 </form>
 </div>
 </div>

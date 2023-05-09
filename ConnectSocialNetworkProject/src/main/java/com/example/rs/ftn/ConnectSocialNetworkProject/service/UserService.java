@@ -71,12 +71,16 @@ public class UserService {
 		        return userRepo.save(user);
            }
 		  
-		  public User changePassword(String username, String oldPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException {
+		  public User changePassword(String username, String oldPassword, String newPassword, String newPasswordRepeated) throws UserNotFoundException, InvalidPasswordException {
 			  Optional<User> userOptional = userRepo.findUserByUsername(username);
 			   User user = userOptional.orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found."));
 		            
 		        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
 		            throw new InvalidPasswordException("Old password does not match.");
+		        }
+		        
+		        if (!newPassword.equals(newPasswordRepeated)) {
+		            throw new InvalidPasswordException("New passwords do not match.");
 		        }
 		        
 		        user.setPassword(passwordEncoder.encode(newPassword));

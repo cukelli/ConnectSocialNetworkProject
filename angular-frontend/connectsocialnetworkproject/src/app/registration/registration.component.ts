@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup,FormBuilder, Validators } from '@angular/forms';
 import { BackendServiceService } from '../backend-service.service';
 import { Router } from '@angular/router';
@@ -21,6 +21,7 @@ interface ErrorMessages {
 
 
 export class RegistrationComponent implements OnInit {  
+  @ViewChild('backendError') backendError!: ElementRef;
   registrationForm!: FormGroup;
   errorMessages: ErrorMessages = {};
 
@@ -29,19 +30,18 @@ export class RegistrationComponent implements OnInit {
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group({
-        firstName: ['',Validators.required],
-        lastName: ['',Validators.required],
-        email: ['',[Validators.required,Validators.email]],
-        username: ['',Validators.required],
-        password: ['',Validators.required],
-        repeatPassword: ['',Validators.required]
+        "firstName": ['',[Validators.required,Validators.pattern(/^[a-zA-Z]+/)]],
+        "lastName": ['',[Validators.required,Validators.pattern(/^[a-zA-Z]+/)]],
+        "email": ['',[Validators.required,Validators.email]],
+       "username": ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+/)]],
+        "password": ['',Validators.required],
+        "repeatPassword": ['',Validators.required]
 
     })
 
   }
 
 async submitForm() {
-  console.log(this.registrationForm.value);
     this.backendService.registration(this.registrationForm.value).subscribe({
       next: response => {
         console.log('Registration successful');
@@ -53,8 +53,9 @@ async submitForm() {
         });
       },
       error: error => {
-          console.error(error);
-          console.log(error.error); 
+        this.backendError.nativeElement.style.display = 'block';
+        this.backendError.nativeElement.textContent = error.error.message;
+        //console.log(error.error); 
        // this.errorMessages = error.error;
 
       }

@@ -31,7 +31,7 @@ public class UserRegister{
 	private String email;
 	
 	@NotBlank
-    @Size(min = 8, message = "Password should be at least 8 characters long")
+    @Size(min = 8, message = "Password should be at least 8 characters long.")
 	private String password;
 	
     private PasswordEncoder passwordEncoder;

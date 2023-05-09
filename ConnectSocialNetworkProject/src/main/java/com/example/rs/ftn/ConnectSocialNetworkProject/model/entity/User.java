@@ -60,6 +60,9 @@ public class User {
 	   @OneToMany(mappedBy = "sentFor")
 	   private List<FriendRequest> receivedRequests;
 	   
+	   @OneToMany(mappedBy = "postedImageBy")
+	   private List<Image> userImages;
+	   
 	   @OneToMany(mappedBy = "userReacted")
 	   private List<Reaction> reactions;
 	   

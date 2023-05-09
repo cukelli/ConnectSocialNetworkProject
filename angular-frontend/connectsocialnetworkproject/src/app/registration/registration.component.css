@@ -1,3 +1,10 @@
 .margin {
     margin-top: 5%;
 }
+
+#backendError {
+    display: none;
+    /* background-color: rgb(206, 58, 58);
+    opacity: 0.7; */
+
+}

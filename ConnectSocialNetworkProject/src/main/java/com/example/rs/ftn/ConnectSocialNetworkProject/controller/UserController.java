@@ -154,7 +154,7 @@ public class UserController {
 		User existingUser = null;
 		try {
 			existingUser = userService.findOne(userRegister.getUsername());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username alaredy exists.");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this username already exists.");
 		} catch (UserNotFoundException e) {
 		}
 		 try {
@@ -185,7 +185,11 @@ public class UserController {
 	    if (!userService.checkPassword(userLogged, request.getOldPassword())) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect old password.");
 	    }
-	    userService.changePassword(userLogged.getUsername(),request.getOldPassword(), request.getNewPassword());
+	    
+	    if (request.getNewPassword().length() < 8) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password must be at least 8 characters long.");
+	    }
+	    userService.changePassword(userLogged.getUsername(),request.getOldPassword(), request.getNewPassword(),request.getRepeatNewPassword());
 	    return new ResponseEntity<>(new Message("Password changed successfully."), HttpStatus.OK);
 	}	
 	
