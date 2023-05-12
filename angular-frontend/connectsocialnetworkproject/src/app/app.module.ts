@@ -15,6 +15,7 @@ import { FeedComponent } from './feed/feed.component';
 import { FooterComponent } from './footer/footer.component';
 import { RegistrationSuccesfulComponent } from './registration-succesful/registration-succesful.component';
 import { ChangePasswordComponent } from './user-profile/change-password/change-password.component';
+import { PostsComponent } from './feed/posts/posts.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ChangePasswordComponent } from './user-profile/change-password/change-p
     FeedComponent,
     FooterComponent,
     RegistrationSuccesfulComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    PostsComponent
   ],
   imports: [
     BrowserModule,

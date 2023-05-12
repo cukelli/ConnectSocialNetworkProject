@@ -35,6 +35,9 @@ public class Report {
 	 @Column(nullable = false)
 	 private boolean accepted;
 	 
+	 @Column(nullable = false, unique = false)
+	 private boolean isDeleted;
+	 
 	 @ManyToOne
 	 @JoinColumn(name = "postId")
 	 private Post reportedPost;
@@ -45,7 +48,7 @@ public class Report {
 	 
 	 public Report() {}
 
-	public Report(Long reportId, ReportReason reportReason, LocalDateTime timestamp, User user, boolean accepted,
+	public Report(Long reportId, ReportReason reportReason, LocalDateTime timestamp, User user, boolean accepted, boolean isDeleted,
 			Post reportedPost, Comment reportedComment) {
 		super();
 		this.reportId = reportId;
@@ -53,6 +56,7 @@ public class Report {
 		this.timestamp = timestamp;
 		this.user = user;
 		this.accepted = accepted;
+		this.isDeleted = isDeleted;
 		this.reportedPost = reportedPost;
 		this.reportedComment = reportedComment;
 	}
@@ -113,5 +117,20 @@ public class Report {
 		this.reportedComment = reportedComment;
 	}
 
+	public Long getReportId() {
+		return reportId;
+	}
 
+	public void setReportId(Long reportId) {
+		this.reportId = reportId;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	
 }

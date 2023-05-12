@@ -45,6 +45,9 @@ public class User {
 	   @Column(nullable = false, unique = false)
 	   private String user_type;
 	   
+	   @Column(nullable = false, unique = false)
+	   private boolean isDeleted;
+	   
 	   @Column(nullable = true, unique = false)
 	   private String profileImagePath;
 	   
@@ -75,7 +78,7 @@ public class User {
 	   public User() {}
 
 	public User(Role role,String username, String password, String email, String firstName, String lastName,
-			String profileImagePath, LocalDateTime lastLogin) {
+			String profileImagePath, LocalDateTime lastLogin, boolean isDeleted) {
 		super();
 		this.role = role;
 		this.username = username;
@@ -86,6 +89,7 @@ public class User {
 		this.profileImagePath = profileImagePath;
 		this.lastLogin = lastLogin;
 		this.user_type="user";
+		this.isDeleted = isDeleted;
 	}
 
 	public String getUsername() {
@@ -200,5 +204,31 @@ public class User {
 	public void setBans(List<Ban> bans) {
 		this.bans = bans;
 	}
+
+	public String getUser_type() {
+		return user_type;
+	}
+
+	public void setUser_type(String user_type) {
+		this.user_type = user_type;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public List<Image> getUserImages() {
+		return userImages;
+	}
+
+	public void setUserImages(List<Image> userImages) {
+		this.userImages = userImages;
+	}
+	
+	
 	
 }

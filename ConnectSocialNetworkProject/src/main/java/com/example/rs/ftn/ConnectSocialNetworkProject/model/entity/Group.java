@@ -33,6 +33,9 @@ public class Group {
 	   @Column(nullable = false)
 	   private boolean isSuspended;
 	   
+	   @Column (nullable = false, unique = false)
+	   private boolean isDeleted;
+	   
 	   @Column(nullable = true)
 	   private String suspendedReason;
 	   
@@ -45,7 +48,7 @@ public class Group {
 	   public Group() {}
 	  
 
-	  public Group(Long groupId, String name, String description, LocalDate createdAt, boolean isSuspended,
+	  public Group(Long groupId, String name, String description, LocalDate createdAt, boolean isSuspended, boolean isDeleted,
 			String suspendedReason, List<GroupAdmin> admins, List<Post> posts) {
 		super();
 		this.groupId = groupId;
@@ -53,6 +56,7 @@ public class Group {
 		this.description = description;
 		this.createdAt = createdAt;
 		this.isSuspended = isSuspended;
+		this.isDeleted = isDeleted;
 		this.suspendedReason = suspendedReason;
 		this.admins = admins;
 		this.posts = posts;
@@ -115,6 +119,17 @@ public class Group {
 	public boolean isSuspended() {
 		return isSuspended;
 	}
+	
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
 
 	public void setSuspended(boolean isSuspended) {
 		this.isSuspended = isSuspended;

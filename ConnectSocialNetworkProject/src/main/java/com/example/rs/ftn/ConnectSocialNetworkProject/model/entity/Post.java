@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Post {
-	  @Id
+	   @Id
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
 	   private Long postId;
 	   
@@ -26,10 +27,10 @@ public class Post {
 	   @Column(nullable = false,unique = false)
 	   private LocalDateTime creationDate;
 	   
-	   @Column(nullable = true,unique = false)
-	   private ArrayList<String> imagePaths;
+	  // @Column(nullable = true,unique = false)
+	  // private List<String> imagePaths;
 	   
-	   @ManyToOne(fetch = FetchType.LAZY)
+	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "userId",nullable = true)
 	   private User user;
 	   
@@ -43,17 +44,17 @@ public class Post {
 	   private List<Report> reports;
 	   
 	   @ManyToOne
-	   @JoinColumn(name = "groupId", nullable = false)
+	   @JoinColumn(name = "groupId", nullable = true)
 	   private Group groupPosted;
 	   
 	   public Post() {}
 
-	public Post(Long postId, String content, LocalDateTime creationDate, ArrayList<String> imagePaths, User user) {
+	public Post(Long postId, String content, LocalDateTime creationDate, User user) {
 		super();
 		this.postId = postId;
 		this.content = content;
 		this.creationDate = creationDate;
-		this.imagePaths = imagePaths;
+		//this.imagePaths = imagePaths;
 		this.user = user;
 	}
 
@@ -81,16 +82,16 @@ public class Post {
 		this.creationDate = creationDate;
 	}
 
-	public ArrayList<String> getImagePaths() {
-		return imagePaths;
-	}
+//	public List<String> getImagePaths() {
+//		return imagePaths;
+//	}
+//
+//	public void setImagePaths(List<String> imagePaths) {
+//		this.imagePaths = imagePaths;
+//	}
 
-	public void setImagePaths(ArrayList<String> imagePaths) {
-		this.imagePaths = imagePaths;
-	}
-
-	public User getUser() {
-		return user;
+	public String getUser() {
+		return user.getUsername();
 	}
 
 	public void setUser(User user) {

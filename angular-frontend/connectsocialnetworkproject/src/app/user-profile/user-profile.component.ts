@@ -20,10 +20,10 @@ export class UserProfileComponent implements OnInit {
        this.backendService.getUser().subscribe({
        next: c => {  
            this.user = c;
-           console.log(this.user)
+           //console.log(this.user)
        },
        error: er => {
-           console.error(er.error.message);
+           //console.error(er.error.message);
            // set the form controls for both username and password to invalid;
        }
    });

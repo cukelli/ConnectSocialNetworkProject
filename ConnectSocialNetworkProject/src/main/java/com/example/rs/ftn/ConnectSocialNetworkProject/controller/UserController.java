@@ -165,7 +165,7 @@ public class UserController {
 		 
 		String encodedPassword = passwordEncoder.encode(userRegister.getPassword());
 		User newUser = new User(Role.USER,userRegister.getUsername(), encodedPassword, userRegister.getEmail(),
-				userRegister.getFirstName(), userRegister.getLastName(),null,LocalDateTime.now());
+				userRegister.getFirstName(), userRegister.getLastName(),null,LocalDateTime.now(),false);
 	    userService.addUser(newUser);
 	    return new Message("Registration successful.");	
 	}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.PostNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.PostRepo;
 
 @Service
@@ -42,5 +43,9 @@ private final PostRepo postRepo;
 		return postRepo.save(Post);
 	}
 	
+	 public Post addPost(Post post) {   
+	       return postRepo.save(post);
+    }
+	  
 
 }

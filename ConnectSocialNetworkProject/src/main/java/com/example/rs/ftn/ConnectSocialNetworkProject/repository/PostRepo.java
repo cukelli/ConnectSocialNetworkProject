@@ -16,5 +16,6 @@ public interface PostRepo extends JpaRepository<Post,Long> {
 
 	public Page<Post> findAll(Pageable pageable);
 
+
 }
 
