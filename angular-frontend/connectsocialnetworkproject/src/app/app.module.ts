@@ -16,6 +16,7 @@ import { FooterComponent } from './footer/footer.component';
 import { RegistrationSuccesfulComponent } from './registration-succesful/registration-succesful.component';
 import { ChangePasswordComponent } from './user-profile/change-password/change-password.component';
 import { PostsComponent } from './feed/posts/posts.component';
+import { GroupsComponent } from './feed/groups/groups.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { PostsComponent } from './feed/posts/posts.component';
     FooterComponent,
     RegistrationSuccesfulComponent,
     ChangePasswordComponent,
-    PostsComponent
+    PostsComponent,
+    GroupsComponent
   ],
   imports: [
     BrowserModule,

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.GroupNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.GroupRepo;
 
 @Service
@@ -41,6 +42,12 @@ public class GroupService {
 	public Group updateGroup(Group Group) {
 		return groupRepo.save(Group);
 	}
-    
+	
+	  public Group addGroup(Group group) {
+		  
+	        return groupRepo.save(group);
+     }
+	  
+
 }
 

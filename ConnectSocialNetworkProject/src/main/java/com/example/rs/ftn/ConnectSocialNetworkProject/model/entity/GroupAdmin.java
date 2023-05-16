@@ -1,14 +1,13 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
 
-import java.util.List;
-
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.MapsId;
 
 @Entity
 public class GroupAdmin {
@@ -17,36 +16,45 @@ public class GroupAdmin {
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
 	   private Long groupAdminId;
 	   
-	   @OneToMany(mappedBy = "byGroupAdmin")
-	   private List<Ban> bans;
+	   @ManyToOne(fetch = FetchType.EAGER)
+	   @JoinColumn(name = "username")
+	   private User user;
 	   
-	   @ManyToOne
-	   @JoinColumn(name = "groupId", referencedColumnName = "groupId")
+	   @ManyToOne(fetch = FetchType.EAGER)
+	   @JoinColumn(name ="groupId")
 	   private Group adminGroup;
 	   
 	   public GroupAdmin() {}
 	   
-	   public GroupAdmin(Long groupAdminId) {
-		   this.groupAdminId = groupAdminId;
-	   }
-
-	  public Long getGroupAdminId() {
-		return groupAdminId;
-	 }
-
-	  public void setGroupAdminId(Long groupAdminId) {
-		this.groupAdminId = groupAdminId;
-	 }
-
-	  public List<Ban> getBans() {
-	  	return bans;
-	 }
-
-	 public void setBans(List<Ban> bans) {
-		this.bans = bans;
-	 }
 	   
+	   public GroupAdmin(User user, Group adminGroup) {
+	        this.user = user;
+	        this.adminGroup = adminGroup;
+	    }
 
 
+	public Long getGroupAdminId() {
+		return groupAdminId;
+	}
+
+	public String getUser() {
+		return user.getUsername();
+	}
+
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+	public Long getAdminGroup() {
+		return adminGroup.getId();
+	}
+
+
+	public void setAdminGroup(Group adminGroup) {
+		this.adminGroup = adminGroup;
+	}
+	
 
 }

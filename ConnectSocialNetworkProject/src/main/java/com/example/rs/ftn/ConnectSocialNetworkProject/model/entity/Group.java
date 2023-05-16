@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 
 public class Group {
 	
-	 @Id
+	   @Id
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
 	   private Long groupId;
 	   
@@ -55,9 +56,9 @@ public class Group {
 		this.name = name;
 		this.description = description;
 		this.createdAt = createdAt;
-		this.isSuspended = isSuspended;
-		this.isDeleted = isDeleted;
-		this.suspendedReason = suspendedReason;
+		this.isSuspended = false;
+		this.isDeleted = false;
+		this.suspendedReason = null;
 		this.admins = admins;
 		this.posts = posts;
 	}
@@ -142,8 +143,14 @@ public class Group {
 	public void setSuspendedReason(String suspendedReason) {
 		this.suspendedReason = suspendedReason;
 	}
-
-
+	
+	public void addGroupAdmin(GroupAdmin groupAdmin) {
+	    if (this.admins == null) {
+	        this.admins = new ArrayList<>();
+	    }
+	    this.admins.add(groupAdmin);
+	    groupAdmin.setAdminGroup(this);
+	}
 
 	public List<Post> getPosts() {
 		return posts;

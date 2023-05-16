@@ -5,6 +5,7 @@ import { RegistrationUser } from './registration-user';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { ChangePassword } from './change-password';
+import jwt_decode from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,24 @@ export class BackendServiceService {
     return this.http.post(this.apiUrl + '/user/login', user);
   }
 
+  getDecodedToken(token: string) {
+  return jwt_decode(token) as { username: string };
+}
+
   registration(user: RegistrationUser) {
   return this.http.post(this.apiUrl + '/user/registration', user);
+  }
+
+  getUserPosts(username: string) {
+
+    let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  })
+
+  let requestOptions = { headers: headers };  
+return this.http.get(this.apiUrl + '/post/user', requestOptions);
+
   }
 
   getUser(): Observable<RegistrationUser> {

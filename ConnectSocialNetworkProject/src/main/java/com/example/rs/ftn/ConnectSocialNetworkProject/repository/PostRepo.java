@@ -15,7 +15,8 @@ public interface PostRepo extends JpaRepository<Post,Long> {
 	public List<Post> findAll();
 
 	public Page<Post> findAll(Pageable pageable);
-
+	
+	public List<Post> findByUserUsername(String username);
 
 }
 

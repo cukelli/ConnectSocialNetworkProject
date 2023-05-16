@@ -21,20 +21,27 @@ public class Ban {
 	 private LocalDate timestamp;
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "userId", nullable = false)
+	 @JoinColumn(name = "userId", nullable = true) //towards
 	 private User bannedUser;
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "groupId", nullable = false)
+	 @JoinColumn(name = "groupId", nullable = true) //for
 	 private Group bannedGroup;
+	
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "groupAdminId", nullable = false)
-	 private GroupAdmin byGroupAdmin;
+	 @JoinColumn(name = "username", nullable = false) 
+	 private User byAdmin;
 	 
 	 
-	 public Ban() {}
-	 
+//	 @ManyToOne
+//	    @JoinColumns({
+//	            @JoinColumn(name = "group_id", referencedColumnName = "groupId"),
+//	            @JoinColumn(name = "username", referencedColumnName = "username")
+//	    })
+//	  private GroupAdminId groupAdminId;
+//	 
+	 	 
 	 public Ban(Long banId,LocalDate timestamp) {
 		 this.banId = banId;
 		 this.timestamp = timestamp;
@@ -71,14 +78,5 @@ public class Ban {
 	public void setBannedGroup(Group bannedGroup) {
 		this.bannedGroup = bannedGroup;
 	}
-
-	public GroupAdmin getGroupAdmin() {
-		return byGroupAdmin;
-	}
-
-	public void setGroupAdmin(GroupAdmin byGroupAdmin) {
-		this.byGroupAdmin = byGroupAdmin;
-	}
-
 
 }

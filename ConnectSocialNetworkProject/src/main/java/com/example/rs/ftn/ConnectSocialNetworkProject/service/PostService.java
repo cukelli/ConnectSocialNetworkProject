@@ -46,6 +46,10 @@ private final PostRepo postRepo;
 	 public Post addPost(Post post) {   
 	       return postRepo.save(post);
     }
+	 
+	 public List<Post> getUserPosts(String username) {
+		 return postRepo.findByUserUsername(username);
+	 }
 	  
 
 }

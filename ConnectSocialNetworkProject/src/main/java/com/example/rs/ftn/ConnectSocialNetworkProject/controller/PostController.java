@@ -128,5 +128,33 @@ public class PostController {
 		
 	}
 	
+	@GetMapping("/user")
+	@ResponseBody
+	public ResponseEntity<List<Post>> getUserPosts(Authentication authentication) {
+		String userUsername = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(userUsername);
+			
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		
+		if (!userLogged.getUsername().toString().equals(userLogged.getUsername()) && !userLogged.getRole().toString().equals("ADMIN")) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin/you are not creator of those posts.");
 
+		}
+
+		if (userLogged.getRole().toString().equals("ADMIN")) {
+			List<Post> posts = postService.findAll();
+			return new ResponseEntity<>(posts,HttpStatus.OK);
+		}
+		
+		List<Post> posts = postService.getUserPosts(userLogged.getUsername());
+		return new ResponseEntity<>(posts,HttpStatus.OK);
+
+	}
+	
+	
+	
 }
