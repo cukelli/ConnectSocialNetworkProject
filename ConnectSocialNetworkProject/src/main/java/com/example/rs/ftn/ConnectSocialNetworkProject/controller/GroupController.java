@@ -1,5 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
+
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,11 +23,14 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundExce
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.GroupRequestCreate;
+import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.GroupAdminService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.GroupService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
@@ -38,10 +43,14 @@ public class GroupController {
 	
 	private final GroupAdminService groupAdminService;
 	
-	public GroupController(GroupService groupService,UserService userService,GroupAdminService groupAdminService) {
+	private final PostService postService;
+	
+	public GroupController(GroupService groupService,UserService userService,GroupAdminService groupAdminService,PostService
+			postService) {
 		this.groupAdminService = groupAdminService;
 		this.groupService = groupService;
 		this.userService = userService;
+		this.postService = postService;
 		
 	}
 	
@@ -162,8 +171,55 @@ public class GroupController {
 		 Group updatedGroup = groupService.updateGroup(oldGroup);
 		return new ResponseEntity<>(updatedGroup,HttpStatus.OK);
 		
-		
-	
 	}
+	
+	@PostMapping("/{groupId}/post")
+	@ResponseBody
+	public Message createPostinGroup(Authentication authentication, @RequestBody PostRequest post,
+	        @PathVariable("groupId") Long groupId) {
+		
+		String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+	    Group group = groupService.findOne(groupId);
+	    
+	    boolean isMemberOrAdmin = false;
+
+	    for (GroupAdmin groupAdmin : group.getAdmins()) {
+	        if (groupAdmin.getUser().equals(userLogged.getUsername())) {
+	            isMemberOrAdmin = true;
+	            break;
+	        }
+	    }
+	    
+	    if (!isMemberOrAdmin) {
+	        for (GroupRequest request : group.getGroupRequests()) {
+	            if (request.isApproved() && request.getUser().getUsername().equals(userLogged.getUsername())) {
+	                isMemberOrAdmin = true;
+	                break;
+	            }
+	        }
+	    }
+
+	    if (!isMemberOrAdmin) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not a member of this group.");
+	    }
+		Post newPost = new Post();
+		newPost.setContent(post.getContent());
+		newPost.setCreationDate(post.getCreationDate());
+		newPost.setGroupPosted(group);
+		newPost.setUser(userLogged);
+		
+		postService.addPost(newPost);
+		return new Message("Post added succesfuly.");
+		
+	}
+	
+	
+	
 		
 }

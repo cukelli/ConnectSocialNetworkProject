@@ -69,6 +69,7 @@ public class User {
 	   @OneToMany(mappedBy = "userReacted")
 	   private List<Reaction> reactions;
 	   
+	   
 		@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 		private List<Post> posts;
 		

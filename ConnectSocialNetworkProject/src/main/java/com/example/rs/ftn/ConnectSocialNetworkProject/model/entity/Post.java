@@ -98,5 +98,45 @@ public class Post {
 		this.user = user;
 	}
 
+	public Long getPostId() {
+		return postId;
+	}
+
+	public void setPostId(Long postId) {
+		this.postId = postId;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public List<Reaction> getReactions() {
+		return reactions;
+	}
+
+	public void setReactions(List<Reaction> reactions) {
+		this.reactions = reactions;
+	}
+
+	public List<Report> getReports() {
+		return reports;
+	}
+
+	public void setReports(List<Report> reports) {
+		this.reports = reports;
+	}
+
+	public Group getGroupPosted() {
+		return groupPosted;
+	}
+
+	public void setGroupPosted(Group groupPosted) {
+		this.groupPosted = groupPosted;
+	}
+
 
 }

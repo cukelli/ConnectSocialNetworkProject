@@ -46,6 +46,9 @@ public class Group {
 	   @OneToMany(mappedBy = "groupPosted")
 	   private List<Post> posts;
 	   
+	   @OneToMany(mappedBy = "group")
+	   private List<GroupRequest> groupRequests;
+	   
 	   public Group() {}
 	  
 
@@ -159,8 +162,16 @@ public class Group {
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 	}
-	     
-	
 
+
+	public List<GroupRequest> getGroupRequests() {
+		return groupRequests;
+	}
+
+
+	public void setGroupRequests(List<GroupRequest> groupRequests) {
+		this.groupRequests = groupRequests;
+	}
+	
 
 }
