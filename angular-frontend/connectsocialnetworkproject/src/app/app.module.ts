@@ -13,14 +13,16 @@ import { HeaderRegisteredUserComponent } from './header-registered-user/header-r
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { FeedComponent } from './feed/feed.component';
 import { FooterComponent } from './footer/footer.component';
+import { PostDeletedComponent } from './feed/posts/post-deleted/post-deleted.component';
 import { RegistrationSuccesfulComponent } from './registration-succesful/registration-succesful.component';
 import { ChangePasswordComponent } from './user-profile/change-password/change-password.component';
 import { PostsComponent } from './feed/posts/posts.component';
 import { GroupsComponent } from './groups/groups.component';
-import { SucesfullyDeletedGroupComponent } from './feed/groups/sucesfully-deleted-group/sucesfully-deleted-group.component';
+import { SuccesDeletionGroupComponent } from './feed/groups/succes-deletion-group/succes-deletion-group.component';
 import { GroupReqestComponent } from './groups/group-reqest/group-reqest.component';
 import { CreateGroupComponent } from './groups/create-group/create-group.component';
 import { GroupDetailComponent } from './groups/group-detail/group-detail.component';
+import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,11 @@ import { GroupDetailComponent } from './groups/group-detail/group-detail.compone
     PostsComponent,
     GroupsComponent,
     CreateGroupComponent,
-    GroupDetailComponent
+    GroupDetailComponent,
+    SuccesDeletionGroupComponent,
+    PostDetailsComponent,
+    GroupReqestComponent,
+    PostDeletedComponent
   ],
   imports: [
     BrowserModule,

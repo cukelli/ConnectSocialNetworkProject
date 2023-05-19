@@ -13,12 +13,14 @@ import { Router } from '@angular/router';
 export class GroupDetailComponent implements OnInit {
     isAdmin: boolean = false;
     group!: Group;
+    admins!: Array<any>;
 
   constructor(private backendService: BackendServiceService, private router: ActivatedRoute,
     private routing: Router) {
   this.router.params.subscribe(params => {
     let obj = JSON.parse(JSON.stringify(params));
     this.group = obj;
+    this.admins = JSON.parse(obj.admins)
   });  
   }
   ngOnInit(): void {
@@ -34,9 +36,9 @@ export class GroupDetailComponent implements OnInit {
   }
 
   deleteGroup(): void {
-      this.backendService.deleteGroup(this.group['groupId']).subscribe({
+      this.backendService.deletePost(this.group['groupId']).subscribe({
        next: () => {
-      this.routing.navigate(['/success-deletion-group'],{ queryParams: { deleteSuccess: true } }).then(() => {
+      this.routing.navigate(['/post-deleted'],{ queryParams: { deleteSuccess: true } }).then(() => {
           setTimeout(() => {
             this.routing.navigate(['feed']);
           },2000)

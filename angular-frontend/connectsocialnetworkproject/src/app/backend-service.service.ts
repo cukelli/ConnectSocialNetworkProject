@@ -7,6 +7,7 @@ import { catchError, retry } from 'rxjs/operators';
 import { ChangePassword } from './change-password';
 import jwt_decode from "jwt-decode";
 import { Group } from 'src/group';
+import { Post } from './post';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,7 @@ export class BackendServiceService {
   return this.http.post(this.apiUrl + '/user/registration', user);
   }
 
-  getUserPosts(username: string) {
+  getUserPosts() {
 
     let headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ return this.http.get(this.apiUrl + '/post/user', requestOptions);
   }
 
   getGroups() {
-    
+
     let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -101,6 +102,18 @@ deleteGroup(groupId: number) {
 
 }
 
+deletePost(postId: number) {
+
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+    let requestOptions = { headers: headers };
+    const url = `${this.apiUrl}/post/delete/${postId}`;
+     return this.http.delete(url, requestOptions);
+
+}
+
 checkMembership(groupId: number) {
    let headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -111,7 +124,19 @@ checkMembership(groupId: number) {
    const url = `${this.apiUrl}/group/isAdmin/${groupId}`;
      return this.http.get(url, requestOptions);
 
+}
+
+getPostDetails(postId: number): Observable<Post> {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+     let requestOptions = { headers: headers }; 
+     const url = `${this.apiUrl}/post/${postId}`;
+     return this.http.get<Post>(url, requestOptions);
 
 }
+
 
 }

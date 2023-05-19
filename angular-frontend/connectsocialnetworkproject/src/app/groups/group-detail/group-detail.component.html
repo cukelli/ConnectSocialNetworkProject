@@ -3,7 +3,7 @@
     <h1> Group details </h1>
     <div class="form-group">
         <label for="inputGroupName"> Group id </label>
-        <input type="number" class="form-control" id="inputId" 
+        <input type="number" disabled class="form-control" id="inputId" 
             placeholder="Group id" value="{{this.group.groupId}}"> </div>
     <div class="form-group">
         <label for="inputGroupName"> Group name </label>
@@ -14,12 +14,17 @@
         <input type="text" class="form-control" id="inputDescription"
          placeholder="Group description"  value="{{this.group.description}}">
     </div>
- <!--<div class="form-group">
-    <label for="exampleFormControlSelect1">Group admins</label>
+    <div class="form-group">
+        <label for="inputCreationDate">Creation date</label>
+        <input type="text" class="form-control" id="inputDescription" placeholder="Creation date"
+            value="{{this.group.createdAt}}" disabled>
+    </div>
+ <div class="form-group">
+    <label for="exampleFormControlSelect1" disabled >Group admins</label>
     <select class="form-control" id="exampleFormControlSelect1">
-        <option *ngFor="let admin of group.admins">{{admin}}</option>
+        <option *ngFor="let admin of admins">{{admin.user}}</option>
     </select>
-</div> -->
+</div> 
 
     <button type="submit" class="btn btn-primary">Edit group </button> 
     <button type="button" class="btn btn-danger" *ngIf="isAdmin" (click)="deleteGroup()">Delete</button>

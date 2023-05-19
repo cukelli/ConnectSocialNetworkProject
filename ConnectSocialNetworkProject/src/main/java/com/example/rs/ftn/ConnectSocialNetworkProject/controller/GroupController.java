@@ -256,11 +256,9 @@ public class GroupController {
 	    }
 	    
 	    if (isMemberOrAdmin) {
-	        group.setAdmins(group.getAdmins());
-	        
 	        return new ResponseEntity<>(group, HttpStatus.OK);
 	    } else {
-	        return new ResponseEntity<>(new Message("You are not a member or admin of this group."), HttpStatus.UNAUTHORIZED);
+		    return new ResponseEntity<>(new Message("You are not member or admi nof this group."), HttpStatus.UNAUTHORIZED);
 	    }
 	}
 	

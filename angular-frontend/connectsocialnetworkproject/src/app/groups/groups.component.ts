@@ -33,15 +33,14 @@ export class GroupsComponent implements OnInit {
   
  ngOnInit(): void {}
 
- //isAdmin(): boolean {
-  //return this.user.role === 'ADMIN'; 
-//}
+
   isMemberOrAdmin(group: Group): void {
     const groupId = group.groupId;
 
     this.backendService.getGroupDetails(groupId).subscribe(
       (groupDetails: Group) => {
         group = groupDetails;
+        group.admins = [JSON.stringify(group.admins)];
         this.router.navigate(['/group-detail',group])
        // console.log(groupDetails);
       },

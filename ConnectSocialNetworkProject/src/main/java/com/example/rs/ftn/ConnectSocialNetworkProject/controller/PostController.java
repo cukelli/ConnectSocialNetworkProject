@@ -18,6 +18,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
@@ -160,6 +163,21 @@ public class PostController {
 
 	}
 	
+	
+	@GetMapping("/{postId}")
+	public Object getPostDetails(Authentication authentication, @PathVariable("postId") Long postId) {
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+	    
+	    Post post = postService.findOne(postId);
+	    return post;
+	   
+	}
 	
 	
 }
