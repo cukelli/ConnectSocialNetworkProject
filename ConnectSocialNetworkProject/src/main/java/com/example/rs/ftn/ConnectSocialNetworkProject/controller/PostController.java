@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
+import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
@@ -55,7 +56,10 @@ public class PostController {
 		if (!userLogged.getRole().toString().equals("ADMIN")) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
 		}
-		List<Post> posts = postService.findAll();
+		List<Post> posts = postService.findAllUndeletedPosts();
+		for (Post post: posts) {
+			System.out.println(post.getId());
+		}
 		
         return posts;
 		
@@ -106,7 +110,7 @@ public class PostController {
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deletePost(Authentication authentication,@PathVariable("id") Long id) {
+	public Message deletePost(Authentication authentication,@PathVariable("id") Long id) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -118,13 +122,14 @@ public class PostController {
 		
 		Post postForDeletion = postService.findOne(id);
 		
-		if (postForDeletion.getUser().toString() != userLogged.getUsername().toString() ||
+		if (!postForDeletion.getUser().equals(userLogged.getUsername()) &&
 				!postForDeletion.getUser().equals("admin")) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You are not creator of this post.");
 		}
 		
-		 postService.remove(id);
-		return new ResponseEntity<>(HttpStatus.OK);
+		 postForDeletion.setDeleted(true);
+		 postService.updatePost(postForDeletion);
+		return new Message("Post deleted succesfuly.");
 		
 	}
 	
@@ -146,7 +151,7 @@ public class PostController {
 		}
 
 		if (userLogged.getRole().toString().equals("ADMIN")) {
-			List<Post> posts = postService.findAll();
+			List<Post> posts = postService.findAllUndeletedPosts();
 			return new ResponseEntity<>(posts,HttpStatus.OK);
 		}
 		

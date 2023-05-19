@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { CommonModule } from '@angular/common'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -16,7 +16,11 @@ import { FooterComponent } from './footer/footer.component';
 import { RegistrationSuccesfulComponent } from './registration-succesful/registration-succesful.component';
 import { ChangePasswordComponent } from './user-profile/change-password/change-password.component';
 import { PostsComponent } from './feed/posts/posts.component';
-import { GroupsComponent } from './feed/groups/groups.component';
+import { GroupsComponent } from './groups/groups.component';
+import { SucesfullyDeletedGroupComponent } from './feed/groups/sucesfully-deleted-group/sucesfully-deleted-group.component';
+import { GroupReqestComponent } from './groups/group-reqest/group-reqest.component';
+import { CreateGroupComponent } from './groups/create-group/create-group.component';
+import { GroupDetailComponent } from './groups/group-detail/group-detail.component';
 
 @NgModule({
   declarations: [
@@ -32,14 +36,17 @@ import { GroupsComponent } from './feed/groups/groups.component';
     RegistrationSuccesfulComponent,
     ChangePasswordComponent,
     PostsComponent,
-    GroupsComponent
+    GroupsComponent,
+    CreateGroupComponent,
+    GroupDetailComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

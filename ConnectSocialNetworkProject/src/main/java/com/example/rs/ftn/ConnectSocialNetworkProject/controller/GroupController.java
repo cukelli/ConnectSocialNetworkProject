@@ -91,11 +91,11 @@ public class GroupController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		if (!userLogged.getRole().toString().equals("ADMIN")) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
-		}
+//		if (!userLogged.getRole().toString().equals("ADMIN")) {
+//			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
+//		}
 	
-		List<Group> groups = groupService.findAll();
+		List<Group> groups = groupService.findAllUndeletedGroups();
 		
         return groups;
         
@@ -130,8 +130,14 @@ public class GroupController {
 
 		 }
 		 
-		 groupService.remove(id);
-		return new Message("Sucesfuly delete.");	
+		 groupForDeletion.setDeleted(true);
+		 
+		 for (Post post: groupForDeletion.getPosts()) {
+			 post.setDeleted(true);
+			 
+		 }
+		 groupService.updateGroup(groupForDeletion);
+		return new Message("Sucessfuly delete.");	
 	}
 	
 	
@@ -219,7 +225,72 @@ public class GroupController {
 		
 	}
 	
+	@GetMapping("/{groupId}")
+	public Object getGroupDetails(Authentication authentication, @PathVariable("groupId") Long groupId) {
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+	    
+	    Group group = groupService.findOne(groupId);
+	    
+	    boolean isMemberOrAdmin = false;
+	    
+	    for (GroupAdmin groupAdmin : group.getAdmins()) {
+	        if (groupAdmin.getUser().equals(userLogged.getUsername())  || userLogged.getRole().toString().equals("ADMIN") ) {
+	            isMemberOrAdmin = true;
+	            break;
+	        }
+	    }
+	    
+	    if (!isMemberOrAdmin) {
+	        for (GroupRequest request : group.getGroupRequests()) {
+	            if (request.isApproved() && request.getUser().getUsername().equals(userLogged.getUsername())) {
+	                isMemberOrAdmin = true;
+	                break;
+	            }
+	        }
+	    }
+	    
+	    if (isMemberOrAdmin) {
+	        group.setAdmins(group.getAdmins());
+	        
+	        return new ResponseEntity<>(group, HttpStatus.OK);
+	    } else {
+	        return new ResponseEntity<>(new Message("You are not a member or admin of this group."), HttpStatus.UNAUTHORIZED);
+	    }
+	}
 	
-	
+	@GetMapping("/isAdmin/{groupId}")
+	public boolean checkMembership(Authentication authentication, @PathVariable("groupId") Long groupId) {
 		
+		String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+	    
+	    Group group = groupService.findOne(groupId);
+	    
+	    boolean isAdmin = false;
+	    
+	    if (userLogged.getRole().toString().equals("ADMIN")) {
+	    	isAdmin = true;
+	    	return isAdmin;
+	    }
+	    
+	    for (GroupAdmin groupAdmin : group.getAdmins()) {
+	        if (groupAdmin.getUser().equals(userLogged.getUsername())  || userLogged.getRole().toString().equals("ADMIN") ) {
+	        	isAdmin = true;
+	            return isAdmin;
+	        }
+	    }
+	    return false;
+		
+}
 }

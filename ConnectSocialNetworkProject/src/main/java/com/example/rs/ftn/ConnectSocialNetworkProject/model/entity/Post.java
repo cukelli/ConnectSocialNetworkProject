@@ -27,6 +27,9 @@ public class Post {
 	   @Column(nullable = false,unique = false)
 	   private LocalDateTime creationDate;
 	   
+	   @Column(nullable = false,unique = false)
+	   private boolean isDeleted;
+	   
 	  // @Column(nullable = true,unique = false)
 	  // private List<String> imagePaths;
 	   
@@ -49,13 +52,14 @@ public class Post {
 	   
 	   public Post() {}
 
-	public Post(Long postId, String content, LocalDateTime creationDate, User user) {
+	public Post(Long postId, String content, LocalDateTime creationDate, User user,boolean isDeleted) {
 		super();
 		this.postId = postId;
 		this.content = content;
 		this.creationDate = creationDate;
 		//this.imagePaths = imagePaths;
 		this.user = user;
+		this.isDeleted = false;
 	}
 
 	public Long getId() {
@@ -130,13 +134,23 @@ public class Post {
 		this.reports = reports;
 	}
 
-	public Group getGroupPosted() {
-		return groupPosted;
+	public Long getGroupPosted() {
+		if (this.groupPosted == null) {
+			return (long) -1;
+		}
+		return groupPosted.getGroupId();
 	}
 
 	public void setGroupPosted(Group groupPosted) {
 		this.groupPosted = groupPosted;
 	}
 
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
 }

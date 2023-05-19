@@ -6,6 +6,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { ChangePassword } from './change-password';
 import jwt_decode from "jwt-decode";
+import { Group } from 'src/group';
 
 @Injectable({
   providedIn: 'root'
@@ -37,10 +38,24 @@ export class BackendServiceService {
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   })
 
+
   let requestOptions = { headers: headers };  
 return this.http.get(this.apiUrl + '/post/user', requestOptions);
 
   }
+
+  getGroups() {
+    
+    let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+    let requestOptions = { headers: headers };  
+    return this.http.get(this.apiUrl + '/group/all', requestOptions);
+  }
+
+
 
   getUser(): Observable<RegistrationUser> {
   let headers = new HttpHeaders({
@@ -61,4 +76,42 @@ return this.http.get(this.apiUrl + '/post/user', requestOptions);
   let requestOptions = { headers: headers };
   return this.http.post<JSON>(this.apiUrl + '/user/changePassword',changePassword,requestOptions);
 }
+
+getGroupDetails(groupId: number): Observable<Group> {
+
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+     let requestOptions = { headers: headers }; 
+     const url = `${this.apiUrl}/group/${groupId}`;
+     return this.http.get<Group>(url, requestOptions);
+
+}
+
+deleteGroup(groupId: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+    let requestOptions = { headers: headers };
+    const url = `${this.apiUrl}/group/delete/${groupId}`;
+     return this.http.delete(url, requestOptions);
+
+}
+
+checkMembership(groupId: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+      let requestOptions = { headers: headers };
+
+   const url = `${this.apiUrl}/group/isAdmin/${groupId}`;
+     return this.http.get(url, requestOptions);
+
+
+}
+
 }
