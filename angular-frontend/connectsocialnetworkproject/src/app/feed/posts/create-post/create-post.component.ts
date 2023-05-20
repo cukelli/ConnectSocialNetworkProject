@@ -10,6 +10,8 @@ import { updatedPostData } from 'src/app/updatedPostData';
 })
 export class CreatePostComponent implements OnInit {
     postContent!: string;
+    isPostCreated: boolean = false;
+
 
 
     constructor(private backendService: BackendServiceService) { }
@@ -24,6 +26,11 @@ export class CreatePostComponent implements OnInit {
       
       this.backendService.createPost(postForCreation).subscribe({
        next: () => {
+          this.isPostCreated = true;
+       setTimeout(() => {
+       this.isPostCreated = false;
+        }, 5000);
+        return;     
         //console.log('Post created successfully');
      
        },

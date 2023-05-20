@@ -171,14 +171,14 @@ createPost(post: updatedPostData) {
   return this.http.post<Post>(url,post, requestOptions);
 }
 
-createGroup(group: Group) {
+createGroup(group: updatedGroupData) {
   let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   });
   let requestOptions = { headers: headers }; 
   const url = `${this.apiUrl}/group/add`;
-  return this.http.post<Group>(url, requestOptions);
+  return this.http.post<Group>(url,group, requestOptions);
 }
 
 }

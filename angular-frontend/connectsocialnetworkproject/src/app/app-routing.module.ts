@@ -14,7 +14,7 @@ import { SuccesDeletionGroupComponent } from './feed/groups/succes-deletion-grou
 import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
 import { PostDeletedComponent } from './feed/posts/post-deleted/post-deleted.component';
 import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
-import { CreateGroupComponent } from './groups/create-group/create-group.component';
+import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
   const routes: Routes = [
     {path: '',component: HomePageComponent,
   //  children: [  { path: 'login',component: LoginComponent }

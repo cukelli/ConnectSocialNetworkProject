@@ -20,9 +20,9 @@ import { PostsComponent } from './feed/posts/posts.component';
 import { GroupsComponent } from './groups/groups.component';
 import { SuccesDeletionGroupComponent } from './feed/groups/succes-deletion-group/succes-deletion-group.component';
 import { GroupReqestComponent } from './groups/group-reqest/group-reqest.component';
-import { CreateGroupComponent } from './groups/create-group/create-group.component';
 import { GroupDetailComponent } from './groups/group-detail/group-detail.component';
 import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
+import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
 import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
 
 @NgModule({
@@ -40,13 +40,13 @@ import { CreatePostComponent } from './feed/posts/create-post/create-post.compon
     ChangePasswordComponent,
     PostsComponent,
     GroupsComponent,
-    CreateGroupComponent,
     GroupDetailComponent,
     SuccesDeletionGroupComponent,
     PostDetailsComponent,
     GroupReqestComponent,
     PostDeletedComponent,
-    CreatePostComponent
+    CreatePostComponent,
+    CreateGroupComponent
   ],
   imports: [
     BrowserModule,
