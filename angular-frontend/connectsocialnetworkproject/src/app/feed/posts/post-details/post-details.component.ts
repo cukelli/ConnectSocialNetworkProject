@@ -10,6 +10,7 @@ import { Post } from 'src/app/post';
 })
 export class PostDetailsComponent implements OnInit {
   post!: Post;
+  isPostUpdated: boolean = false;
 
   constructor(private backendService: BackendServiceService, private router: ActivatedRoute,
     private routing: Router) {
@@ -32,6 +33,26 @@ deletePost(): void {
        },
        error: er => {
       //console.error('Error deleting group:', er);
+
+       }
+   });
+  }
+
+      updatePost(): void {
+      const updatedPostData = {
+      content: this.post.content,
+  };
+      this.backendService.updatePost(this.post['postId'],updatedPostData).subscribe({
+       next: (updatedPost: Post) => {
+       this.isPostUpdated = true; 
+        setTimeout(() => {
+      this.isPostUpdated = false;
+    }, 5000);
+      return;
+       // console.log(updatedPost)
+     
+       },
+       error: er => {
 
        }
    });

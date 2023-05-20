@@ -7,12 +7,12 @@
             placeholder="Group id" value="{{this.group.groupId}}"> </div>
     <div class="form-group">
         <label for="inputGroupName"> Group name </label>
-        <input type="text" class="form-control" id="inputGroupName" placeholder="Group name" value="{{this.group.name}}">
+        <input type="text" class="form-control" id="inputGroupName"  name="groupName" placeholder="Group name"  [(ngModel)]="group.name">
     </div>
     <div class="form-group">
         <label for="inputDescription"> Group description </label>
         <input type="text" class="form-control" id="inputDescription"
-         placeholder="Group description"  value="{{this.group.description}}">
+         placeholder="Group description" name="groupDescription"  [(ngModel)]="group.description">
     </div>
     <div class="form-group">
         <label for="inputCreationDate">Creation date</label>
@@ -26,7 +26,12 @@
     </select>
 </div> 
 
-    <button type="submit" class="btn btn-primary">Edit group </button> 
+    <button type="submit" class="btn btn-primary" (click)="updateGroup()">Edit group </button> 
     <button type="button" class="btn btn-danger" *ngIf="isAdmin" (click)="deleteGroup()">Delete</button>
 
 </form>
+<br>
+<br>
+<div class="alert alert-success" *ngIf="isGroupUpdated">
+    Group updated successfully.
+</div>

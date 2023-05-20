@@ -23,6 +23,7 @@ import { GroupReqestComponent } from './groups/group-reqest/group-reqest.compone
 import { CreateGroupComponent } from './groups/create-group/create-group.component';
 import { GroupDetailComponent } from './groups/group-detail/group-detail.component';
 import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
+import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { PostDetailsComponent } from './feed/posts/post-details/post-details.com
     SuccesDeletionGroupComponent,
     PostDetailsComponent,
     GroupReqestComponent,
-    PostDeletedComponent
+    PostDeletedComponent,
+    CreatePostComponent
   ],
   imports: [
     BrowserModule,

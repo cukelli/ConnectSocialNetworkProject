@@ -1,0 +1,17 @@
+<app-header-registered-user></app-header-registered-user>
+<div class="d-flex justify-content-center">
+
+<form>
+    <h1> Post something, what's on your mind? </h1>
+    <div class="form-group">
+        <label for="inputContent"> Content </label>
+        <input type="text" class="form-control" id="inputContent" placeholder="Content"
+            name="postContent"[(ngModel)]="postContent">
+    </div>
+
+    <button type="submit" class="btn btn-primary" (click)="createPost()"> Post! </button>
+
+    <br>
+    <br>
+</form>
+</div>

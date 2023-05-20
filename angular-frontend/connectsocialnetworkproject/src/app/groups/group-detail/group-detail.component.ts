@@ -14,6 +14,8 @@ export class GroupDetailComponent implements OnInit {
     isAdmin: boolean = false;
     group!: Group;
     admins!: Array<any>;
+    isGroupUpdated: boolean = false;
+
 
   constructor(private backendService: BackendServiceService, private router: ActivatedRoute,
     private routing: Router) {
@@ -21,6 +23,7 @@ export class GroupDetailComponent implements OnInit {
     let obj = JSON.parse(JSON.stringify(params));
     this.group = obj;
     this.admins = JSON.parse(obj.admins)
+    console.log(this.admins)
   });  
   }
   ngOnInit(): void {
@@ -36,9 +39,9 @@ export class GroupDetailComponent implements OnInit {
   }
 
   deleteGroup(): void {
-      this.backendService.deletePost(this.group['groupId']).subscribe({
+      this.backendService.deleteGroup(this.group['groupId']).subscribe({
        next: () => {
-      this.routing.navigate(['/post-deleted'],{ queryParams: { deleteSuccess: true } }).then(() => {
+      this.routing.navigate(['/success-deletion-group'],{ queryParams: { deleteSuccess: true } }).then(() => {
           setTimeout(() => {
             this.routing.navigate(['feed']);
           },2000)
@@ -46,6 +49,24 @@ export class GroupDetailComponent implements OnInit {
        },
        error: er => {
       //console.error('Error deleting group:', er);
+
+       }
+   });
+  }
+
+    updateGroup(): void {
+      const updatedGroupData = {
+      name: this.group.name,
+      description: this.group.description
+  };
+      this.backendService.updateGroup(this.group['groupId'],updatedGroupData).subscribe({
+       next: (updatedGroup: Group) => {
+       this.isGroupUpdated = true; 
+        setTimeout(() => {
+      this.isGroupUpdated = false;
+    }, 5000);     
+       },
+       error: er => {
 
        }
    });

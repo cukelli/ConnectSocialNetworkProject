@@ -1,5 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -80,15 +82,16 @@ public class PostController {
 		
 		Post newPost = new Post();
 		newPost.setContent(post.getContent());
-		newPost.setCreationDate(post.getCreationDate());
+		newPost.setCreationDate(LocalDateTime.now());
 		newPost.setUser(userLogged);
 		
 		
 		return new ResponseEntity<>(postService.addPost(newPost),HttpStatus.OK);
 	}
 	
-	@PutMapping("/update")
-	public ResponseEntity<Post> updatePostApi(Authentication authentication,@RequestBody PostUpdate post) {
+	@PutMapping("/update/{postId}")
+	public ResponseEntity<Post> updatePostApi(Authentication authentication,@RequestBody PostUpdate post,
+			@PathVariable("postId") Long id) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -98,7 +101,7 @@ public class PostController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		Post oldPost = postService.findOne(post.getPostId());
+		Post oldPost = postService.findOne(id);
 		oldPost.setContent(post.getContent());
 		
 		if (oldPost.getUser().toString() != userLogged.getUsername().toString()) {

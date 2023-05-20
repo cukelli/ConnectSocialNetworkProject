@@ -8,6 +8,8 @@ import { ChangePassword } from './change-password';
 import jwt_decode from "jwt-decode";
 import { Group } from 'src/group';
 import { Post } from './post';
+import { updatedGroupData } from './updatedGroupData';
+import { updatedPostData } from './updatedPostData';
 
 @Injectable({
   providedIn: 'root'
@@ -138,5 +140,45 @@ getPostDetails(postId: number): Observable<Post> {
 
 }
 
+updatePost(postId: number,updatedPostData: updatedPostData) {
+    let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+    let requestOptions = { headers: headers }; 
+    const url = `${this.apiUrl}/post/update/${postId}`;
+     return this.http.put<Post>(url,updatedPostData, requestOptions);
+
+}
+
+updateGroup(groupId: number, updatedGroupData: updatedGroupData) {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers }; 
+  const url = `${this.apiUrl}/group/update/${groupId}`;
+  return this.http.put<Group>(url, updatedGroupData, requestOptions);
+}
+
+createPost(post: updatedPostData) {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers }; 
+  const url = `${this.apiUrl}/post/add`;
+  return this.http.post<Post>(url,post, requestOptions);
+}
+
+createGroup(group: Group) {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers }; 
+  const url = `${this.apiUrl}/group/add`;
+  return this.http.post<Group>(url, requestOptions);
+}
 
 }

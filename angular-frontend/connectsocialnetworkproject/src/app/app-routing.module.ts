@@ -13,6 +13,8 @@ import { GroupReqestComponent } from './groups/group-reqest/group-reqest.compone
 import { SuccesDeletionGroupComponent } from './feed/groups/succes-deletion-group/succes-deletion-group.component';
 import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
 import { PostDeletedComponent } from './feed/posts/post-deleted/post-deleted.component';
+import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
+import { CreateGroupComponent } from './groups/create-group/create-group.component';
   const routes: Routes = [
     {path: '',component: HomePageComponent,
   //  children: [  { path: 'login',component: LoginComponent }
@@ -27,7 +29,9 @@ import { PostDeletedComponent } from './feed/posts/post-deleted/post-deleted.com
   {path: 'group-reqest', component: GroupReqestComponent},
   {path: 'success-deletion-group',component: SuccesDeletionGroupComponent},
   {path: 'post-details', component: PostDetailsComponent},
-  {path: 'post-deleted', component: PostDeletedComponent}
+  {path: 'post-deleted', component: PostDeletedComponent},
+   {path: 'add-post', component: CreatePostComponent},
+   {path: 'add-group', component: CreateGroupComponent}
   ];
 
   @NgModule({

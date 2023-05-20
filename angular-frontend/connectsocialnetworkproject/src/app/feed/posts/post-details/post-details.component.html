@@ -1,29 +1,29 @@
 <app-header-registered-user></app-header-registered-user>
+
 <form>
     <h1> Post details </h1>
      <div class="form-group">
         <label for="inputContent"> Content </label>
-        <input type="text" class="form-control" id="inputContent" placeholder="Content"
-            value="{{this.post.content}}">
+        <input type="text" class="form-control" id="inputContent" placeholder="Content" [(ngModel)]="post.content" name="postContent">
     </div>
-    <!--<div class="form-group">
+    <div class="form-group">
         <label for="inputDescription"> Group description </label>
-        <input type="text" class="form-control" id="inputDescription" placeholder="Group description"
-            value="{{this.group.description}}">
+        <input type="text" class="form-control" id="inputUser" placeholder="Created by" disabled
+            value="{{this.post.user}}">
     </div>
     <div class="form-group">
-        <label for="inputCreationDate">Creation date</label>
-        <input type="text" class="form-control" id="inputDescription" placeholder="Creation date"
-            value="{{this.group.createdAt}}" disabled>
+        <label for="inputCreationDate">Posted by</label>
+        <input type="text" class="form-control" id="inputCreationDate" placeholder="Creation date"
+            value="{{this.post.creationDate}}" disabled>
     </div>
-    <div class="form-group">
-        <label for="exampleFormControlSelect1" disabled>Group admins</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-            <option *ngFor="let admin of admins">{{admin.user}}</option>
-        </select>
-    </div> -->
             
-    <button type="submit" class="btn btn-primary">Edit post </button>
+    <button type="submit" class="btn btn-primary" (click)="updatePost()">Edit post </button>
     <button type="button" class="btn btn-danger" (click)="deletePost()">Delete</button>
 
+<br>
+<br>
+    <div class="alert alert-success" *ngIf="isPostUpdated">
+        Post updated successfully.
+    </div>
 </form>
+
