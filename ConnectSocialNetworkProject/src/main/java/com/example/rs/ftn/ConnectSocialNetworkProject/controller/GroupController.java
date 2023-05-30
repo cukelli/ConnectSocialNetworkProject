@@ -204,7 +204,7 @@ public class GroupController {
 	    
 	    if (!isMemberOrAdmin) {
 	        for (GroupRequest request : group.getGroupRequests()) {
-	            if (request.isApproved() && request.getUser().getUsername().equals(userLogged.getUsername())) {
+	            if (request.isApproved() && request.getUser().equals(userLogged.getUsername())) {
 	                isMemberOrAdmin = true;
 	                break;
 	            }
@@ -248,7 +248,7 @@ public class GroupController {
 	    
 	    if (!isMemberOrAdmin) {
 	        for (GroupRequest request : group.getGroupRequests()) {
-	            if (request.isApproved() && request.getUser().getUsername().equals(userLogged.getUsername())) {
+	            if (request.isApproved() && request.getUser().equals(userLogged.getUsername())) {
 	                isMemberOrAdmin = true;
 	                break;
 	            }

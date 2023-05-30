@@ -32,8 +32,7 @@ export class GroupsComponent implements OnInit {
   }
   
  ngOnInit(): void {}
-
-
+ 
   isMemberOrAdmin(group: Group): void {
     const groupId = group.groupId;
 
@@ -46,12 +45,13 @@ export class GroupsComponent implements OnInit {
       },
       (error: any) => {
          if (error.status === 401) {
-        this.router.navigate(['/group-reqest']);
+        this.router.navigate(['/group-reqest',group]);
       } else {
         //console.error('Error occurred:', error);
       }
       }
     );
   }
+
   
 }

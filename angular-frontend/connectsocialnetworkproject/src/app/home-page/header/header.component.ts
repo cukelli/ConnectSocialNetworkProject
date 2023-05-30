@@ -11,10 +11,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router
   ){}
   ngOnDestroy(): void {
-    console.log('Test');
   }
   ngOnInit(): void {
-    console.log('Test');
   }
 
   navigateTo(link: string){

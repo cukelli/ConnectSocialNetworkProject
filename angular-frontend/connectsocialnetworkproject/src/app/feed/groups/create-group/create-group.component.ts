@@ -12,7 +12,7 @@ export class CreateGroupComponent implements OnInit {
 
       groupName!: string;
       groupDescription!: string;
-        isGroupCreated: boolean = false;
+      isGroupCreated: boolean = false;
 
 
       constructor(private backendService: BackendServiceService) { }

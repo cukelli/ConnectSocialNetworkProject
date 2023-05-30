@@ -24,6 +24,7 @@ export class GroupDetailComponent implements OnInit {
     this.group = obj;
     this.admins = JSON.parse(obj.admins)
     console.log(this.admins)
+    console.log(obj);
   });  
   }
   ngOnInit(): void {

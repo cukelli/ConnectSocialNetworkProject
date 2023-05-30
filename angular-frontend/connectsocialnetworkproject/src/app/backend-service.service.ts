@@ -10,6 +10,7 @@ import { Group } from 'src/group';
 import { Post } from './post';
 import { updatedGroupData } from './updatedGroupData';
 import { updatedPostData } from './updatedPostData';
+import { GroupRequest } from './groupRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -150,7 +151,6 @@ updatePost(postId: number,updatedPostData: updatedPostData) {
      return this.http.put<Post>(url,updatedPostData, requestOptions);
 
 }
-
 updateGroup(groupId: number, updatedGroupData: updatedGroupData) {
   let headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -179,6 +179,28 @@ createGroup(group: updatedGroupData) {
   let requestOptions = { headers: headers }; 
   const url = `${this.apiUrl}/group/add`;
   return this.http.post<Group>(url,group, requestOptions);
+}
+
+joinGroup(groupRequest: GroupRequest) {
+    let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+    let requestOptions = { headers: headers }; 
+      const url = `${this.apiUrl}/groupRequest/add`;
+      return this.http.post<GroupRequest>(url,groupRequest, requestOptions);
+
+}
+
+getGroupRequest(groupId: number): Observable<GroupRequest> {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let requestOptions = { headers: headers }; 
+    const url = `${this.apiUrl}/groupRequest/${groupId}`;
+  return this.http.get<GroupRequest>(url, requestOptions);
 }
 
 }

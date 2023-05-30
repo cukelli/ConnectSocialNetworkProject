@@ -1,8 +1,13 @@
-<form>
-    <div class="form-group">
-        <div class="alert alert-primary" role="alert">
-            You are not a <a href="#" class="alert-link">member</a> of this group. Feel free to send Group Request.
+    <form *ngIf="!isGroupRequestSent">
+        <div class="form-group">
+            <div class="alert alert-primary" role="alert">
+                You are not a <a href="#" class="alert-link">member</a> of this group. Feel free to send Group Request.
+            </div>
         </div>
+        <button type="submit" class="btn btn-primary" (click)=" joinGroup()">Send</button>
+    </form>
+    <br>
+
+    <div *ngIf="isGroupRequestSent" class="alert alert-success" role="alert">
+        Group request sent succesfuly! We'll inform you if admin of the group accepts request.
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>

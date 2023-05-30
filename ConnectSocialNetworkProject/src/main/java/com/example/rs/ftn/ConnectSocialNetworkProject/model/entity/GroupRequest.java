@@ -23,8 +23,8 @@ public class GroupRequest {
 	   @Column(nullable = false)
 	   private LocalDateTime createdAt;
 	   
-	   @Column(nullable = false)
-	   private LocalDateTime at;
+	   @Column(nullable = true)
+	   private LocalDateTime at; //kada je zahtev prihvacen
 	   
 	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "username")
@@ -78,8 +78,8 @@ public class GroupRequest {
 		this.at = at;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUser() {
+		return user.getUsername();
 	}
 
 	public void setUser(User user) {
@@ -94,8 +94,8 @@ public class GroupRequest {
 		this.groupRequestId = groupRequestId;
 	}
 
-	public Group getGroup() {
-		return group;
+	public Long getGroup() {
+		return group.getGroupId();
 	}
 
 	public void setGroup(Group group) {
