@@ -24,6 +24,7 @@ import { GroupDetailComponent } from './groups/group-detail/group-detail.compone
 import { PostDetailsComponent } from './feed/posts/post-details/post-details.component';
 import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
 import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
+import { CommentsComponent } from './feed/posts/post-details/comments/comments.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { CreatePostComponent } from './feed/posts/create-post/create-post.compon
     GroupReqestComponent,
     PostDeletedComponent,
     CreatePostComponent,
-    CreateGroupComponent
+    CreateGroupComponent,
+    CommentsComponent
   ],
   imports: [
     BrowserModule,

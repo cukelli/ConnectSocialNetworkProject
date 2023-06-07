@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 
 @Repository
 public interface CommentRepo extends JpaRepository<Comment,Long>{
@@ -24,6 +25,15 @@ public interface CommentRepo extends JpaRepository<Comment,Long>{
 	Optional<Comment> findById(Long id); //optinal rukuje sa null vrednostima
 	
 	long count();
+	
+	Page<Comment> findAllByIsDeletedFalse(Pageable pageable);
+	
+	List<Comment> findAllByIsDeletedFalse();
+	
+	List<Comment> findAllByCommentedPost(Post commentedPost);
+
+
+
 	
 }
 

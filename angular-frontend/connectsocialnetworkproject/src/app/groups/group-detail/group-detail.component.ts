@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { BackendServiceService } from 'src/app/backend-service.service';
 import { HeaderComponent } from 'src/app/home-page/header/header.component';
 import { Group } from 'src/group';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Post } from 'src/app/post';
 
 @Component({
   selector: 'app-group-detail',
@@ -15,6 +15,8 @@ export class GroupDetailComponent implements OnInit {
     group!: Group;
     admins!: Array<any>;
     isGroupUpdated: boolean = false;
+    posts: Array<Post> = [];
+
 
 
   constructor(private backendService: BackendServiceService, private router: ActivatedRoute,
@@ -23,20 +25,28 @@ export class GroupDetailComponent implements OnInit {
     let obj = JSON.parse(JSON.stringify(params));
     this.group = obj;
     this.admins = JSON.parse(obj.admins)
-    console.log(this.admins)
-    console.log(obj);
+   // console.log(this.admins)
+    //console.log(obj);
   });  
   }
   ngOnInit(): void {
-      this.backendService.checkMembership(this.group['groupId']).subscribe({
-       next: (c: any) => {
+    this.backendService.checkMembership(this.group['groupId']).subscribe({
+      next: (c: any) => {
         this.isAdmin = c;
-       },
-       error: er => {
+      },
+      error: er => {
         console.error;
+      }
+    });
 
-       }
-   });
+    this.backendService.getPostsInGroup(this.group['groupId']).subscribe({
+      next: (c: Array<Post>) => {
+        this.posts = c;
+      },
+      error: er => {
+        console.error(er);
+      }
+    });
   }
 
   deleteGroup(): void {
@@ -71,6 +81,21 @@ export class GroupDetailComponent implements OnInit {
 
        }
    });
+  }
+
+    getPostDetails(post: Post): void {
+    const postId = post.postId;
+
+    this.backendService.getPostDetails(postId).subscribe(
+      (postDetails: Post) => {
+        post = postDetails;
+        this.routing.navigate(['/post-details',post])
+       // console.log(groupDetails);
+      }, (error: any) => {
+        this.routing.navigate(['/feed']);
+      }
+    
+    );
   }
 
 }

@@ -30,8 +30,8 @@ public class Post {
 	   @Column(nullable = false,unique = false)
 	   private boolean isDeleted;
 	   
-	  // @Column(nullable = true,unique = false)
-	  // private List<String> imagePaths;
+	   //@Column(nullable = true,unique = false)
+	   // private List<String> imagePaths;
 	   
 	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "userId",nullable = true)

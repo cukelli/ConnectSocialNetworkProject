@@ -3,5 +3,5 @@ export interface Post {
   content: string;
   creationDate: string;
   user: string;
- 
+  comments: Array<Comment>;
 }

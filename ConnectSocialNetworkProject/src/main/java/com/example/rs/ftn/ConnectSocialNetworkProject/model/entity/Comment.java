@@ -95,16 +95,16 @@ public class Comment {
 		this.isDeleted = isDeleted;
 	}
 
-	public User getUser() {
-		return userCommented;
+	public String getUser() {
+		return userCommented.getUsername();
 	}
 
 	public void setUser(User userCommented) {
 		this.userCommented = userCommented;
 	}
 
-	public Post getCommentedPost() {
-		return commentedPost;
+	public Long getCommentedPost() {
+		return commentedPost.getId();
 	}
 
 	public void setCommentedPost(Post commentedPost) {

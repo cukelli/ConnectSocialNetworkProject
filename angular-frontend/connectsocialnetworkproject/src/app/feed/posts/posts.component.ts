@@ -28,11 +28,8 @@ export class PostsComponent implements OnInit {
    }); 
 
   }
-
  ngOnInit(): void {
-   
   }
-
    getPostDetails(post: Post): void {
     const postId = post.postId;
 

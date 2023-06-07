@@ -291,4 +291,42 @@ public class GroupController {
 	    return false;
 		
 }
+	
+	@GetMapping("/posts/{groupId}")
+	public ResponseEntity<List<Post>> getGroupPosts(Authentication authentication, @PathVariable("groupId") Long groupId) {
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+
+	    Group group = groupService.findOne(groupId);
+	    boolean isMemberOrAdmin = false;
+
+	    for (GroupAdmin groupAdmin : group.getAdmins()) {
+	        if (groupAdmin.getUser().equals(userLogged.getUsername()) || userLogged.getRole().toString().equals("ADMIN")) {
+	            isMemberOrAdmin = true;
+	            break;
+	        }
+	    }
+
+	    if (!isMemberOrAdmin) {
+	        for (GroupRequest request : group.getGroupRequests()) {
+	            if (request.isApproved() && request.getUser().equals(userLogged.getUsername())) {
+	                isMemberOrAdmin = true;
+	                break;
+	            }
+	        }
+	    }
+
+	    if (isMemberOrAdmin) {
+	        List<Post> posts = group.getPosts();
+	        return new ResponseEntity<>(posts, HttpStatus.OK);
+	    } else {
+	        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	    }
+	}
+
 }

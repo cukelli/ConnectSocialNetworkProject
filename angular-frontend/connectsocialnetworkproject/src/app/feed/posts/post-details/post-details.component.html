@@ -1,5 +1,4 @@
 <app-header-registered-user></app-header-registered-user>
-
 <form>
     <h1> Post details </h1>
      <div class="form-group">
@@ -7,23 +6,28 @@
         <input type="text" class="form-control" id="inputContent" placeholder="Content" [(ngModel)]="post.content" name="postContent">
     </div>
     <div class="form-group">
-        <label for="inputDescription"> Group description </label>
+        <label for="inputDescription"> Post description </label>
         <input type="text" class="form-control" id="inputUser" placeholder="Created by" disabled
-            value="{{this.post.user}}">
+            value="{{this.post.content}}">
     </div>
     <div class="form-group">
         <label for="inputCreationDate">Posted by</label>
         <input type="text" class="form-control" id="inputCreationDate" placeholder="Creation date"
-            value="{{this.post.creationDate}}" disabled>
+            value="{{this.post.user}}" disabled>
     </div>
             
     <button type="submit" class="btn btn-primary" (click)="updatePost()">Edit post </button>
     <button type="button" class="btn btn-danger" (click)="deletePost()">Delete</button>
-
 <br>
 <br>
     <div class="alert alert-success" *ngIf="isPostUpdated">
         Post updated successfully.
     </div>
+
 </form>
+<app-comments [comments]="comments"></app-comments>
+
+<div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+<div *ngIf="errorMessage2" class="alert alert-danger" role="alert">{{ errorMessage2 }}</div>
+
 

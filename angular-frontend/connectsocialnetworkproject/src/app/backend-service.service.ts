@@ -11,6 +11,7 @@ import { Post } from './post';
 import { updatedGroupData } from './updatedGroupData';
 import { updatedPostData } from './updatedPostData';
 import { GroupRequest } from './groupRequest';
+import { Comment } from 'src/app/comment';
 
 @Injectable({
   providedIn: 'root'
@@ -201,6 +202,36 @@ getGroupRequest(groupId: number): Observable<GroupRequest> {
   let requestOptions = { headers: headers }; 
     const url = `${this.apiUrl}/groupRequest/${groupId}`;
   return this.http.get<GroupRequest>(url, requestOptions);
+}
+
+getPostsInGroup(groupId: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+   let requestOptions = { headers: headers }; 
+    const url = `${this.apiUrl}/group/posts/${groupId}`;
+  return this.http.get<Array<Post>>(url, requestOptions);
+}
+
+getPostComments(postId: number) {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+   let requestOptions = { headers: headers }; 
+    const url = `${this.apiUrl}/comment/post/${postId}`;
+  return this.http.get<Array<Comment>>(url, requestOptions);
+}
+
+getCommentDetails(commentId: number): Observable<Comment>{
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+   let requestOptions = { headers: headers }; 
+    const url = `${this.apiUrl}/comment/${commentId}`;
+  return this.http.get<Comment>(url, requestOptions);
 }
 
 }

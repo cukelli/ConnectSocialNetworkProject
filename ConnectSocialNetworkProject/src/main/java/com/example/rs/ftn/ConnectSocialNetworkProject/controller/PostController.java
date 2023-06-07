@@ -1,9 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
@@ -37,7 +31,6 @@ public class PostController {
 	
 	private final PostService postService;
 	private final UserService userService;
-
 	private final JwtUtil jwtUtil;
 
 	
@@ -128,7 +121,7 @@ public class PostController {
 		
 		Post postForDeletion = postService.findOne(id);
 		
-		if (!postForDeletion.getUser().equals(userLogged.getUsername()) &&
+		if (!postForDeletion.getUser().equals(userLogged.getUsername()) ||
 				!postForDeletion.getUser().equals("admin")) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You are not creator of this post.");
 		}
