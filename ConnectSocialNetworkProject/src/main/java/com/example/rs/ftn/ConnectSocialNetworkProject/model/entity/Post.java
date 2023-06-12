@@ -88,7 +88,7 @@ public class Post {
 
 	public List<String> getImagePaths() {
 		List<String> imagePathsR = new ArrayList<>();
-		if (this.imagePaths.size() > 0) {
+		if  (this.imagePaths != null) {
 			for (Image i: this.imagePaths) {
 				imagePathsR.add(i.getPath());
 			}
