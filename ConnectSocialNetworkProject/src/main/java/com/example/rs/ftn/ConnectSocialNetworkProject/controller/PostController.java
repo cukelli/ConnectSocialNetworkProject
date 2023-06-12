@@ -2,6 +2,7 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostUpdate;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.ImageService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
@@ -31,13 +35,15 @@ public class PostController {
 	
 	private final PostService postService;
 	private final UserService userService;
+	private final ImageService imageService;
 	private final JwtUtil jwtUtil;
 
 	
 	public PostController(PostService postService,UserService
-			userService,JwtUtil jwtUtil) {
+			userService,ImageService imageService,JwtUtil jwtUtil) {
 		this.postService = postService;
 		this.userService = userService;
+		this.imageService = imageService;
 		this.jwtUtil = jwtUtil;
 	}
 	
@@ -78,9 +84,38 @@ public class PostController {
 		newPost.setCreationDate(LocalDateTime.now());
 		newPost.setUser(userLogged);
 		
+		Post dbPost = postService.addPost(newPost);
 		
-		return new ResponseEntity<>(postService.addPost(newPost),HttpStatus.OK);
+		Image image = new Image();
+		image.setPath(post.getImage());
+		image.setPostedImageBy(userLogged);
+		image.setBelongsTo(dbPost);
+;		
+		imageService.addImage(image);
+		
+		
+		
+		return new ResponseEntity<>(dbPost,HttpStatus.OK);
 	}
+	
+//	@PostMapping("/images/{postId}")
+//	public Message createImage(Authentication authentication,@RequestBody PostRequest post) {
+//		String username = authentication.getName();
+//		User userLogged = null;
+//		try {
+//			userLogged = userService.findOne(username);
+//		} catch (UserNotFoundException e) {
+//			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+//		}
+//		
+//
+//		
+//		
+//		return new ResponseEntity<>(postService.addPost(newPost),HttpStatus.OK);
+//	}
+//	
+	
+	
 	
 	@PutMapping("/update/{postId}")
 	public ResponseEntity<Post> updatePostApi(Authentication authentication,@RequestBody PostUpdate post,
@@ -151,10 +186,22 @@ public class PostController {
 
 		if (userLogged.getRole().toString().equals("ADMIN")) {
 			List<Post> posts = postService.findAllUndeletedPosts();
+			
+			for (Post p: posts) {
+				List<Image> postImages = imageService.findAllByBelongsTo(p);
+				p.setImagePaths(postImages);
+			}
+			
 			return new ResponseEntity<>(posts,HttpStatus.OK);
 		}
 		
 		List<Post> posts = postService.getUserPosts(userLogged.getUsername());
+		
+		for (Post p: posts) {
+			List<Image> postImages = imageService.findAllByBelongsTo(p);
+			p.setImagePaths(postImages);
+		}
+		
 		return new ResponseEntity<>(posts,HttpStatus.OK);
 
 	}
@@ -174,6 +221,8 @@ public class PostController {
 	    return post;
 	   
 	}
+	
+	
 	
 	
 }

@@ -12,6 +12,8 @@ import { updatedGroupData } from './updatedGroupData';
 import { updatedPostData } from './updatedPostData';
 import { GroupRequest } from './groupRequest';
 import { Comment } from 'src/app/comment';
+import { CreateComment } from './commentCreate';
+import { UpdatePostContent } from 'updatePostContent';
 
 @Injectable({
   providedIn: 'root'
@@ -142,7 +144,7 @@ getPostDetails(postId: number): Observable<Post> {
 
 }
 
-updatePost(postId: number,updatedPostData: updatedPostData) {
+updatePost(postId: number,updatedPostData: UpdatePostContent) {
     let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -234,4 +236,13 @@ getCommentDetails(commentId: number): Observable<Comment>{
   return this.http.get<Comment>(url, requestOptions);
 }
 
+createComment(comment: CreateComment,postId: number): Observable<Comment> {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers }; 
+  const url = `${this.apiUrl}/comment/add/${postId}`;
+  return this.http.post<Comment>(url,comment, requestOptions);
+}
 }

@@ -30,4 +30,18 @@
 <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
 <div *ngIf="errorMessage2" class="alert alert-danger" role="alert">{{ errorMessage2 }}</div>
 
+<form>
+    <div class="form-group">
+        <label for="textComment">Leave a comment: </label>
+        <input type="text" class="form-control" id="textComment"
+         [(ngModel)]="text" name="text" placeholder="Comment something ...">
+    </div>
+        <button type="submit" class="btn btn-primary" (click)="createComment()">Comment</button>
+    <div class="alert alert-success" *ngIf="isCommentCreated">
+        Comment created successfully.
+    </div>
+    <br> 
+
+    </form>
+
 

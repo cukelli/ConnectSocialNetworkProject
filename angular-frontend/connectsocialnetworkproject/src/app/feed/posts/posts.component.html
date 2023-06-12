@@ -1,18 +1,19 @@
-<div class="d-flex justify-content-center">
-    <div *ngFor="let post of posts" class="card mb-3" style="max-width: 540px;">
-        <div class="row no-gutters">
-            <div class="col-md-4">
-                <img src="assets/post.png" class="card-img" alt="...">
+<div>
+    <div  *ngFor="let post of posts" class="" style="max-width: 100%;">
+
+            <div class="">
+                    <div *ngFor="let image of post.imagePaths" class="" style="max-width: 540px;">
+        <img  [src]="image"alt="Selected Image">
+        </div>
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title"> {{ post.content }} </h5>
-                    <p class="card-text"> {{post.user}}</p>
-                    <p class="card-text"><small class="text-muted">{{ post.creationDate}} </small></p>
-                </div>
+            <h5> {{ post.user }}</h5>
+            <h3> {{post.creationDate}} </h3>
+
+            <p> {{post.content}}</p>
+                
              <button type="button" class="btn btn-info" (click)="getPostDetails(post)">Info</button>
 
-            </div>
-        </div>
+    <div class="w-100"></div> <!-- Add this line to create a line break after each post -->
+
     </div>
 </div>

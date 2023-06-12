@@ -222,13 +222,13 @@ public class User {
 		this.isDeleted = isDeleted;
 	}
 
-	public List<Image> getUserImages() {
-		return userImages;
-	}
-
-	public void setUserImages(List<Image> userImages) {
-		this.userImages = userImages;
-	}
+//	public List<Image> getUserImages() {
+//		return userImages;
+//	}
+//
+//	public void setUserImages(List<Image> userImages) {
+//		this.userImages = userImages;
+//	}
 	
 	
 	

@@ -4,4 +4,5 @@ export interface Post {
   creationDate: string;
   user: string;
   comments: Array<Comment>;
+  imagePaths: Array<String> | null;
 }

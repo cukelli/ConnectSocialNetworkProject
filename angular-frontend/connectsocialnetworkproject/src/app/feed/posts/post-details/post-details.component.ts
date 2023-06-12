@@ -3,6 +3,7 @@
   import { BackendServiceService } from 'src/app/backend-service.service';
   import { Post } from 'src/app/post';
   import { Comment } from 'src/app/comment';
+import { CreateComment } from 'src/app/commentCreate';
 
 
   @Component({
@@ -17,7 +18,9 @@
     errorMessage: string | null = null;
     errorMessage2: string | null = null;
 
-
+    //kreiranje komentara
+     text!: string;
+     isCommentCreated: boolean = false;
 
     constructor(private backendService: BackendServiceService, private router: ActivatedRoute,
       private routing: Router) {
@@ -81,6 +84,27 @@
       }
     });
     }
+
+      createComment(): void {
+    const commentForCreation: CreateComment = {
+      text: this.text,
+    };
+      this.backendService.createComment(commentForCreation,this.post['postId']).subscribe({
+       next: () => {
+         this.isCommentCreated = true;
+        setTimeout(() => {
+          this.isCommentCreated = false;
+          this.getPostComments();
+        }, 5000);
+        return;  
+       },
+       error: er => {
+          //console.error('Error creating post', er);
+
+
+       }
+   });
+  }
 
 
   }

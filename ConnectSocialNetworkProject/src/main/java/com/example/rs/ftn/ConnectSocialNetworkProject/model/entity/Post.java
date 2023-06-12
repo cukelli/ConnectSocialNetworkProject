@@ -1,7 +1,6 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
 
 import java.time.LocalDateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,9 @@ public class Post {
 	   @Column(nullable = false,unique = false)
 	   private boolean isDeleted;
 	   
-	   //@Column(nullable = true,unique = false)
-	   // private List<String> imagePaths;
+	   @OneToMany( mappedBy = "belongsTo")
+	   @Column(nullable = true,unique = false)
+	    private List<Image> imagePaths;
 	   
 	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "userId",nullable = true)
@@ -86,13 +86,21 @@ public class Post {
 		this.creationDate = creationDate;
 	}
 
-//	public List<String> getImagePaths() {
-//		return imagePaths;
-//	}
-//
-//	public void setImagePaths(List<String> imagePaths) {
-//		this.imagePaths = imagePaths;
-//	}
+	public List<String> getImagePaths() {
+		List<String> imagePathsR = new ArrayList<>();
+		if (this.imagePaths.size() > 0) {
+			for (Image i: this.imagePaths) {
+				imagePathsR.add(i.getPath());
+			}
+		}
+		
+		return imagePathsR;
+
+	}
+
+	public void setImagePaths(List<Image> imagePaths) {
+		this.imagePaths = imagePaths;
+	}
 
 	public String getUser() {
 		return user.getUsername();
