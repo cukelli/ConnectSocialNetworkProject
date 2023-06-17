@@ -23,44 +23,47 @@
     }
 
     createPost(): void {
-
-      const reader = new FileReader();
-       reader.onload = () => {
-        const imageBase64 = reader.result as string;
+    if (this.selectedImage) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const imageBase64 = reader.result as string;
       this.imageCompressService.compressFile(imageBase64, -1, 7, 17).then((compressedImage: string) => {
         const postForCreation: updatedPostData = {
           content: this.postContent,
           image: compressedImage
-      };
-      this.imageToShow = compressedImage;
-      console.log(this.imageToShow);
-
-        // const postForCreation: updatedPostData = {
-        //   content: this.postContent,
-        //   image: imageBase64
-        // };
-        
-        this.backendService.createPost(postForCreation).subscribe({
-        next: () => {
-            this.isPostCreated = true;
-        setTimeout(() => {
-        this.isPostCreated = false;
-          }, 5000);
-          //return;     
-          //console.log('Post created successfully');
-      
-        },
-        error: er => {
-            //console.error('Error creating post', er);
-
-
-        }
-    });
-    })
-    } 
-        reader.readAsDataURL(this.selectedImage);
+        };
+        this.imageToShow = compressedImage;
+        this.createPostWithImage(postForCreation);
+      });
+    };
+    reader.readAsDataURL(this.selectedImage);
+  } else {
+    const postForCreation: updatedPostData = {
+      content: this.postContent,
+      image: ""
+    };
+    this.createPostWithImage(postForCreation);
+    console.log("succesfuly posted without image")
+  }
 
     }
+
+
+    createPostWithImage(postForCreation: updatedPostData): void {
+  this.backendService.createPost(postForCreation).subscribe({
+    next: () => {
+      this.isPostCreated = true;
+      setTimeout(() => {
+        this.isPostCreated = false;
+      }, 5000);
+    },
+    error: er => {
+      // Handle the error
+    }
+  });
+}
+
+
 
       onImageSelected(event: any) {
       this.selectedImage = event.target.files[0];

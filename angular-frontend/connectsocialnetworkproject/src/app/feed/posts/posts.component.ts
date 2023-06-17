@@ -37,6 +37,8 @@ export class PostsComponent implements OnInit {
       (postDetails: Post) => {
         post = postDetails;
         this.router.navigate(['/post-details',post])
+        console.log(this.user + "user");
+
        // console.log(groupDetails);
       }, (error: any) => {
         this.router.navigate(['/feed']);

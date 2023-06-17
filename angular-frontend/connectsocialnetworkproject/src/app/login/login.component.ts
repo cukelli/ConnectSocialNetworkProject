@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit
 formControl() {
    this.loginService.login(this.form.value).subscribe({
        next: c => {  
-           //console.log("Welcome user " + this.form.value.username)
+              //console.log("Welcome user " + this.form.value.username)
                  localStorage.setItem("token", JSON.parse(JSON.stringify(c)).token);
                  this.router.navigate(['profile']);      
        },

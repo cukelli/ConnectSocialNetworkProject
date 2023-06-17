@@ -3,8 +3,6 @@
     <p>{{ comment.text }}</p>
     <p>{{ comment.timestamp }}</p>
     <p>{{ comment.user }}</p>
-
-
-
+  <button *ngIf="isCommentCreator(comment)" (click)="getCommentDetails(comment)">Edit</button>
     </div>
 </div>

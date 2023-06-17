@@ -25,6 +25,8 @@ import { PostDetailsComponent } from './feed/posts/post-details/post-details.com
 import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
 import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
 import { CommentsComponent } from './feed/posts/post-details/comments/comments.component';
+import { CommentDetailsComponent } from './feed/posts/post-details/comments/comment-details/comment-details.component';
+import { CommentDeletedComponent } from './comments/comment-deleted/comment-deleted.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { CommentsComponent } from './feed/posts/post-details/comments/comments.c
     PostDeletedComponent,
     CreatePostComponent,
     CreateGroupComponent,
-    CommentsComponent
+    CommentsComponent,
+    CommentDetailsComponent,
+    CommentDeletedComponent
   ],
   imports: [
     BrowserModule,

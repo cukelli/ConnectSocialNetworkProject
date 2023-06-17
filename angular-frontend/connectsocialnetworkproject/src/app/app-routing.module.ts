@@ -15,6 +15,8 @@ import { PostDetailsComponent } from './feed/posts/post-details/post-details.com
 import { PostDeletedComponent } from './feed/posts/post-deleted/post-deleted.component';
 import { CreatePostComponent } from './feed/posts/create-post/create-post.component';
 import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
+import { CommentDetailsComponent } from './feed/posts/post-details/comments/comment-details/comment-details.component';
+import { CommentDeletedComponent } from './comments/comment-deleted/comment-deleted.component';
   const routes: Routes = [
     {path: '',component: HomePageComponent,
   //  children: [  { path: 'login',component: LoginComponent }
@@ -31,7 +33,10 @@ import { CreateGroupComponent } from './feed/groups/create-group/create-group.co
   {path: 'post-details', component: PostDetailsComponent},
   {path: 'post-deleted', component: PostDeletedComponent},
    {path: 'add-post', component: CreatePostComponent},
-   {path: 'add-group', component: CreateGroupComponent}
+   {path: 'add-group', component: CreateGroupComponent},
+   {path: 'comment-details', component: CommentDetailsComponent},
+  {path: 'comment-deleted', component: CommentDeletedComponent}
+
   ];
 
   @NgModule({

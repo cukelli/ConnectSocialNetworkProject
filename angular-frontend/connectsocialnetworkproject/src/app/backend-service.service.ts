@@ -10,6 +10,7 @@ import { Group } from 'src/group';
 import { Post } from './post';
 import { updatedGroupData } from './updatedGroupData';
 import { updatedPostData } from './updatedPostData';
+import { updatedCommentData } from './updatedCommentData';
 import { GroupRequest } from './groupRequest';
 import { Comment } from 'src/app/comment';
 import { CreateComment } from './commentCreate';
@@ -245,4 +246,27 @@ createComment(comment: CreateComment,postId: number): Observable<Comment> {
   const url = `${this.apiUrl}/comment/add/${postId}`;
   return this.http.post<Comment>(url,comment, requestOptions);
 }
+
+
+updateComment(commentId: number, updatedCommentData: updatedCommentData) {
+  let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers }; 
+  const url = `${this.apiUrl}/comment/update/${commentId}`;
+  return this.http.put<Comment>(url, updatedCommentData, requestOptions);
+}
+
+deleteComment(id: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+    let requestOptions = { headers: headers };
+    const url = `${this.apiUrl}/comment/delete/${id}`;
+     return this.http.delete(url, requestOptions);
+
+}
+
 }

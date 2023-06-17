@@ -86,16 +86,15 @@ public class PostController {
 		
 		Post dbPost = postService.addPost(newPost);
 		
-		Image image = new Image();
-		image.setPath(post.getImage());
-		image.setPostedImageBy(userLogged);
-		image.setBelongsTo(dbPost);
-;		
-		imageService.addImage(image);
-		
-		
-		
-		return new ResponseEntity<>(dbPost,HttpStatus.OK);
+		  if (post.getImage() != null && !post.getImage().isEmpty()) {
+		        Image image = new Image();
+		        image.setPath(post.getImage());
+		        image.setPostedImageBy(userLogged);
+		        image.setBelongsTo(dbPost);
+		        imageService.addImage(image);
+		    }
+
+		    return new ResponseEntity<>(dbPost, HttpStatus.OK);
 	}
 	
 //	@PostMapping("/images/{postId}")

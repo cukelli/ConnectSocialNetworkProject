@@ -166,21 +166,22 @@ public class CommentController {
 	}
 	
 	
-	@GetMapping("/{commentId}")
-	public Object getCommenttDetails(Authentication authentication, @PathVariable("commentId") Long commentId) {
-	    String username = authentication.getName();
-	    User userLogged = null;
-	    try {
-	        userLogged = userService.findOne(username);
-	    } catch (UserNotFoundException e) {
-	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-	    }
-	    
-	    Comment comment = commentService.findOne(commentId);
-	    return comment;
-	   
-	}
-	
+		@GetMapping("/{commentId}")
+		public Object getCommenttDetails(Authentication authentication, @PathVariable("commentId") Long commentId) {
+		    String username = authentication.getName();
+		    User userLogged = null;
+		    try {
+		        userLogged = userService.findOne(username);
+		    } catch (UserNotFoundException e) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		    }
+		    
+		    Comment comment = commentService.findOne(commentId);
+		    
+		    return comment;
+		   
+		}
+		
 	
 
 	
