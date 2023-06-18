@@ -3,6 +3,24 @@
     <p>{{ comment.text }}</p>
     <p>{{ comment.timestamp }}</p>
     <p>{{ comment.user }}</p>
-  <button *ngIf="isCommentCreator(comment)" (click)="getCommentDetails(comment)">Edit</button>
+
+    <div class="card mb-4">
+        <div  *ngIf="comment.replies.length > 0" class="card-body">
+             <div class="reply-comment" *ngFor="let reply of comment.replies">
+          <p>{{ reply.text }}</p>
+          <p>{{ reply.timestamp }}</p>
+          <p>{{ reply.user }}</p>
+          <button *ngIf="isCommentCreator(reply)" (click)="getCommentDetails(reply)">Edit</button>
+  </div>
+  </div>
     </div>
+  <button *ngIf="isCommentCreator(comment)" (click)="getCommentDetails(comment)">Edit</button>
+
+<br>
+<div class="form-group">
+  <label for="replyComment">Reply: </label>
+  <input type="text" class="form-control" id="textComment" name="text" placeholder="Reply something ...">
 </div>
+</div>
+
+    </div>

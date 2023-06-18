@@ -3,4 +3,5 @@ export interface Comment {
   text: string;
   timestamp: string;
   user: string;
+  replies: Array<Comment>;
 }

@@ -19,12 +19,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostUpdate;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.CommentService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.ImageService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
@@ -36,14 +38,16 @@ public class PostController {
 	private final PostService postService;
 	private final UserService userService;
 	private final ImageService imageService;
+	private final CommentService commentService;
 	private final JwtUtil jwtUtil;
 
 	
 	public PostController(PostService postService,UserService
-			userService,ImageService imageService,JwtUtil jwtUtil) {
+			userService,ImageService imageService,CommentService commentService,JwtUtil jwtUtil) {
 		this.postService = postService;
 		this.userService = userService;
 		this.imageService = imageService;
+		this.commentService = commentService;
 		this.jwtUtil = jwtUtil;
 	}
 	
@@ -217,6 +221,11 @@ public class PostController {
 	    }
 	    
 	    Post post = postService.findOne(postId);
+//	    List<Comment> undeletedComments = commentService.findAllByCommentedPostAndIsDeletedFalse(post); // Fetch undeleted comments for the post
+	    post.setComments(null); // Set the undeleted comments in the post
+//	     for (Comment comment: undeletedComments) {
+//			System.out.println(comment.getId());
+//		}
 	    return post;
 	   
 	}

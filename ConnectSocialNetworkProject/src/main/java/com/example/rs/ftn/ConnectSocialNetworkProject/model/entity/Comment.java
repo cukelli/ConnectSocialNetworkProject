@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Comment {
 	   @Id
@@ -42,9 +44,11 @@ public class Comment {
 		 @OneToMany(mappedBy = "reportedComment")
 		 private List<Report> reports;
 
-	    
-	    @ManyToOne
-		@JoinColumn(name = "parentCommentId", insertable = false, updatable = false)
+		@JsonIgnore
+	    @ManyToOne(fetch = FetchType.EAGER)
+		@JoinColumn(name = "parentCommentId", updatable = false,  nullable = true )
+	   // @JsonSerialize(using = ParentCommentSerializer.class)
+	    //@JsonDeserialize(using = ParentCommentDeserializer.class)
 		private Comment parentComment;
 	    
 	    @OneToMany(mappedBy = "parentComment")
@@ -119,8 +123,8 @@ public class Comment {
 		this.reactions = reactions;
 	}
 
-	public Comment getParentComment() {
-		return parentComment;
+	public Long getParentComment() {
+		return parentComment.getId();
 	}
 
 	public void setParentComment(Comment parentComment) {

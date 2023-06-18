@@ -30,10 +30,12 @@ public interface CommentRepo extends JpaRepository<Comment,Long>{
 	
 	List<Comment> findAllByIsDeletedFalse();
 	
+	List<Comment> findAllByCommentedPostAndParentCommentIsNullAndIsDeletedFalse(Post commentedPost);
+	
 	List<Comment> findAllByCommentedPost(Post commentedPost);
-
-
-
+	
+    List<Comment> findAllByRepliesIsNotEmpty();
+   
 	
 }
 

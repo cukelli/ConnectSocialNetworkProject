@@ -1,7 +1,6 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDate;
-
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -161,7 +160,7 @@ public class CommentController {
 		}
 	    Post post = postService.findOne(postId);
 		
-	    List<Comment> comments = commentService.findAllByPost(post);
+	    List<Comment> comments = commentService.findAllByCommentedPostAndParentCommentIsNullAndIsDeletedFalse(post);
 	    return comments;
 	}
 	
@@ -180,6 +179,34 @@ public class CommentController {
 		    
 		    return comment;
 		   
+		}
+		
+		@PostMapping("/reply/{postId}/{commentId}")
+		public ResponseEntity<Comment> addReply(Authentication authentication, @RequestBody CommentRequest comment,
+		        @PathVariable("commentId") Long id, @PathVariable("postId") Long postId) {
+		    String username = authentication.getName();
+		    User userLogged = null;
+		    try {
+		        userLogged = userService.findOne(username);
+		    } catch (UserNotFoundException e) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		    }
+
+		    Comment parentComment = commentService.findOne(id);
+		    if (parentComment == null) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Parent comment not found.");
+		    }
+		    Post post = postService.findOne(postId);
+		 
+
+		    Comment newReply = new Comment();
+		    newReply.setText(comment.getText());
+		    newReply.setTimestamp(LocalDate.now());
+		    newReply.setUser(userLogged);
+		    newReply.setParentComment(parentComment);
+		    newReply.setCommentedPost(post);
+
+		    return new ResponseEntity<>(commentService.addComment(newReply), HttpStatus.OK);
 		}
 		
 	

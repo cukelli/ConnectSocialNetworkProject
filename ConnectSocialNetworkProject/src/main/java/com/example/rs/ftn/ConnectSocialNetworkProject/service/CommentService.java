@@ -47,6 +47,9 @@ public class CommentService {
 			return commentRepo.findAllByIsDeletedFalse();
 		}
 		
+		public List<Comment> findAllByCommentedPostAndParentCommentIsNullAndIsDeletedFalse(Post commentedPost) {
+			return commentRepo.findAllByCommentedPostAndParentCommentIsNullAndIsDeletedFalse(commentedPost);
+		}
 		
 		 public Comment addComment(Comment comment) {   
 		       return commentRepo.save(comment);
