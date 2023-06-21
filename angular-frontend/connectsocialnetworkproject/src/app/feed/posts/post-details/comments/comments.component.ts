@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BackendServiceService } from 'src/app/backend-service.service';
 import { Post } from 'src/app/post';
 import { User } from 'src/app/user.model';
 import { Comment } from 'src/app/comment';
 import { RegistrationUser } from 'src/app/registration-user';
+import { CreateComment } from 'src/app/commentCreate';
 
 @Component({
   selector: 'app-comments',
@@ -17,11 +18,16 @@ export class CommentsComponent implements OnInit {
   user!: RegistrationUser;
   post!: Post;
   @Input('comments') comments!: Array<Comment>;
+  replyText!: string; 
+
   constructor(private http: HttpClient, private backendService: BackendServiceService,
+     private router1: ActivatedRoute,
     private router: Router) {
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
-
-
+    this.router1.params.subscribe(params => {
+      let obj = JSON.parse(JSON.stringify(params));
+      this.post = obj;
+  });
   }
   ngOnInit(): void {
    this.backendService.getUser().subscribe({
@@ -32,6 +38,18 @@ export class CommentsComponent implements OnInit {
            //console.error(er.error.message);
        }
    });
+
+    this.backendService.getPostDetails(this.post['postId']).subscribe({
+      next: (post: Post) => {
+        this.post = post;
+        //console.log(post.postId + "id posta");
+      },
+      error: (error: any) => {
+        console.error('Error retrieving post details', error);
+      }
+    });
+
+
 
   }
 
@@ -48,9 +66,28 @@ export class CommentsComponent implements OnInit {
     }
   );
   }
+
+
   
   isCommentCreator(comment: Comment): boolean {
     return this.user && comment.user === this.user.username;
   }
-}
 
+  replyToComment(comment: Comment, replyText: string): void {
+  const reply: CreateComment = {
+    text: replyText,
+    parentComment: comment.id 
+
+  };
+
+  this.backendService.replyToComment(reply, this.post.postId, comment.id).subscribe({
+    next: () => {
+      this.backendService.getPostComments(this.post.postId);
+      this.replyText = ''; 
+    },
+    error: er => {
+      console.error('Error creating reply', er);
+    }
+  });
+}
+}

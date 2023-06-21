@@ -269,14 +269,14 @@ deleteComment(id: number) {
 
 }
 
-replyToComment(postId: number,id: number) {
+replyToComment(comment: CreateComment,postId: number,id: number) {
    let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   });
   let requestOptions = { headers: headers };
     const url = `${this.apiUrl}/comment/reply/${postId}/${id}`;
-     return this.http.delete(url, requestOptions);
+  return this.http.post<Comment>(url,comment, requestOptions);
 }
 
 }

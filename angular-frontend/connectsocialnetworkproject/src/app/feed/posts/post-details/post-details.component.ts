@@ -106,5 +106,14 @@ import { CreateComment } from 'src/app/commentCreate';
    });
   }
 
-
+//   replyToComment(comment: Comment, replyText: string): void {
+//   this.backendService.replyToComment(replyText, this.post['postId'], comment.id).subscribe({
+//     next: () => {
+//       this.getPostComments();
+//     },
+//     error: er => {
+//       console.error('Error creating reply', er);
+//     }
+//   });
+// }
   }

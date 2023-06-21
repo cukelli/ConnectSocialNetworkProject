@@ -1,6 +1,8 @@
 use  ConnectSocialNetworkProject
 select * from users
 select * from post
+select * from comment
+select * from reaction
 select * from group_table
 select * from group_admin
 select * from group_request
