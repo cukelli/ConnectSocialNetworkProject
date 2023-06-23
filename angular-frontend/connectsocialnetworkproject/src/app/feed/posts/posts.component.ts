@@ -12,12 +12,13 @@ import { Router } from '@angular/router';
 })
 export class PostsComponent implements OnInit {
   posts!: Array<Post>;
+  sort: string = 'desc';
   user: User;
   constructor(private http: HttpClient,private backendService: BackendServiceService,
     private router: Router) { 
         this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
-        this.backendService.getUserPosts().subscribe({
+        this.backendService.getUserPosts(this.sort).subscribe({
        next: (data: any)=> {  
           this.posts = data;
           
@@ -28,6 +29,7 @@ export class PostsComponent implements OnInit {
    }); 
 
   }
+
  ngOnInit(): void {
   }
    getPostDetails(post: Post): void {
@@ -46,5 +48,23 @@ export class PostsComponent implements OnInit {
     
     );
   }
+
+  sortPostsAscendingByDate() {
+
+
+  }
+
+  sortPostsDescendingByDate() {
+
+        this.backendService.getUserPosts(this.sort).subscribe({
+       next: (data: any)=> {  
+          this.posts = data;
+          console.log("here");
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
   
 }

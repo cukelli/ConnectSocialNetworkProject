@@ -27,6 +27,7 @@ import { CreatePostComponent } from './feed/posts/create-post/create-post.compon
 import { CommentsComponent } from './feed/posts/post-details/comments/comments.component';
 import { CommentDetailsComponent } from './feed/posts/post-details/comments/comment-details/comment-details.component';
 import { CommentDeletedComponent } from './comments/comment-deleted/comment-deleted.component';
+import { ReplyComponent } from './feed/posts/post-details/comments/reply/reply.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { CommentDeletedComponent } from './comments/comment-deleted/comment-dele
     CreateGroupComponent,
     CommentsComponent,
     CommentDetailsComponent,
-    CommentDeletedComponent
+    CommentDeletedComponent,
+    ReplyComponent
   ],
   imports: [
     BrowserModule,

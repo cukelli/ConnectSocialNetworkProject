@@ -101,7 +101,6 @@ import { CreateComment } from 'src/app/commentCreate';
        error: er => {
           //console.error('Error creating post', er);
 
-
        }
    });
   }

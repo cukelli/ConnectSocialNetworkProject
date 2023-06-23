@@ -19,6 +19,8 @@ export class CommentsComponent implements OnInit {
   post!: Post;
   @Input('comments') comments!: Array<Comment>;
   replyText!: string; 
+  selectedComment!: Comment;
+  
 
   constructor(private http: HttpClient, private backendService: BackendServiceService,
      private router1: ActivatedRoute,
@@ -49,8 +51,10 @@ export class CommentsComponent implements OnInit {
       }
     });
 
+ }
 
-
+  toggleReplies(comment: Comment) {
+    this.selectedComment = comment;
   }
 
    getCommentDetails(comment: Comment): void {

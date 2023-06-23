@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { User } from './user.model';
 import { RegistrationUser } from './registration-user';
 import { Observable, throwError } from 'rxjs';
@@ -39,25 +39,27 @@ export class BackendServiceService {
   return this.http.post(this.apiUrl + '/user/registration', user);
   }
 
-  getUserPosts() {
-
-    let headers = new HttpHeaders({
+getUserPosts(sortOrder?: string) {
+  const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
-  })
+  });
 
-
-  let requestOptions = { headers: headers };  
-return this.http.get(this.apiUrl + '/post/user', requestOptions);
-
+  let params = new HttpParams();
+  if (sortOrder) {
+    params = params.set('sort', sortOrder);
   }
+
+  console.log(this.apiUrl + '/post/user', { headers, params });
+  return this.http.get<Array<Post>>(this.apiUrl + '/post/user?sort=desc', { headers, params });
+}
 
   getGroups() {
 
     let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    }) 
 
     let requestOptions = { headers: headers };  
     return this.http.get(this.apiUrl + '/group/all', requestOptions);

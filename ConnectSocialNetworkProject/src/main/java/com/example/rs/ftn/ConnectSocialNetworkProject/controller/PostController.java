@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
@@ -51,27 +52,31 @@ public class PostController {
 		this.jwtUtil = jwtUtil;
 	}
 	
-	@GetMapping("/all")
-	@ResponseBody
-	public List<Post> getAllPosts(Authentication authentication) {
-		String username = authentication.getName();
-		User userLogged = null;
-		try {
-			userLogged = userService.findOne(username);
-		} catch (UserNotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-		}
-		if (!userLogged.getRole().toString().equals("ADMIN")) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
-		}
-		List<Post> posts = postService.findAllUndeletedPosts();
-		for (Post post: posts) {
-			System.out.println(post.getId());
-		}
-		
-        return posts;
-		
-	}
+	 @GetMapping("/all")
+	    @ResponseBody
+	    public List<Post> getAllPosts(Authentication authentication,
+	                                  @RequestParam(value = "sort", defaultValue = "asc") String sort) {
+	        String username = authentication.getName();
+	        User userLogged = null;
+	        try {
+	            userLogged = userService.findOne(username);
+	        } catch (UserNotFoundException e) {
+	            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	        }
+	        if (!userLogged.getRole().toString().equals("ADMIN")) {
+	            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
+	        }
+
+	        List<Post> posts = postService.findAllUndeletedPosts();
+
+	        if (sort.equalsIgnoreCase("asc")) {
+	            posts.sort(Comparator.comparing(Post::getCreationDate));
+	        } else if (sort.equalsIgnoreCase("desc")) {
+	            posts.sort(Comparator.comparing(Post::getCreationDate).reversed());
+	        }
+
+	        return posts;
+	    }
 	
 	@PostMapping("/add")
 	public ResponseEntity<Post> addPost(Authentication authentication,@RequestBody PostRequest post) {
@@ -172,42 +177,41 @@ public class PostController {
 	
 	@GetMapping("/user")
 	@ResponseBody
-	public ResponseEntity<List<Post>> getUserPosts(Authentication authentication) {
-		String userUsername = authentication.getName();
-		User userLogged = null;
-		try {
-			userLogged = userService.findOne(userUsername);
-			
-		} catch (UserNotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-		}
-		
-		if (!userLogged.getUsername().toString().equals(userLogged.getUsername()) && !userLogged.getRole().toString().equals("ADMIN")) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin/you are not creator of those posts.");
+	public ResponseEntity<List<Post>> getUserPosts(Authentication authentication,
+	        @RequestParam(value = "sort", defaultValue = "asc") String sort) {
+	    String userUsername = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(userUsername);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
 
-		}
+	    if (!userLogged.getUsername().equals(userUsername) && !userLogged.getRole().toString().equals("ADMIN")) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin/you are not the creator of those posts.");
+	    }
 
-		if (userLogged.getRole().toString().equals("ADMIN")) {
-			List<Post> posts = postService.findAllUndeletedPosts();
-			
-			for (Post p: posts) {
-				List<Image> postImages = imageService.findAllByBelongsTo(p);
-				p.setImagePaths(postImages);
-			}
-			
-			return new ResponseEntity<>(posts,HttpStatus.OK);
-		}
-		
-		List<Post> posts = postService.getUserPosts(userLogged.getUsername());
-		
-		for (Post p: posts) {
-			List<Image> postImages = imageService.findAllByBelongsTo(p);
-			p.setImagePaths(postImages);
-		}
-		
-		return new ResponseEntity<>(posts,HttpStatus.OK);
+	    List<Post> posts;
+	    if (userLogged.getRole().toString().equals("ADMIN")) {
+	        posts = postService.findAllUndeletedPosts();
+	    } else {
+	        posts = postService.getUserPosts(userLogged.getUsername());
+	    }
 
+	    if (sort.equalsIgnoreCase("asc")) {
+	        posts.sort(Comparator.comparing(Post::getCreationDate));
+	    } else if (sort.equalsIgnoreCase("desc")) {
+	        posts.sort(Comparator.comparing(Post::getCreationDate).reversed());
+	    }
+
+	    for (Post p : posts) {
+	        List<Image> postImages = imageService.findAllByBelongsTo(p);
+	        p.setImagePaths(postImages);
+	    }
+
+	    return new ResponseEntity<>(posts, HttpStatus.OK);
 	}
+
 	
 	
 	@GetMapping("/{postId}")
