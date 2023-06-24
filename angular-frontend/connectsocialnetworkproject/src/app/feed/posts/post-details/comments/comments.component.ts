@@ -112,4 +112,29 @@ refreshComments(): void {
     }
   });
 }
+
+  sortCommentsDescendingByDate() {
+
+        this.backendService.getPostComments(this.post.postId,'desc').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+
+    sortCommentsAscendingByDate() {
+
+        this.backendService.getPostComments(this.post.postId,'asc').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
 }

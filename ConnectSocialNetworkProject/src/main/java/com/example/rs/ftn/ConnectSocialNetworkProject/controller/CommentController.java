@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -149,7 +151,9 @@ public class CommentController {
 	
 	@GetMapping("/post/{postId}")
 	@ResponseBody
-	public List<Comment> getCommentsByPostId(Authentication authentication,@PathVariable("postId") Long postId) {
+	public List<Comment> getCommentsByPostId(Authentication authentication, @PathVariable("postId") Long postId,
+			@RequestParam(value = "sort", defaultValue = "asc")
+			String sort) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -161,6 +165,12 @@ public class CommentController {
 	    Post post = postService.findOne(postId);
 		
 	    List<Comment> comments = commentService.findAllByCommentedPostAndParentCommentIsNullAndIsDeletedFalse(post);
+	    
+	    if (sort.equalsIgnoreCase("asc")) {
+	        comments.sort(Comparator.comparing(Comment::getTimestamp));
+	    } else if (sort.equalsIgnoreCase("desc")) {
+	        comments.sort(Comparator.comparing(Comment::getTimestamp).reversed());
+	    }
 	    return comments;
 	}
 	

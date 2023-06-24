@@ -218,13 +218,18 @@ getPostsInGroup(groupId: number) {
   return this.http.get<Array<Post>>(url, requestOptions);
 }
 
-getPostComments(postId: number) {
+getPostComments(postId: number,sortOrder?: string) {
   let headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   });
+
+    let sortOrdertemp = "asc"
+  if (sortOrder !== undefined) {
+     sortOrdertemp = sortOrder;
+  }
    let requestOptions = { headers: headers }; 
-    const url = `${this.apiUrl}/comment/post/${postId}`;
+    const url = `${this.apiUrl}/comment/post/${postId}?sort=${sortOrdertemp}`;
   return this.http.get<Array<Comment>>(url, requestOptions);
 }
 
