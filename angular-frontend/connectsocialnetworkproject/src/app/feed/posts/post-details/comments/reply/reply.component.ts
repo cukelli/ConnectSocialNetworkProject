@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendServiceService } from 'src/app/backend-service.service';
 import { CreateComment } from 'src/app/commentCreate';
@@ -17,9 +17,9 @@ export class ReplyComponent  {
   reply!: Comment;
   @Input('postId') postId!: number;
   @Input('user') user!: RegistrationUser;
+  @Input('comments') comments!: Array<Comment>;
+  replyText!: string;
 
-
-  replyText!: string; 
 
   constructor(private http: HttpClient, private backendService: BackendServiceService,
      private router1: ActivatedRoute,
@@ -59,11 +59,27 @@ export class ReplyComponent  {
 
   this.backendService.replyToComment(reply, this.postId, comment.id).subscribe({
     next: () => {
-      this.backendService.getPostComments(this.postId);
+      //this.backendService.getPostComments(this.postId);
       this.replyText = ''; 
+      this.refreshReplies();
+
+
     },
     error: er => {
       console.error('Error creating reply', er);
+    }
+  });
+
+  
+}
+refreshReplies(): void {
+  this.backendService.getPostComments(this.postId).subscribe({
+    next: (comments: Comment[]) => {
+      this.comments = comments;
+      //console.log(comments);
+    },
+    error: (error: any) => {
+      console.error('Error refreshing comments', error);
     }
   });
 }

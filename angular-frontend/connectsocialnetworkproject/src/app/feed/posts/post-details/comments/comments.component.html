@@ -42,9 +42,10 @@
 <br>
 <div class="form-group">
   <label for="replyComment">Reply: </label>
-  <input type="text" class="form-control" id="textComment" name="text" placeholder="Reply something ...">
+  <input type="text" class="form-control" id="textComment" name="text" placeholder="Reply something ..."
+  [(ngModel)]="replyText">
   <br>
-                <button  class="btn btn-info" >Reply</button>
+                <button  class="btn btn-info" (click)="replyToComment(comment, replyText)" >Reply</button>
 </div>
 </div>
 

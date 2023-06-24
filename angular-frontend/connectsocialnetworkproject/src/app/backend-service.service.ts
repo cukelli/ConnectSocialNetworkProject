@@ -45,13 +45,12 @@ getUserPosts(sortOrder?: string) {
     'Authorization': `Bearer ${localStorage.getItem('token')}`
   });
 
-  let params = new HttpParams();
-  if (sortOrder) {
-    params = params.set('sort', sortOrder);
+  let sortOrdertemp = "asc"
+  if (sortOrder !== undefined) {
+     sortOrdertemp = sortOrder;
   }
 
-  console.log(this.apiUrl + '/post/user', { headers, params });
-  return this.http.get<Array<Post>>(this.apiUrl + '/post/user?sort=desc', { headers, params });
+  return this.http.get<Array<Post>>(this.apiUrl + `/post/user?sort=${sortOrdertemp}`, { headers });
 }
 
   getGroups() {

@@ -20,7 +20,7 @@ export class CommentsComponent implements OnInit {
   @Input('comments') comments!: Array<Comment>;
   replyText!: string; 
   selectedComment!: Comment;
-  
+
 
   constructor(private http: HttpClient, private backendService: BackendServiceService,
      private router1: ActivatedRoute,
@@ -32,6 +32,7 @@ export class CommentsComponent implements OnInit {
   });
   }
   ngOnInit(): void {
+ 
    this.backendService.getUser().subscribe({
        next: c => {  
            this.user = c;
@@ -86,11 +87,28 @@ export class CommentsComponent implements OnInit {
 
   this.backendService.replyToComment(reply, this.post.postId, comment.id).subscribe({
     next: () => {
-      this.backendService.getPostComments(this.post.postId);
+     // this.backendService.getPostComments(this.post.postId);
       this.replyText = ''; 
+      this.refreshComments();
+
     },
     error: er => {
       console.error('Error creating reply', er);
+    }
+  });
+
+
+  
+}
+
+refreshComments(): void {
+  this.backendService.getPostComments(this.post.postId).subscribe({
+    next: (comments: Comment[]) => {
+      this.comments = comments;
+      //console.log(comments);
+    },
+    error: (error: any) => {
+      console.error('Error refreshing comments', error);
     }
   });
 }

@@ -18,8 +18,8 @@ export class PostsComponent implements OnInit {
     private router: Router) { 
         this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
-        this.backendService.getUserPosts(this.sort).subscribe({
-       next: (data: any)=> {  
+        this.backendService.getUserPosts('asc').subscribe({
+       next: (data: Array<Post>)=> {  
           this.posts = data;
           
        },
@@ -50,16 +50,23 @@ export class PostsComponent implements OnInit {
   }
 
   sortPostsAscendingByDate() {
+        this.backendService.getUserPosts('asc').subscribe({
+       next: (data: Array<Post>)=> {  
+          this.posts = data;
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });  
+   }
 
-
-  }
+  
 
   sortPostsDescendingByDate() {
 
-        this.backendService.getUserPosts(this.sort).subscribe({
-       next: (data: any)=> {  
+        this.backendService.getUserPosts('desc').subscribe({
+       next: (data: Array<Post>)=> {  
           this.posts = data;
-          console.log("here");
           
        },
        error: er => {
