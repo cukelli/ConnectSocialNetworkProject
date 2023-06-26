@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 
@@ -35,6 +37,7 @@ public interface CommentRepo extends JpaRepository<Comment,Long>{
 	List<Comment> findAllByCommentedPost(Post commentedPost);
 	
     List<Comment> findAllByRepliesIsNotEmpty();
+    
    
 	
 }

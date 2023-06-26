@@ -7,6 +7,7 @@ import { User } from 'src/app/user.model';
 import { Comment } from 'src/app/comment';
 import { RegistrationUser } from 'src/app/registration-user';
 import { CreateComment } from 'src/app/commentCreate';
+import { CountReactions } from 'src/app/countReactions';
 
 @Component({
   selector: 'app-comments',
@@ -20,6 +21,9 @@ export class CommentsComponent implements OnInit {
   @Input('comments') comments!: Array<Comment>;
   replyText!: string; 
   selectedComment!: Comment;
+  reactionsCounter: CountReactions = {  hearts: 0,
+    dislike: 0,
+    like: 0}
 
 
   constructor(private http: HttpClient, private backendService: BackendServiceService,
@@ -32,7 +36,7 @@ export class CommentsComponent implements OnInit {
   });
   }
   ngOnInit(): void {
- 
+
    this.backendService.getUser().subscribe({
        next: c => {  
            this.user = c;
@@ -52,7 +56,9 @@ export class CommentsComponent implements OnInit {
       }
     });
 
- }
+
+    }
+  
 
   toggleReplies(comment: Comment) {
     this.selectedComment = comment;
@@ -137,4 +143,8 @@ refreshComments(): void {
             console.error(er.error.message);
        }
    });   }
+
+  
+
+
 }

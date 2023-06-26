@@ -4,6 +4,7 @@
   import { Post } from 'src/app/post';
   import { Comment } from 'src/app/comment';
 import { CreateComment } from 'src/app/commentCreate';
+import { CountReactions } from 'src/app/countReactions';
 
 
   @Component({
@@ -14,7 +15,8 @@ import { CreateComment } from 'src/app/commentCreate';
   export class PostDetailsComponent implements OnInit {
     post!: Post;
     isPostUpdated: boolean = false;
-    comments!: Array<Comment>;
+    commentsInit!: Array<Comment>;
+    comments: Array<Comment> = [];
     errorMessage: string | null = null;
     errorMessage2: string | null = null;
 
@@ -32,7 +34,7 @@ import { CreateComment } from 'src/app/commentCreate';
     }
 
     ngOnInit(): void {
-   
+
     }
   deletePost(): void {
         this.backendService.deletePost(this.post['postId']).subscribe({
@@ -73,11 +75,26 @@ import { CreateComment } from 'src/app/commentCreate';
         }
     });
     }
+
+    getCommntReactions(){
+      for (let comment of this.commentsInit){
+      this.backendService.countReactions(comment.id).subscribe(
+      (countReactions: CountReactions) => {
+        comment.reactions = countReactions;
+        this.comments.push(comment);
+      },
+      (error: any) => {
+        console.error('Error counting reactions', error);
+      }
+    );
+      }
+    }
     
     getPostComments(): void {
     this.backendService.getPostComments(this.post['postId']).subscribe({
       next: (c: Array<Comment>) => {
-        this.comments = c;
+        this.commentsInit = c;
+        this.getCommntReactions();
       },
       error: er => {
         console.error(er);

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.CommentNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
@@ -58,7 +59,6 @@ public class CommentService {
 		 public List<Comment> findAllByPost(Post commentedPost) {
 			 return commentRepo.findAllByCommentedPost(commentedPost);
 		 }
-		
-		  
+		 
 	  
 }

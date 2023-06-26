@@ -1,17 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendServiceService } from 'src/app/backend-service.service';
 import { CreateComment } from 'src/app/commentCreate';
 import { Comment } from 'src/app/comment';
 import { RegistrationUser } from 'src/app/registration-user';
+import { CountReactions } from 'src/app/countReactions';
 
 @Component({
   selector: 'app-reply',
   templateUrl: './reply.component.html',
   styleUrls: ['./reply.component.css']
 })
-export class ReplyComponent  {
+export class ReplyComponent implements OnInit{
   showReplies: boolean = false;
   @Input('comment') comment!: Comment;
   reply!: Comment;
@@ -26,7 +27,30 @@ export class ReplyComponent  {
     private router: Router) {
       this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  };
+  }
+  ngOnInit(): void {
+    setTimeout(() => {
+      
+      for (let reply of this.comment.replies){
+        this.backendService.countReactions(reply.id).subscribe(
+      (countReactions: CountReactions) => {
+        reply.reactions = countReactions;
+    
+      },
+      (error: any) => {
+        console.error('Error counting reactions', error);
+      }
+    );
+      }
+
+
+         });
+
+  }
+  
+ 
+  
+
   toggleReplies(reply: Comment){
     this.showReplies = true;
     this.reply = reply;
@@ -62,7 +86,6 @@ export class ReplyComponent  {
       //this.backendService.getPostComments(this.postId);
       this.replyText = ''; 
       this.refreshReplies();
-
 
     },
     error: er => {

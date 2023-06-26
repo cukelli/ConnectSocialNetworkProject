@@ -15,6 +15,7 @@ import { GroupRequest } from './groupRequest';
 import { Comment } from 'src/app/comment';
 import { CreateComment } from './commentCreate';
 import { UpdatePostContent } from 'updatePostContent';
+import { CountReactions } from './countReactions';
 
 @Injectable({
   providedIn: 'root'
@@ -284,5 +285,16 @@ replyToComment(comment: CreateComment,postId: number,id: number) {
     const url = `${this.apiUrl}/comment/reply/${postId}/${id}`;
   return this.http.post<Comment>(url,comment, requestOptions);
 }
+
+countReactions(commentId: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers };
+    const url = `${this.apiUrl}/comment/reactions/${commentId}`;
+  return this.http.get<CountReactions>(url, requestOptions);
+}
+
 
 }

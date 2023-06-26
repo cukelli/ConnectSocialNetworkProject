@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.PostNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
@@ -26,9 +27,11 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.CommentRequest;
+import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.ReactionCount;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.CommentService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.ReactionService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
@@ -38,13 +41,15 @@ public class CommentController {
 	private final CommentService commentService;
 	private final UserService userService;
 	private final PostService postService;
+	private final ReactionService reactionService;
 	private final JwtUtil jwtUtil;
 	
 	public CommentController(CommentService commentService,UserService
-			userService,PostService postService,JwtUtil jwtUtil) {
+			userService,PostService postService,ReactionService reactionService,JwtUtil jwtUtil) {
 		this.commentService = commentService;
 		this.userService = userService;
 		this.postService = postService;
+		this.reactionService = reactionService;
 		this.jwtUtil = jwtUtil;
 	}
 	
@@ -218,6 +223,36 @@ public class CommentController {
 
 		    return new ResponseEntity<>(commentService.addComment(newReply), HttpStatus.OK);
 		}
+		
+		
+		@GetMapping("/reactions/{commentId}")
+		@ResponseBody
+		public ReactionCount countReactions(Authentication authentication, @PathVariable("commentId") Long commentId) {
+		    String username = authentication.getName();
+		    User userLogged = null;
+		    try {
+		        userLogged = userService.findOne(username);
+		    } catch (UserNotFoundException e) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		    }
+
+		    Comment parentComment = commentService.findOne(commentId);
+		    if (parentComment == null) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Parent comment not found.");
+		    }
+		    
+		    long hearts = reactionService.countByCommentReactedToAndType(parentComment, ReactionType.HEART);
+		    long likes = reactionService.countByCommentReactedToAndType(parentComment, ReactionType.LIKE);
+		    long dislikes = reactionService.countByCommentReactedToAndType(parentComment, ReactionType.DISLIKE);
+		    
+		    ReactionCount reactionCount = new ReactionCount(hearts,dislikes,likes);
+		    
+		    return reactionCount;
+
+		  
+		}
+		
+		
 		
 	
 
