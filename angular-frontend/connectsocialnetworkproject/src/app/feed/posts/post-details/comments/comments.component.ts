@@ -124,6 +124,8 @@ refreshComments(): void {
         this.backendService.getPostComments(this.post.postId,'desc').subscribe({
        next: (data: Array<Comment>)=> {  
           this.comments = data;
+         this.getCommntReactions();
+
           
        },
        error: er => {
@@ -137,12 +139,118 @@ refreshComments(): void {
         this.backendService.getPostComments(this.post.postId,'asc').subscribe({
        next: (data: Array<Comment>)=> {  
           this.comments = data;
+          this.getCommntReactions();
+
           
        },
        error: er => {
             console.error(er.error.message);
        }
    });   }
+
+     sortCommentsAscendingByLikes() {
+
+        this.backendService.getPostComments(this.post.postId,'ascLikes').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+          //console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+
+       sortCommentsDescendingByLikes() {
+
+        this.backendService.getPostComments(this.post.postId,'descLikes').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+          //console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+       sortCommentsAscendingByDislikes() {
+
+        this.backendService.getPostComments(this.post.postId,'ascDislikes').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+         0// console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+
+      sortCommentsDescendingByDislikes() {
+
+        this.backendService.getPostComments(this.post.postId,'descDislikes').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+         0// console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+    sortCommentsAscendingByHearts() {
+
+        this.backendService.getPostComments(this.post.postId,'ascHearts').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+         0// console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+
+   
+    sortCommentsDescendingByHearts() {
+
+        this.backendService.getPostComments(this.post.postId,'descHearts').subscribe({
+       next: (data: Array<Comment>)=> {  
+          this.comments = data;
+          this.getCommntReactions();
+         0// console.log(data);
+          
+       },
+       error: er => {
+            console.error(er.error.message);
+       }
+   });   }
+
+
+
+     getCommntReactions(){
+      for (let comment of this.comments){
+      this.backendService.countReactions(comment.id).subscribe(
+      (countReactions: CountReactions) => {
+        comment.reactions = countReactions;
+        this.comments.push(comment);
+      },
+      (error: any) => {
+        console.error('Error counting reactions', error);
+      }
+    );
+      }
+    }
 
   
 

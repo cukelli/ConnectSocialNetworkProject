@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
 
 @Repository
@@ -31,6 +32,9 @@ public interface ReactionRepo extends JpaRepository<Reaction,Long> {
 	List<Reaction> findAllByIsDeletedFalse();
 	
     long countByCommentReactedToAndType(Comment comment, ReactionType reactionType);
+    
+    long countByPostReactedAndType(Post post, ReactionType reactionType);
+
 
 	
 	

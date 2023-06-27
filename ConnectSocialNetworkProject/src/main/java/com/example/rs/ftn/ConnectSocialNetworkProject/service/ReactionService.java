@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.ReactionNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.ReactionRepo;
 
@@ -55,6 +56,10 @@ public class ReactionService {
 		 
 		 public long countByCommentReactedToAndType(Comment comment, ReactionType reactionType) {
 			 return reactionRepo.countByCommentReactedToAndType(comment, reactionType);
+		 }
+		 
+		 public long countByPostReactedAndType(Post post, ReactionType reactionType) {
+			 return reactionRepo.countByPostReactedAndType(post, reactionType);
 		 }
 	    
 }

@@ -173,7 +173,39 @@ public class CommentController {
 	    
 	    if (sort.equalsIgnoreCase("asc")) {
 	        comments.sort(Comparator.comparing(Comment::getTimestamp));
-	    } else if (sort.equalsIgnoreCase("desc")) {
+	    } 
+	    else if (sort.equalsIgnoreCase("ascLikes")) {
+	        comments.sort(Comparator.comparingLong(c -> reactionService.countByCommentReactedToAndType(c, ReactionType.LIKE)));
+	    }
+	    else if (sort.equalsIgnoreCase("descLikes")) {
+	        comments.sort((c1, c2) -> Long.compare(
+	            reactionService.countByCommentReactedToAndType(c2, ReactionType.LIKE),
+	            reactionService.countByCommentReactedToAndType(c1, ReactionType.LIKE)
+	        ));
+	    }
+	    else if (sort.equalsIgnoreCase("ascDislikes")) {
+	        comments.sort(Comparator.comparingLong(c -> reactionService.countByCommentReactedToAndType(c, ReactionType.DISLIKE)));
+	    }
+	    
+	    else if (sort.equalsIgnoreCase("descLikes")) {
+	        comments.sort((c1, c2) -> Long.compare(
+	            reactionService.countByCommentReactedToAndType(c2, ReactionType.DISLIKE),
+	            reactionService.countByCommentReactedToAndType(c1, ReactionType.DISLIKE)
+	        ));
+	    }
+	    else if (sort.equalsIgnoreCase("ascHearts")) {
+	        comments.sort(Comparator.comparingLong(c -> reactionService.countByCommentReactedToAndType(c, ReactionType.HEART)));
+	    }
+	    else if (sort.equalsIgnoreCase("descHearts")) {
+	        comments.sort((c1, c2) -> Long.compare(
+	            reactionService.countByCommentReactedToAndType(c2, ReactionType.HEART),
+	            reactionService.countByCommentReactedToAndType(c1, ReactionType.HEART)
+	        ));
+	    }
+	    
+	    
+	    
+	    else if (sort.equalsIgnoreCase("desc")) {
 	        comments.sort(Comparator.comparing(Comment::getTimestamp).reversed());
 	    }
 	    return comments;

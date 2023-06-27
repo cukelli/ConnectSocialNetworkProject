@@ -296,5 +296,15 @@ countReactions(commentId: number) {
   return this.http.get<CountReactions>(url, requestOptions);
 }
 
+countReactionsPost(postId: number) {
+   let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  let requestOptions = { headers: headers };
+    const url = `${this.apiUrl}/post/reactions/${postId}`;
+  return this.http.get<CountReactions>(url, requestOptions);
+}
+
 
 }

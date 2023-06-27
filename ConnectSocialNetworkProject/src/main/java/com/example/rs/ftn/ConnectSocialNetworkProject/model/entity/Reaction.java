@@ -60,7 +60,7 @@
 		public void setId(Long reactionId) {
 			this.reactionId = reactionId;
 		}
-	
+		
 		public ReactionType getType() {
 			return type;
 		}

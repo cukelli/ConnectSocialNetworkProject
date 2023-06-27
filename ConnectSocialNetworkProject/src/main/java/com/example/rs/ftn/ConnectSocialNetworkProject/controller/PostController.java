@@ -19,17 +19,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostUpdate;
+import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.ReactionCount;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.CommentService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.ImageService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.ReactionService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
@@ -39,15 +43,18 @@ public class PostController {
 	private final PostService postService;
 	private final UserService userService;
 	private final ImageService imageService;
+	private final ReactionService reactionService;
 	private final CommentService commentService;
 	private final JwtUtil jwtUtil;
 
 	
 	public PostController(PostService postService,UserService
-			userService,ImageService imageService,CommentService commentService,JwtUtil jwtUtil) {
+			userService,ImageService imageService,ReactionService reactionService,
+			CommentService commentService,JwtUtil jwtUtil) {
 		this.postService = postService;
 		this.userService = userService;
 		this.imageService = imageService;
+		this.reactionService = reactionService;
 		this.commentService = commentService;
 		this.jwtUtil = jwtUtil;
 	}
@@ -200,7 +207,8 @@ public class PostController {
 
 	    if (sort.equalsIgnoreCase("asc")) {
 	        posts.sort(Comparator.comparing(Post::getCreationDate));
-	    } else if (sort.equalsIgnoreCase("desc")) {
+	    }
+	    else if (sort.equalsIgnoreCase("desc")) {
 	        posts.sort(Comparator.comparing(Post::getCreationDate).reversed());
 	    }
 
@@ -233,6 +241,34 @@ public class PostController {
 	    return post;
 	   
 	}
+	
+	@GetMapping("/reactions/{postId}")
+	@ResponseBody
+	public ReactionCount countReactions(Authentication authentication, @PathVariable("postId") Long postId) {
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+
+	    Post post = postService.findOne(postId);
+	    if (post == null) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found.");
+	    }
+	    
+	    long hearts = reactionService.countByPostReactedAndType(post, ReactionType.HEART);
+	    long likes = reactionService.countByPostReactedAndType(post, ReactionType.LIKE);
+	    long dislikes = reactionService.countByPostReactedAndType(post, ReactionType.DISLIKE);
+	    
+	    ReactionCount reactionCount = new ReactionCount(hearts,dislikes,likes);
+	    
+	    return reactionCount;
+
+	  
+	}
+	
 	
 	
 	

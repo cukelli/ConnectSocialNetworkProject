@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 
@@ -23,7 +24,9 @@ public interface PostRepo extends JpaRepository<Post,Long> {
 	
 	List<Post> findAllByIsDeletedFalseAndUserUsername(String username);
 
-	Page<Post> findAllByIsDeletedFalse(Pageable pageable);		
+	Page<Post> findAllByIsDeletedFalse(Pageable pageable);
+	
+
 
 }
 

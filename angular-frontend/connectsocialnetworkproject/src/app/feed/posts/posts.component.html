@@ -12,6 +12,13 @@
             <p> {{post.content}}</p>
                 
              <button type="button" class="btn btn-info" (click)="getPostDetails(post)">Info</button>
+             <br>
+             <p> Total hearts: {{post.reactions.hearts}}</p>
+             <p> Total likes: {{post.reactions.like}}</p>
+             <p> Total dislikes: {{post.reactions.dislike}}</p>
+
+
+
 
     <div class="w-100"></div> <!-- Add this line to create a line break after each post -->
 
