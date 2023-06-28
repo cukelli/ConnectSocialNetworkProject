@@ -6,6 +6,7 @@ import { CreateComment } from 'src/app/commentCreate';
 import { Comment } from 'src/app/comment';
 import { RegistrationUser } from 'src/app/registration-user';
 import { CountReactions } from 'src/app/countReactions';
+import { ReactionType } from 'src/app/reactionType';
 
 @Component({
   selector: 'app-reply',
@@ -20,6 +21,9 @@ export class ReplyComponent implements OnInit{
   @Input('user') user!: RegistrationUser;
   @Input('comments') comments!: Array<Comment>;
   replyText!: string;
+  isReplyLiked!: boolean;
+  isReplyDisliked!: boolean;
+  isReplyHearted!: boolean;
 
 
   constructor(private http: HttpClient, private backendService: BackendServiceService,
@@ -106,5 +110,63 @@ refreshReplies(): void {
     }
   });
 }
+
+
+
+  replyReaction(type: ReactionType) {
+      const reaction = { type: type };
+
+      for (let reply of this.comment.replies){
+
+  this.backendService.reactToComment(reply.id,reaction).subscribe({
+    next: () => {
+         this.getReplyReactions(reply);
+      //console.log("reacted succesfuly")
+     if (type === ReactionType.LIKE) {
+        this.isReplyLiked = true;
+        this.isReplyDisliked = false;
+        this.isReplyHearted = false;
+      } else if (type === ReactionType.DISLIKE) {
+         this.isReplyLiked = false;
+        this.isReplyDisliked = true;
+        this.isReplyHearted = false;
+          //console.log("here")
+
+      } else if (type === ReactionType.HEART) {
+       this.isReplyLiked = false;
+        this.isReplyDisliked = false;
+        this.isReplyHearted = true;
+         //console.log("here")
+
+      }
+
+      
+    },
+    error: er => {
+      console.error('Error creating reaction', er);
+    }
+  
+  });
+  }
+      }
+
+    getReplyReactions(reply: Comment){
+      for (let reply of this.comment.replies){
+      this.backendService.countReactions(reply.id).subscribe(
+      (countReactions: CountReactions) => {
+        reply.reactions = countReactions;
+       // this.comment.replies.push(reply);
+      },
+      (error: any) => {
+        //console.error('Error counting reactions', error);
+      }
+    );
+      }
+    }
+
+       public get ReactionType() {
+       return ReactionType; 
+}
+
 
 }

@@ -2,6 +2,7 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.service;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.exception.ReactionNotFound
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.ReactionRepo;
 
 @Service
@@ -62,6 +64,13 @@ public class ReactionService {
 			 return reactionRepo.countByPostReactedAndType(post, reactionType);
 		 }
 	    
+		 public Reaction findByPostReactedAndUserReacted(Post post,User user) {
+			return reactionRepo.findByPostReactedAndUserReacted(post, user);
+		 }
+		 
+		 public Reaction findByCommentReactedToAndUserReacted(Comment comment,User user) {
+				return reactionRepo.findByCommentReactedToAndUserReacted(comment, user);
+			 }
 }
 
 

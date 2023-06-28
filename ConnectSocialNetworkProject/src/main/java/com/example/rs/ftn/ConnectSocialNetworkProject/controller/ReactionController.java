@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.PostNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
@@ -72,33 +73,53 @@ public class ReactionController {
 	
 	
 	@PostMapping("/add/{postId}")
-	public ResponseEntity<Reaction> reactToPost(Authentication authentication,@RequestBody ReactionRequest reaction,
-	        @PathVariable("postId") Long postId) {
-		String username = authentication.getName();
-		User userLogged = null;
-		try {
-			userLogged = userService.findOne(username);
-		} catch (UserNotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-		}
-		
-		
-		 Post post = null;
-		    try {
-		        post = postService.findOne(postId);
-		    } catch (PostNotFoundException e) {
-		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found.");
-		    }
-		
-		Reaction newReaction = new Reaction();
-		newReaction.setPostReacted(post);
-		newReaction.setType(reaction.getType());
-		newReaction.setTimestamp(LocalDate.now());
-		newReaction.setCommentReactedTo(null);
-		newReaction.setUserReacted(userLogged);
-		
-		return new ResponseEntity<>(reactionService.addReaction(newReaction),HttpStatus.OK);
+	public ResponseEntity<Reaction> reactToPost(
+	    Authentication authentication,
+	    @RequestBody ReactionRequest reaction,
+	    @PathVariable("postId") Long postId
+	) {
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+
+	    Post post = null;
+	    try {
+	        post = postService.findOne(postId);
+	    } catch (PostNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found.");
+	    }
+
+	    Reaction existingReaction = reactionService.findByPostReactedAndUserReacted(post, userLogged);
+	    if (existingReaction != null) {
+	        ReactionType existingType = existingReaction.getType();
+	        ReactionType newType = reaction.getType();
+	        if ((existingType == ReactionType.LIKE && newType == ReactionType.LIKE)
+	            || (existingType == ReactionType.DISLIKE && newType == ReactionType.DISLIKE)
+	            || (existingType == ReactionType.HEART && newType == ReactionType.HEART)) {
+	            return new ResponseEntity<>(existingReaction, HttpStatus.OK);
+	        } else {
+	            existingReaction.setType(reaction.getType());
+	            return new ResponseEntity<>(reactionService.updateReaction(existingReaction), HttpStatus.OK);
+	        }
+	    }
+
+	    Reaction newReaction = new Reaction();
+	    newReaction.setPostReacted(post);
+	    newReaction.setType(reaction.getType());
+	    newReaction.setTimestamp(LocalDate.now());
+	    newReaction.setCommentReactedTo(null);
+	    newReaction.setUserReacted(userLogged);
+
+	    return new ResponseEntity<>(reactionService.addReaction(newReaction), HttpStatus.OK);
 	}
+
+
+
+
 		
 	@PostMapping("/add/comment/{commentId}")
 	public ResponseEntity<Reaction> reactToComment(Authentication authentication,@RequestBody ReactionRequest reaction,
@@ -118,6 +139,22 @@ public class ReactionController {
 		    } catch (PostNotFoundException e) {
 		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found.");
 		    }
+		    
+		    
+		    Reaction existingReaction = reactionService.findByCommentReactedToAndUserReacted(comment, userLogged);
+		    if (existingReaction != null) {
+		        ReactionType existingType = existingReaction.getType();
+		        ReactionType newType = reaction.getType();
+		        if ((existingType == ReactionType.LIKE && newType == ReactionType.LIKE)
+		            || (existingType == ReactionType.DISLIKE && newType == ReactionType.DISLIKE)
+		            || (existingType == ReactionType.HEART && newType == ReactionType.HEART)) {
+		            return new ResponseEntity<>(existingReaction, HttpStatus.OK);
+		        } else {
+		            existingReaction.setType(reaction.getType());
+		            return new ResponseEntity<>(reactionService.updateReaction(existingReaction), HttpStatus.OK);
+		        }
+		    }
+		    
 		
 		Reaction newReaction = new Reaction();
 		newReaction.setCommentReactedTo(comment);

@@ -8,6 +8,7 @@ import { Comment } from 'src/app/comment';
 import { RegistrationUser } from 'src/app/registration-user';
 import { CreateComment } from 'src/app/commentCreate';
 import { CountReactions } from 'src/app/countReactions';
+import { ReactionType } from 'src/app/reactionType';
 
 @Component({
   selector: 'app-comments',
@@ -21,6 +22,9 @@ export class CommentsComponent implements OnInit {
   @Input('comments') comments!: Array<Comment>;
   replyText!: string; 
   selectedComment!: Comment;
+   isCommentLiked!: boolean;
+   isCommentDisliked!: boolean;
+   isCommentHearted!: boolean;
   reactionsCounter: CountReactions = {  hearts: 0,
     dislike: 0,
     like: 0}
@@ -252,7 +256,46 @@ refreshComments(): void {
       }
     }
 
-  
+    commentReaction(type: ReactionType) {
+      const reaction = { type: type };
 
+      for (let comment of this.comments){
+
+  this.backendService.reactToComment(comment.id,reaction).subscribe({
+    next: () => {
+         this.getCommntReactions();
+      //console.log("reacted succesfuly")
+     if (type === ReactionType.LIKE) {
+        this.isCommentLiked = true;
+        this.isCommentDisliked = false;
+        this.isCommentHearted = false;
+        console.log("here")
+      } else if (type === ReactionType.DISLIKE) {
+       this.isCommentLiked = false;
+        this.isCommentDisliked = true;
+        this.isCommentHearted = false;
+          console.log("here")
+
+      } else if (type === ReactionType.HEART) {
+       this.isCommentLiked = false;
+        this.isCommentDisliked = false;
+        this.isCommentHearted = true;
+         console.log("here")
+
+      }
+
+      
+    },
+    error: er => {
+      console.error('Error creating reaction', er);
+    }
+  
+  });
+  }
+      }
+
+       public get ReactionType() {
+      return ReactionType; 
+}
 
 }

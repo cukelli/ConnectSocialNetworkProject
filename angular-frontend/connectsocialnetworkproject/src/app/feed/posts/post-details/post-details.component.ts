@@ -5,7 +5,7 @@
   import { Comment } from 'src/app/comment';
 import { CreateComment } from 'src/app/commentCreate';
 import { CountReactions } from 'src/app/countReactions';
-
+import { ReactionType } from 'src/app/reactionType';
 
   @Component({
     selector: 'app-post-details',
@@ -15,10 +15,15 @@ import { CountReactions } from 'src/app/countReactions';
   export class PostDetailsComponent implements OnInit {
     post!: Post;
     isPostUpdated: boolean = false;
+    reactionype!: ReactionType;
     commentsInit!: Array<Comment>;
     comments: Array<Comment> = [];
     errorMessage: string | null = null;
     errorMessage2: string | null = null;
+    isPostLiked!: boolean;
+    isPostDisliked!: boolean;
+    isPostHearted!: boolean;
+
 
     //kreiranje komentara
      text!: string;
@@ -34,6 +39,8 @@ import { CountReactions } from 'src/app/countReactions';
     }
 
     ngOnInit(): void {
+
+      
 
     }
   deletePost(): void {
@@ -122,14 +129,39 @@ import { CountReactions } from 'src/app/countReactions';
    });
   }
 
-//   replyToComment(comment: Comment, replyText: string): void {
-//   this.backendService.replyToComment(replyText, this.post['postId'], comment.id).subscribe({
-//     next: () => {
-//       this.getPostComments();
-//     },
-//     error: er => {
-//       console.error('Error creating reply', er);
-//     }
-//   });
-// }
+  postReaction(type: ReactionType) {
+      const reaction = { type: type };
+
+
+  this.backendService.reactToPost(this.post['postId'],reaction).subscribe({
+    next: () => {
+      //console.log("reacted succesfuly")
+     if (type === ReactionType.LIKE) {
+        this.isPostLiked = true;
+        this.isPostDisliked = false;
+        this.isPostHearted = false;
+        console.log("here")
+      } else if (type === ReactionType.DISLIKE) {
+        this.isPostLiked = false;
+        this.isPostDisliked = true;
+        this.isPostHearted = false;
+      } else if (type === ReactionType.HEART) {
+        this.isPostLiked = false;
+        this.isPostDisliked = false;
+        this.isPostHearted = true;
+      }
+
+      
+    },
+    error: er => {
+      console.error('Error creating reaction', er);
+    }
+  });
   }
+
+  public get ReactionType() {
+  return ReactionType; 
+}
+}
+
+  

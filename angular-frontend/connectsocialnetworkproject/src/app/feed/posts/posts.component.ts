@@ -82,19 +82,18 @@ export class PostsComponent implements OnInit {
    });   }
   
 
-   getPostReactions(){
-      for (let post of this.posts){
-      this.backendService.countReactionsPost(post.postId).subscribe(
+ getPostReactions() {
+  for (let post of this.posts) {
+    this.backendService.countReactionsPost(post.postId).subscribe(
       (countReactions: CountReactions) => {
         post.reactions = countReactions;
-        console.log(post.reactions);
-        this.posts.push(post);
+        //console.log(post.reactions);
       },
       (error: any) => {
         console.error('Error counting reactions', error);
       }
     );
-      }
-    }
+  }
+}
 
 }

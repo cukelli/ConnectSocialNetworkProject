@@ -12,6 +12,7 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 
 @Repository
 public interface ReactionRepo extends JpaRepository<Reaction,Long> {
@@ -34,6 +35,10 @@ public interface ReactionRepo extends JpaRepository<Reaction,Long> {
     long countByCommentReactedToAndType(Comment comment, ReactionType reactionType);
     
     long countByPostReactedAndType(Post post, ReactionType reactionType);
+    
+    Reaction findByPostReactedAndUserReacted(Post post,User user);
+    
+    Reaction findByCommentReactedToAndUserReacted(Comment comment,User user);
 
 
 	
