@@ -84,21 +84,22 @@ public class GroupController {
 	@GetMapping("/all")
 	@ResponseBody
 	public List<Group> getAllGroups(Authentication authentication) {
-		String username = authentication.getName();
-		User userLogged = null;
-		try {
-			userLogged = userService.findOne(username);
-		} catch (UserNotFoundException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-		}
-//		if (!userLogged.getRole().toString().equals("ADMIN")) {
-//			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin");
-//		}
-	
-		List<Group> groups = groupService.findAllUndeletedGroups();
-		
-        return groups;
-        
+	    String username = authentication.getName();
+	    User userLogged = null;
+	    try {
+	        userLogged = userService.findOne(username);
+	    } catch (UserNotFoundException e) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+	    }
+
+	    List<Group> groups;
+	    if (userLogged.getRole().toString().equals("ADMIN")) {
+	        groups = groupService.findAll();
+	    } else {
+	        groups = groupService.findAllUndeletedGroups();
+	    }
+
+	    return groups;
 	}
 	
 	@DeleteMapping("/delete/{id}")
@@ -115,18 +116,18 @@ public class GroupController {
 		
 		Group groupForDeletion = groupService.findOne(id);
 		boolean admin = false;
-		for (GroupAdmin groupAdmin: groupForDeletion.getAdmins()) {
-			if (groupAdmin.getUser().equals(userLogged.getUsername())) {
-				admin = true;
-				break;
-			}
-			
-		}
+//		for (GroupAdmin groupAdmin: groupForDeletion.getAdmins()) {
+//			if (groupAdmin.getUser().equals(userLogged.getUsername())) {
+//				admin = true;
+//				break;
+//			}
+//			
+//		}
 		 if (userLogged.getRole().toString().equals("ADMIN")) {
 			 admin = true;
 		    }
 		 if (!admin) {
-		        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not admin of this group.");
+		        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not admin of this app.");
 
 		 }
 		 

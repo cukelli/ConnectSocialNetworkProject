@@ -4,15 +4,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.Role;
-
-public class UserRegister{
+public class UserUpdate {
 	
-	private Role role;
 	
 	@NotBlank
 	@Pattern(regexp = "[a-zA-Z]+", message = "First name should contain only letters.")
@@ -30,24 +24,15 @@ public class UserRegister{
 	@Email
 	private String email;
 	
-	@NotBlank
-    @Size(min = 8, message = "Password should be at least 8 characters long.")
-	private String password;
+	public UserUpdate() {}
 	
-    private PasswordEncoder passwordEncoder;
-
 	
-	public UserRegister(Role role,String firstName, String lastName, String username, String email, String password,
-			PasswordEncoder passwordEncoder) {
+	public UserUpdate(String firstName, String lastName, String username, String email) {
 		super();
-		this.role = role;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.email = email;
-		this.password = password;
-	    this.passwordEncoder = passwordEncoder;
-
 		
 	}
 	
@@ -77,21 +62,6 @@ public class UserRegister{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		  this.password = password;
-		  this.password = passwordEncoder.encode(password);
-	}
 	
-
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
 	
 }

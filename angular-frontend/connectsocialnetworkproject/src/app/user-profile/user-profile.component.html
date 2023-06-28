@@ -10,14 +10,30 @@
                         <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
                             alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
                         <h5 *ngIf="user" class="my-3">{{user.firstName}} {{user.lastName}}</h5>
+                            <p class="text-muted mb-1">Description</p>
+                            <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
                         <div class="d-flex justify-content-center mb-2">
-                            <button type="button" class="btn btn-outline-primary ms-1">Settings</button>
+                            <button type="button" class="btn btn-outline-primary ms-1">Upload photo </button>
                         </div>
                     </div>
                 </div>
             </div>
+        
 
 
+<!--user groups-->
+<div class="col-lg-8">
+<div class="card mb-4">
+
+   <h4> Your groups </h4>
+    
+    </div>
+</div>
+
+<!--user groups-->
+
+
+<form>
            <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-body">
@@ -26,7 +42,9 @@
                                 <p class="mb-0"> First Name </p>
                             </div>
                             <div *ngIf="user" class="col-sm-9">
-                                <p class="text-muted mb-0">{{user.firstName}} </p>
+        <input type="text" class="form-control" id="firstName"
+         placeholder="First name"   value="{{user.firstName}}"
+            name="firstName" [(ngModel)]="user.firstName">
                             </div>
                         </div>
                         <hr>
@@ -35,8 +53,8 @@
                                 <p class="mb-0">Last Name</p>
                             </div>
                             <div *ngIf="user" class="col-sm-9">
-                                <p class="text-muted mb-0"> {{user.lastName}} </p>
-                            </div>
+<input type="text" class="form-control" id="lastName" placeholder="Last name" value="{{user.lastName}}"
+    name="lastName" [(ngModel)]="user.lastName">                            </div>
                         </div>
                         <hr>
                         <div class="row">
@@ -44,8 +62,8 @@
                                 <p class="mb-0">Username</p>
                             </div>
                             <div *ngIf="user" class="col-sm-9">
-                                <p class="text-muted mb-0">{{user.username}} </p>
-                            </div>
+<input type="text" class="form-control" id="username" placeholder="Username" value="{{user.username}}"
+    name="username" [(ngModel)]="user.username" disabled>                            </div>
                         </div>
                         <hr>
                         <div class="row">
@@ -53,13 +71,26 @@
                                 <p class="mb-0">Email</p>
                             </div>
                             <div *ngIf="user" class="col-sm-9">
-                            <p class="text-muted mb-0"> {{user.email}}</p>
-                            </div>
+     <input type="text" class="form-control" id="email" placeholder="Email" value="{{user.email}}"
+    name="email" [(ngModel)]="user.email">                            </div>
                         </div>
-                        
+                    <button type="button" (click)="updateUser()" class="btn btn-outline-primary ms-1"> Change data </button>
+                    <br>    
+                    <br>
+<!--DIV FOR SUCCESS-->
+<div class="alert alert-success" *ngIf="isProfileUpdated">
+    Profile updated successfully.
+</div>
+<!--DIV FOR SUCCESS-->
+
                     </div>
+
                 </div>
+
             </div>
+            </form>
+
+
 <app-change-password></app-change-password>
 
 

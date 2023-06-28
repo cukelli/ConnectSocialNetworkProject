@@ -12,6 +12,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class UserProfileComponent implements OnInit {
     user!: RegistrationUser;
+    isProfileUpdated: boolean = false;
+
 
   constructor(private fb: FormBuilder,private http: HttpClient,private backendService: BackendServiceService) {
     }
@@ -28,5 +30,26 @@ export class UserProfileComponent implements OnInit {
        }
    });
   }
+
+updateUser() {
+  const updatedUserData = {
+    firstName: this.user.firstName,
+    lastName: this.user.lastName,
+    username: this.user.username,
+    email: this.user.email
+  };
+
+  this.backendService.updateUser(updatedUserData).subscribe({
+    next: c => {
+      this.isProfileUpdated = true;
+      setTimeout(() => {
+        this.isProfileUpdated = false;
+      }, 5000);
+    },
+    error: er => {
+      console.error(er.error.message);
+    }
+  });
+}
 
   }

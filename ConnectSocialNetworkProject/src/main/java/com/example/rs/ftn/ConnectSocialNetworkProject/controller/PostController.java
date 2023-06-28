@@ -24,7 +24,6 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundExce
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostUpdate;

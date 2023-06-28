@@ -18,6 +18,7 @@ import { UpdatePostContent } from 'updatePostContent';
 import { CountReactions } from './countReactions';
 import { Reaction } from 'src/reaction';
 import { ReactionType } from './reactionType';
+import { UserUpdate } from './userUpdate';
 
 @Injectable({
   providedIn: 'root'
@@ -328,6 +329,17 @@ reactToComment(id: number, reaction: { type: ReactionType }) {
   const url = `${this.apiUrl}/reaction/add/comment/${id}`;
   
   return this.http.post<Reaction>(url, reaction, requestOptions);
+}
+
+updateUser(updatedUserData: UserUpdate) {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/user/update`;
+  
+  return this.http.put<UserUpdate>(url,updatedUserData,requestOptions);
 }
 
 
