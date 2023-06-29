@@ -3,19 +3,17 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.DiscriminatorOptions;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.Role;
 
@@ -48,8 +46,9 @@ public class User {
 	   @Column(nullable = false, unique = false)
 	   private boolean isDeleted;
 	   
-	   @Column(nullable = true, unique = false)
-	   private String profileImagePath;
+	   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	    @JoinColumn(name = "profile_image_id")
+	    private Image profileImage;
 	   
 	   @Column(nullable = false, unique = false)
 	   private LocalDateTime lastLogin;
@@ -62,9 +61,6 @@ public class User {
 
 	   @OneToMany(mappedBy = "sentFor")
 	   private List<FriendRequest> receivedRequests;
-	   
-	   @OneToMany(mappedBy = "postedImageBy")
-	   private List<Image> userImages;
 	   
 	   @OneToMany(mappedBy = "userReacted")
 	   private List<Reaction> reactions;
@@ -79,7 +75,7 @@ public class User {
 	   public User() {}
 
 	public User(Role role,String username, String password, String email, String firstName, String lastName,
-			String profileImagePath, LocalDateTime lastLogin, boolean isDeleted) {
+			Image profileImage, LocalDateTime lastLogin, boolean isDeleted) {
 		super();
 		this.role = role;
 		this.username = username;
@@ -87,7 +83,7 @@ public class User {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.profileImagePath = profileImagePath;
+		this.profileImage = profileImage;
 		this.lastLogin = lastLogin;
 		this.user_type="user";
 		this.isDeleted = isDeleted;
@@ -133,12 +129,13 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getProfileImagePath() {
-		return profileImagePath;
+
+	public Image getProfileImage() {
+		return profileImage;
 	}
 
-	public void setProfileImagePath(String profileImagePath) {
-		this.profileImagePath = profileImagePath;
+	public void setProfileImage(Image profileImage) {
+		this.profileImage = profileImage;
 	}
 
 	public LocalDateTime getLastLogin() {
@@ -221,6 +218,8 @@ public class User {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
+	
+	
 
 //	public List<Image> getUserImages() {
 //		return userImages;

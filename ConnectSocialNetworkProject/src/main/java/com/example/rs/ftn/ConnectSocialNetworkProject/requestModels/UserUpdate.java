@@ -5,6 +5,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
+
 public class UserUpdate {
 	
 	
@@ -24,18 +26,19 @@ public class UserUpdate {
 	@Email
 	private String email;
 	
+	private Image profileImage;
+	
 	public UserUpdate() {}
 	
 	
-	public UserUpdate(String firstName, String lastName, String username, String email) {
+	public UserUpdate(String firstName, String lastName, String username, String email,Image profileImage) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.email = email;
-		
+		this.profileImage = profileImage;
 	}
-	
 	
 	
 	public String getFirstName() {
@@ -62,6 +65,18 @@ public class UserUpdate {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+
+	public Image getProfileImage() {
+		return profileImage;
+	}
+
+
+	public void setProfileImage(Image profileImage) {
+		this.profileImage = profileImage;
+	}
+	
+	
 	
 	
 }

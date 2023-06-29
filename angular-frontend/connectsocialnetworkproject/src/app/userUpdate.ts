@@ -3,4 +3,5 @@ export interface UserUpdate {
     lastName: string;
     username: string;
     email: string;
+    image: string;
 }
