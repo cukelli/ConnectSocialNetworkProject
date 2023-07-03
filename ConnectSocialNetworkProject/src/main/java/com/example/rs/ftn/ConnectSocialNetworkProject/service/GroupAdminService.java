@@ -8,8 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.GroupAdminNotFoundException;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.GroupAdminRepo;
 
 @Service
@@ -49,6 +49,10 @@ public class GroupAdminService {
 		  
 	        return groupAdminRepo.save(groupAdmin);
   }
+	 
+	 public List<GroupAdmin> findAllByUser(User user) {
+		 return groupAdminRepo.findAllByUser(user);
+	 }
 	
 
 }

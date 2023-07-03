@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { UserUpdate } from '../userUpdate';
+import { Group } from 'src/group';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -18,11 +20,10 @@ export class UserProfileComponent implements OnInit {
     selectedImage!: File;
     isProfileUpdated: boolean = false;
     imageToShow!: String;
-
-
+    groups!: Array<Group>;
 
   constructor(private fb: FormBuilder,private http: HttpClient,private backendService: BackendServiceService,
-     private imageCompressService: NgxImageCompressService,
+     private imageCompressService: NgxImageCompressService,private router: Router,
         private domSanitizer: DomSanitizer) {
     }
   ngOnInit(): void {
@@ -30,12 +31,21 @@ export class UserProfileComponent implements OnInit {
        this.backendService.getUser().subscribe({
        next: c => {  
            this.user = c;
-           //console.log(this.user)
+           console.log(this.user.image)
        },
        error: er => {
            //console.error(er.error.message);
        }
    });
+
+        this.backendService.getUserGroups().subscribe({
+       next: (data: Array<Group>)=> {  
+          this.groups = data; 
+       },
+       error: er => {
+          //  console.error(er.error.message);
+       }
+   }); 
   }
 
 
@@ -44,13 +54,14 @@ export class UserProfileComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       const imageBase64 = reader.result as string;
-      this.imageCompressService.compressFile(imageBase64, -1, 7, 17).then((compressedImage: string) => {
+      this.imageCompressService.compressFile(imageBase64, -1, 7, 10).then((compressedImage: string) => {
         const userUpdateData: UserUpdate = {
           firstName: this.user.firstName,
           lastName: this.user.lastName,
           username: this.user.username,
           email: this.user.email,
-          image: compressedImage
+          image: compressedImage,
+          description: this.user.description
         };
         this.imageToShow = compressedImage;
         this.updateUserWithImage(userUpdateData);
@@ -63,7 +74,8 @@ export class UserProfileComponent implements OnInit {
           lastName: this.user.lastName,
           username: this.user.username,
           email: this.user.email,
-          image: ""
+          image: "",
+          description: this.user.description
     };
     this.updateUserWithImage(userUpdateData);
     console.log("succesfuly updated user without image")
@@ -91,30 +103,21 @@ export class UserProfileComponent implements OnInit {
       this.selectedImage = event.target.files[0];
     }
 
+  getGroupDetails(group: Group): void {
+    const groupId = group.groupId;
 
+    this.backendService.getGroupDetails(groupId).subscribe(
+      (groupDetails: Group) => {
+        group = groupDetails;
+        group.admins = [JSON.stringify(group.admins)];
+        this.router.navigate(['/group-detail',group])
 
+      }, (error: any) => {
+        this.router.navigate(['/profile']);
+      }
+    
+    );
+  }
 
-
-// updateUser() {
-
-//   const updatedUserData = {
-//     firstName: this.user.firstName,
-//     lastName: this.user.lastName,
-//     username: this.user.username,
-//     email: this.user.email
-//   };
-
-//   this.backendService.updateUser(updatedUserData).subscribe({
-//     next: c => {
-//       this.isProfileUpdated = true;
-//       setTimeout(() => {
-//         this.isProfileUpdated = false;
-//       }, 5000);
-//     },
-//     error: er => {
-//       console.error(er.error.message);
-//     }
-//   });
-// }
 
   }

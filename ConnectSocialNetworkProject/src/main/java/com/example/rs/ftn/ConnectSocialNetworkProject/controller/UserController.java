@@ -1,6 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.Role;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupAdmin;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.GroupRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Image;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.ChangePasswordRequest;
@@ -36,6 +40,9 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.UserLogin;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.UserRegister;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.UserUpdate;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.GroupAdminService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.GroupRequestService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.GroupService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.ImageService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
@@ -48,11 +55,19 @@ public class UserController {
 	
 	private final UserService userService;
 	private final ImageService imageService;
+	private final GroupAdminService groupAdminService;
+	private final GroupRequestService groupRequestService;
+	private final GroupService groupService;
 	private final JwtUtil jwtUtil;
 	
-	public UserController(UserService userService,ImageService imageService,JwtUtil jwtUtil) {
+	public UserController(UserService userService,ImageService imageService,
+			GroupAdminService groupAdminService,GroupRequestService groupRequestService,GroupService groupService,
+			JwtUtil jwtUtil) {
 		this.userService = userService;
 		this.imageService = imageService;
+		this.groupAdminService = groupAdminService;
+		this.groupRequestService = groupRequestService;
+		this.groupService = groupService;
 		this.jwtUtil = jwtUtil;
 	}
 	
@@ -83,6 +98,9 @@ public class UserController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
+		
+		Image profileImage = imageService.findTopByPostedImageBy_UsernameOrderByCreatedAtDesc(username);
+		user.setProfileImage(profileImage);
         return new ResponseEntity<>(user, HttpStatus.OK);
 
 	}
@@ -107,18 +125,21 @@ public class UserController {
 	    userLogged.setLastName(user.getLastName());
 	    userLogged.setUsername(user.getUsername());
 	    userLogged.setEmail(user.getEmail());
+	    userLogged.setDescription(user.getDescription());
 
-	    if (user.getProfileImage() != null && user.getProfileImage().getPath() != null) {
-	        Image image = new Image();
-	        image.setPath(user.getProfileImage().getPath());
-	        image.setPostedImageBy(userLogged);
-	        userLogged.setProfileImage(image); 
-	        imageService.addImage(image);
-	    }
+        Image image = new Image();
+        image.setPath(user.getImage());
+        image.setPostedImageBy(userLogged);
+        userLogged.setProfileImage(image); 
+        imageService.addImage(image);
+	    
 
 	    User updatedUser = userService.updateUser(userLogged);
+	    updatedUser.setProfileImage(image); 
 	    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	}
+	
+	
 	
 	@DeleteMapping("/delete/{username}")
 	public ResponseEntity<?> deleteUser(@PathVariable("username") String username) {
@@ -126,6 +147,39 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);
 		
 	}
+	
+	
+	@GetMapping("/getUserGroups")
+	@ResponseBody
+	public ResponseEntity<List<Group>> getUserGroups(Authentication authentication) {
+		 ArrayList<Group> groups = new ArrayList<>();
+		 String username = authentication.getName();
+		    User userLogged = null;
+		    try {
+		        userLogged = userService.findOne(username);
+		    } catch (UserNotFoundException e) {
+		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		    }
+		    List<GroupAdmin> groupAdmins = groupAdminService.findAllByUser(userLogged);
+		    List<GroupRequest> groupRequests = groupRequestService.findByUser(userLogged);
+		    for (GroupAdmin g: groupAdmins) {
+		    	Long adminGroupId = g.getAdminGroup();
+		    	Group adminGroup = groupService.findOne(adminGroupId);
+		        groups.add(adminGroup);
+		    	
+		    }
+		    
+		    for (GroupRequest g: groupRequests) {
+		    	Long groupRequestGroupId = g.getGroup();
+		    	Group groupRequestedGroup = groupService.findOne(groupRequestGroupId);
+		        groups.add(groupRequestedGroup);
+		    	
+		    }
+		    
+		    return new ResponseEntity<>(groups, HttpStatus.OK);		    
+		    
+	}
+
 	
 	@PostMapping("/login")
 	@ResponseBody
@@ -157,7 +211,14 @@ public class UserController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
+		
+		Image profileImage = imageService.findTopByPostedImageBy_UsernameOrderByCreatedAtDesc(username);
+		if (profileImage != null) {
+			userLogged.setProfileImage(profileImage);
 
+		}
+		
+		
         return userLogged;
 	}
 	
@@ -189,7 +250,7 @@ public class UserController {
 		 
 		String encodedPassword = passwordEncoder.encode(userRegister.getPassword());
 		User newUser = new User(Role.USER,userRegister.getUsername(), encodedPassword, userRegister.getEmail(),
-				userRegister.getFirstName(), userRegister.getLastName(),null,LocalDateTime.now(),false);
+				userRegister.getFirstName(), userRegister.getLastName(),null,null,LocalDateTime.now(),false);
 	    userService.addUser(newUser);
 	    return new Message("Registration successful.");	
 	}

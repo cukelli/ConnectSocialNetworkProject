@@ -41,6 +41,6 @@ public class FriendRequestService {
 		public FriendRequest updateFriendRequest(FriendRequest FriendRequest) {
 			return friendRequestRepo.save(FriendRequest);
 		}
-	
+			
 }
 

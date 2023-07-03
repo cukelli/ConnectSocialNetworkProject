@@ -52,10 +52,11 @@ public ImageService(ImageRepo imageRepo) {
   }
 	 public List<Image> findAllByBelongsTo(Post post) {
 			return imageRepo.findAllByBelongsTo(post);
-			
 		}
 	 
+	 public Image findTopByPostedImageBy_UsernameOrderByCreatedAtDesc(String username) {
+		 return imageRepo.findTopByPostedImageBy_UsernameOrderByIdDesc(username);
+	 }
 	 
-	
 
 }

@@ -18,6 +18,8 @@ public interface GroupRepo extends JpaRepository<Group,Long> {
 		
 		List<Group> findAllByIsDeletedFalse();
 
-		Page<Group> findAllByIsDeletedFalse(Pageable pageable);		
+		Page<Group> findAllByIsDeletedFalse(Pageable pageable);	
+		
+		
 		
 }

@@ -30,6 +30,10 @@ public interface ImageRepo extends JpaRepository<Image,Long>  {
 		
 		List<Image> findAllByBelongsTo(Post post);
 		
+	    Image findTopByPostedImageBy_UsernameOrderByIdDesc(String username);
+
+		
+		
 
 
 }

@@ -7,14 +7,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 @Entity
 @Table (name = "images")
 public class Image {
-	@Column(length=5000, nullable = false, unique = false)
+	@Column(length=5000, nullable = true, unique = false)
 	private String path;
 	
 	@Id
@@ -33,13 +34,14 @@ public class Image {
 	@JoinColumn(name = "postId")
     private Post belongsTo;	
 	
-	public Image() {}
-
+	public Image() {}	
+	
 	public Image(String path, Long id) {
 		super();
 		this.path = path;
 		this.id = id;
 	}
+	
 	
 	
 

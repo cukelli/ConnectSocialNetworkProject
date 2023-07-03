@@ -51,5 +51,9 @@ public class GroupRequestService {
 		 public GroupRequest findByUserAndGroup(User user,Group group) {
 			 return groupRequestRepo.findByUserAndGroup(user, group);
 		 }
+		 
+		 public List<GroupRequest> findByUser(User user) {
+			 return groupRequestRepo.findByUser(user);
+		 }
 }
 

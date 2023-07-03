@@ -342,5 +342,16 @@ updateUser(updatedUserData: UserUpdate) {
   return this.http.put<UserUpdate>(url,updatedUserData,requestOptions);
 }
 
+getUserGroups() {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/user/getUserGroups`;
+  
+  return this.http.get<Array<Group>>(url,requestOptions);
+}
+
 
 }

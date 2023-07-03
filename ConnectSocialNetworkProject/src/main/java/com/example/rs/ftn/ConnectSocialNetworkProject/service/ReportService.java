@@ -8,7 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.ReportNotFoundException;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Report;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.repository.ReportRepo;
 
 @Service
@@ -41,6 +44,26 @@ public class ReportService {
 	public Report updateReport(Report Report) {
 		return reportRepo.save(Report);
 	}
+	
+    public List<Report> findAllUndeletedReports() {
+    	return reportRepo.findAllByIsDeletedFalse();
+    }
+    
+    public Report addReport(Report report) {   
+	       return reportRepo.save(report);
+ }
+    
+    public Report findByReportedPostAndByUser(Post post,User user) {
+		return reportRepo.findByByUserAndReportedPost(user, post);
+	 }
+    
+    public Report findByReportedUserAndByUser(User userReporting,User userReported) {
+  		return reportRepo.findByByUserAndUser(userReporting, userReported);
+  	 }
+    
+    public Report findByReportedCommentAndByUser(User user,Comment comment) {
+  		return reportRepo.findByByUserAndReportedComment(comment, user);
+  	 }
 	     
 }
 

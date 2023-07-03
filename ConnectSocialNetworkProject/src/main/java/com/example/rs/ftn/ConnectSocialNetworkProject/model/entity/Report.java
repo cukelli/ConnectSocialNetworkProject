@@ -25,11 +25,15 @@ public class Report {
 	 @Enumerated(EnumType.STRING)
 	 private ReportReason reportReason;
 	 
+	 @ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumn(name = "userReported")
+	 private User byUser;
+	 
 	 @Column(nullable = false, unique = false)
 	 private LocalDateTime timestamp;
 	 
-	 @ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumn(name = "username")
+	 @ManyToOne(fetch = FetchType.EAGER)
+	 @JoinColumn(name = "username", nullable = true)
 	 private User user;
 	 
 	 @Column(nullable = false)
@@ -39,20 +43,22 @@ public class Report {
 	 private boolean isDeleted;
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "postId")
+	 @JoinColumn(name = "postId", nullable = true)
 	 private Post reportedPost;
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "commentId")
+	 @JoinColumn(name = "commentId", nullable = true)
 	 private Comment reportedComment;
+	 
 	 
 	 public Report() {}
 
-	public Report(Long reportId, ReportReason reportReason, LocalDateTime timestamp, User user, boolean accepted, boolean isDeleted,
+	public Report(Long reportId, ReportReason reportReason,User byUser, LocalDateTime timestamp, User user, boolean accepted, boolean isDeleted,
 			Post reportedPost, Comment reportedComment) {
 		super();
 		this.reportId = reportId;
 		this.reportReason = reportReason;
+		this.byUser = byUser;
 		this.timestamp = timestamp;
 		this.user = user;
 		this.accepted = accepted;
@@ -85,8 +91,8 @@ public class Report {
 		this.timestamp = timestamp;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUser() {
+		return user.getUsername();
 	}
 
 	public void setUser(User user) {
@@ -101,16 +107,16 @@ public class Report {
 		this.accepted = accepted;
 	}
 
-	public Post getReportedPost() {
-		return reportedPost;
+	public Long getReportedPost() {
+		return reportedPost.getId();
 	}
 
 	public void setReportedPost(Post reportedPost) {
 		this.reportedPost = reportedPost;
 	}
 
-	public Comment getReportedComment() {
-		return reportedComment;
+	public Long getReportedComment() {
+		return reportedComment.getId();
 	}
 
 	public void setReportedComment(Comment reportedComment) {
@@ -132,5 +138,14 @@ public class Report {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
+
+	public String getByUser() {
+		return byUser.getUsername();
+	}
+
+	public void setByUser(User byUser) {
+		this.byUser = byUser;
+	}
+	
 	
 }

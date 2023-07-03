@@ -40,13 +40,16 @@ public class User {
 	   @Column(nullable = false, unique = false)
 	   private String lastName;
 	   
+	   @Column(nullable = true, unique = false)
+	   private String description;
+	   
 	   @Column(nullable = false, unique = false)
 	   private String user_type;
 	   
 	   @Column(nullable = false, unique = false)
 	   private boolean isDeleted;
 	   
-	   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	   @OneToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "profile_image_id")
 	    private Image profileImage;
 	   
@@ -74,7 +77,7 @@ public class User {
 	   
 	   public User() {}
 
-	public User(Role role,String username, String password, String email, String firstName, String lastName,
+	public User(Role role,String username, String password, String email, String firstName, String lastName,String description,
 			Image profileImage, LocalDateTime lastLogin, boolean isDeleted) {
 		super();
 		this.role = role;
@@ -83,6 +86,7 @@ public class User {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.description = description;
 		this.profileImage = profileImage;
 		this.lastLogin = lastLogin;
 		this.user_type="user";
@@ -130,8 +134,13 @@ public class User {
 	}
 
 
-	public Image getProfileImage() {
-		return profileImage;
+	public String getImage() {
+		if (this.profileImage != null) {
+		return this.profileImage.getPath();
+		}
+		else {
+			return "";
+		}
 	}
 
 	public void setProfileImage(Image profileImage) {
@@ -218,17 +227,13 @@ public class User {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-	
-	
 
-//	public List<Image> getUserImages() {
-//		return userImages;
-//	}
-//
-//	public void setUserImages(List<Image> userImages) {
-//		this.userImages = userImages;
-//	}
-	
-	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	
 }

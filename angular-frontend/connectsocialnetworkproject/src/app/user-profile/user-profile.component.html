@@ -6,99 +6,129 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <img *ngIf="selectedImage" 
-                        [src]="imageToShow"
-                             alt="Selected Image" class="rounded-circle img-fluid" style="width: 150px;">
+                        <div *ngIf="user">
+                        <img *ngIf="selectedImage" [src]="imageToShow" alt="Selected Image"
+                            class="rounded-circle img-fluid" style="width: 150px;">
+                        <img *ngIf="!selectedImage && user.image!==''" [src]="user.image" alt="Profile image"
+                            class="rounded-circle img-fluid" style="width: 150px;">
+                            </div>
+
                         <h5 *ngIf="user" class="my-3">{{user.firstName}} {{user.lastName}}</h5>
-                            <p class="text-muted mb-1">Description</p>
-                            <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                        <p *ngIf="user" class="text-muted mb-1"> {{user.description}}</p>
+                        <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
                         <div class="d-flex justify-content-center mb-2">
-                            <button type="button" class="btn btn-outline-primary ms-1"> Set bio </button>
                         </div>
                     </div>
                 </div>
             </div>
-        
 
 
-<!--user groups-->
-<div class="col-lg-8">
-<div class="card mb-4">
 
-   <h4> Your groups </h4>
-    
-    </div>
-</div>
-
-<!--user groups-->
-
-
-<form>
-           <div class="col-lg-8">
+            <!--user groups-->
+            <div class="col-lg-8">
                 <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0"> First Name </p>
-                            </div>
-                            <div *ngIf="user" class="col-sm-9">
-        <input type="text" class="form-control" id="firstName"
-         placeholder="First name"   value="{{user.firstName}}"
-            name="firstName" [(ngModel)]="user.firstName">
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">Last Name</p>
-                            </div>
-                            <div *ngIf="user" class="col-sm-9">
-<input type="text" class="form-control" id="lastName" placeholder="Last name" value="{{user.lastName}}"
-    name="lastName" [(ngModel)]="user.lastName">                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">Username</p>
-                            </div>
-                            <div *ngIf="user" class="col-sm-9">
-<input type="text" class="form-control" id="username" placeholder="Username" value="{{user.username}}"
-    name="username" [(ngModel)]="user.username" disabled>                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">Email</p>
-                            </div>
-                            <div *ngIf="user" class="col-sm-9">
-     <input type="text" class="form-control" id="email" placeholder="Email" value="{{user.email}}"
-    name="email" [(ngModel)]="user.email">                            </div>
-                        </div>
 
-
-                        <label for="inputImage">Profile image </label>
-                        <input type="file" class="form-control" id="inputImage" name="image" (change)="onImageSelected($event)">
+                    <h4> Your groups </h4>
+                    <div *ngFor="let group of groups" class="" style="max-width: 100%;">
+                    
+                        <h5> {{ group.name }}</h5>
+                        <h3> {{group.description}} </h3>
+                    
+                        <p> {{group.createdAt}}</p>
+                    
+                        <button type="button" class="btn btn-info" (click)="getGroupDetails(group)">Info</button>
                         <br>
-                    <button type="button" (click)="updateUser()" class="btn btn-outline-primary ms-1"> Change data </button>
-                    <br>    
-                    <br>
-<!--DIV FOR SUCCESS-->
-<div class="alert alert-success" *ngIf="isProfileUpdated">
-    Profile updated successfully.
-</div>
-<!--DIV FOR SUCCESS-->
+                        <hr class="hr" />
+                        <div class="w-100"></div> <!-- Add this line to create a line break after each group -->
+                    
+                    </div>
+
+                </div>
+            </div>
+
+            <!--user groups-->
+
+
+            <form>
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0"> First Name </p>
+                                </div>
+                                <div *ngIf="user" class="col-sm-9">
+                                    <input type="text" class="form-control" id="firstName" placeholder="First name"
+                                        value="{{user.firstName}}" name="firstName" [(ngModel)]="user.firstName">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Last Name</p>
+                                </div>
+                                <div *ngIf="user" class="col-sm-9">
+                                    <input type="text" class="form-control" id="lastName" placeholder="Last name"
+                                        value="{{user.lastName}}" name="lastName" [(ngModel)]="user.lastName">
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Username</p>
+                                </div>
+                                <div *ngIf="user" class="col-sm-9">
+                                    <input type="text" class="form-control" id="username" placeholder="Username"
+                                        value="{{user.username}}" name="username" [(ngModel)]="user.username" disabled>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Email</p>
+                                </div>
+                                <div *ngIf="user" class="col-sm-9">
+                                    <input type="text" class="form-control" id="email" placeholder="Email"
+                                        value="{{user.email}}" name="email" [(ngModel)]="user.email">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Description</p>
+                                </div>
+                                <div *ngIf="user" class="col-sm-9">
+                                    <input type="text" class="form-control" id="description" placeholder="Description" value="{{user.description}}" name="description"
+                                        [(ngModel)]="user.description">
+                                </div>
+                            </div>
+
+
+                            <label for="inputImage">Profile image </label>
+                            <input type="file" class="form-control" id="inputImage" name="profileImageId"
+                                (change)="onImageSelected($event)">
+                            <br>
+                            <button type="button" (click)="updateUser()" class="btn btn-outline-primary ms-1"> Change
+                                data </button>
+                            <br>
+                            <br>
+                            <!--DIV FOR SUCCESS-->
+                            <div class="alert alert-success" *ngIf="isProfileUpdated">
+                                Profile updated successfully.
+                            </div>
+                            <!--DIV FOR SUCCESS-->
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
 
-          
             </form>
 
 
-<app-change-password></app-change-password>
+            <app-change-password></app-change-password>
 
 
 
@@ -106,5 +136,3 @@
 
     </div>
 </section>
-
-
