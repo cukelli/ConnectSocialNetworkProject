@@ -19,6 +19,8 @@ import { CountReactions } from './countReactions';
 import { Reaction } from 'src/reaction';
 import { ReactionType } from './reactionType';
 import { UserUpdate } from './userUpdate';
+import { FriendRequest } from './friendRequest';
+import { SendFriendRequest } from './sendFriendRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -351,6 +353,67 @@ getUserGroups() {
   const url = `${this.apiUrl}/user/getUserGroups`;
   
   return this.http.get<Array<Group>>(url,requestOptions);
+}
+
+
+getUserFriends() {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/friendRequest/user/friends`;
+  
+  return this.http.get<Array<RegistrationUser>>(url,requestOptions);
+}
+
+getUsersExceptMe() {
+
+   const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/user/all/allUsersNotMe`;
+  
+  return this.http.get<Array<RegistrationUser>>(url,requestOptions);
+
+}
+
+
+getUserFriendRequests() {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/friendRequest/user`;
+  
+  return this.http.get<Array<FriendRequest>>(url,requestOptions);
+}
+
+AnswerFriendRequest(friendRequestId: number, approved: boolean) {
+ const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/friendRequest/answer/${friendRequestId}`;
+  
+  return this.http.post<FriendRequest>(url,{approved: approved},requestOptions);
+}
+
+sendFriendRequest(sendFriendRequest: SendFriendRequest) {
+
+   const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+  const requestOptions = { headers: headers };
+  const url = `${this.apiUrl}/friendRequest/add`;
+  
+  return this.http.post<FriendRequest>(url,sendFriendRequest,requestOptions);
+
 }
 
 

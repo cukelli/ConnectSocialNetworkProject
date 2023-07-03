@@ -1,0 +1,41 @@
+<app-header-registered-user></app-header-registered-user>
+<router-outlet></router-outlet>
+
+
+  <!--  <div *ngFor="let request of requests">
+    <p> {{request.sentBy}}</p>
+</div> --->
+
+<div class="container">
+    <div class="top">
+        <h2>Friend requests</h2>
+    </div>
+    <div *ngFor="let request of requests" class="row">
+
+        <div class="shadow">
+            <div class="col-sm-12">
+                <div class="col-sm-2">
+                    <img src="" class="img-circle" width="60px">
+                </div>
+                <div class="col-sm-8">
+                    <h4><p> Username: {{request.sentBy}}</p></h4>
+                    <h4> <p>Full name: {{request.userSentByInfo}}</p></h4>
+
+                    <p><a href="#">4 mutual friends</a></p>
+                </div>
+                <div class="col-sm-2">
+                    <br>
+                    <button type="button" class="btn btn-success"
+                     (click)="acceptFriendRequest(request)">Accept</button>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-danger"  
+                    (click)="rejectFriendRequest(request)">Decline</button>
+                </div>
+            </div>
+
+            <hr />
+                             
+        </div>
+    </div>
+</div>

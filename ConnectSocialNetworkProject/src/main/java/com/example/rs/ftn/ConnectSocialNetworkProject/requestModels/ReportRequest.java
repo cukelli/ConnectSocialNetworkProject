@@ -5,7 +5,7 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReportReason;
 public class ReportRequest {
 	
 	 private ReportReason reportReason;
-	 
+	 	 
 	 public ReportRequest() {}
 	 
 	 public ReportRequest(ReportReason reportReason) {

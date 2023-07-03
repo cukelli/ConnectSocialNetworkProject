@@ -28,6 +28,9 @@ import { CommentsComponent } from './feed/posts/post-details/comments/comments.c
 import { CommentDetailsComponent } from './feed/posts/post-details/comments/comment-details/comment-details.component';
 import { CommentDeletedComponent } from './comments/comment-deleted/comment-deleted.component';
 import { ReplyComponent } from './feed/posts/post-details/comments/reply/reply.component';
+import { FriendRequestsComponent } from './friend-requests/friend-requests.component';
+import { UsersComponent } from './users/users.component';
+import { SendFriendRequestsComponent } from './send-friend-requests/send-friend-requests.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +57,10 @@ import { ReplyComponent } from './feed/posts/post-details/comments/reply/reply.c
     CommentsComponent,
     CommentDetailsComponent,
     CommentDeletedComponent,
-    ReplyComponent
+    ReplyComponent,
+    FriendRequestsComponent,
+    UsersComponent,
+    SendFriendRequestsComponent
   ],
   imports: [
     BrowserModule,

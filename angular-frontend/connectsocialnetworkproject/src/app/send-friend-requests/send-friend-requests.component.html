@@ -1,0 +1,61 @@
+<app-header-registered-user></app-header-registered-user>
+<router-outlet></router-outlet>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="content" class="content content-full-width">
+                <!-- begin profile -->
+                <div class="profile">
+                    <div class="profile-header">
+                        <!-- BEGIN profile-header-cover -->
+                        <div class="profile-header-cover"></div>
+                        <!-- END profile-header-cover -->
+                        <!-- BEGIN profile-header-content -->
+                    </div>
+                </div>
+                <!-- end profile -->
+                <!-- begin profile-content -->
+                <div class="profile-content">
+                    <!-- begin tab-content -->
+                    <div class="tab-content p-0">
+                        <!-- begin #profile-friends tab -->
+                        <div class="tab-pane fade in active show" id="profile-friends">
+                            <h4 class="m-t-0 m-b-20">Add friend</h4>
+                            <!-- begin row -->
+                            <div class="row row-space-2">
+
+                                <!-- begin col-6 -->
+                                <div *ngFor="let user of users" class="col-md-6 m-b-2">
+                                    <div class="p-10 bg-white">
+                                        <div class="media media-xs overflow-visible">
+                                            <a class="media-left" href="javascript:;">
+                                                <img [src]="user.image" alt="" class="media-object img-circle">
+                                            </a>
+                                            <div class="media-body valign-middle">
+                                                <b class="text-inverse">{{user.firstName}} {{user.lastName}}</b>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" (click)="sendRequest(user)">Send request </button>
+
+                                </div>
+                                <!-- end col-6 -->
+
+
+
+                            </div>
+                            <!-- end row -->
+                        </div>
+                        <!-- end #profile-friends tab -->
+                    </div>
+                    <!-- end tab-content -->
+                </div>
+                <!-- end profile-content -->
+            </div>
+        </div>
+    </div>
+</div>

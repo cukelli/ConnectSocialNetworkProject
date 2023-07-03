@@ -17,7 +17,7 @@ public class FriendRequest {
 	   @GeneratedValue(strategy = GenerationType.IDENTITY)
 	   private Long friendRequestId;
 	   
-	   @Column(nullable = false)
+	   @Column(nullable = true)
 	   private boolean approved;
 	   
 	   @Column(nullable = false,unique = false)
@@ -26,11 +26,11 @@ public class FriendRequest {
 	   @Column(nullable = true, unique = false)
 	   private LocalDateTime at;
 	   
-	   @ManyToOne(fetch = FetchType.LAZY)
+	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "sentBy", referencedColumnName = "username")
 	   private User sentBy;
 	   
-	   @ManyToOne(fetch = FetchType.LAZY)
+	   @ManyToOne(fetch = FetchType.EAGER)
 	   @JoinColumn(name = "sentFor", referencedColumnName = "username")
 	   private User sentFor;
 	   
@@ -59,11 +59,11 @@ public class FriendRequest {
 			this.friendRequestId = friendRequestId;
 		}
 
-		public boolean isApproved() {
+		public Boolean isApproved() {
 			return approved;
 		}
 
-		public void setApproved(boolean approved) {
+		public void setApproved(Boolean approved) {
 			this.approved = approved;
 		}
 
@@ -83,16 +83,20 @@ public class FriendRequest {
 			this.at = at;
 		}
 
-		public User getSentBy() {
-			return sentBy;
+		public String getSentBy() {
+			return sentBy.getUsername();
 		}
 
+		
+		public String getUserSentByInfo() {
+			return this.sentBy.getFirstName()+" "+this.sentBy.getLastName();
+		}
 		public void setSentBy(User sentBy) {
 			this.sentBy = sentBy;
 		}
 
-		public User getSentFor() {
-			return sentFor;
+		public String getSentFor() {
+			return sentFor.getUsername();
 		}
 
 		public void setSentFor(User sentFor) {

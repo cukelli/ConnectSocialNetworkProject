@@ -17,6 +17,9 @@ import { CreatePostComponent } from './feed/posts/create-post/create-post.compon
 import { CreateGroupComponent } from './feed/groups/create-group/create-group.component';
 import { CommentDetailsComponent } from './feed/posts/post-details/comments/comment-details/comment-details.component';
 import { CommentDeletedComponent } from './comments/comment-deleted/comment-deleted.component';
+import { FriendRequestsComponent } from './friend-requests/friend-requests.component';
+import { UsersComponent } from './users/users.component';
+import { SendFriendRequestsComponent } from './send-friend-requests/send-friend-requests.component';
   const routes: Routes = [
     {path: '',component: HomePageComponent,
   //  children: [  { path: 'login',component: LoginComponent }
@@ -35,7 +38,10 @@ import { CommentDeletedComponent } from './comments/comment-deleted/comment-dele
    {path: 'add-post', component: CreatePostComponent},
    {path: 'add-group', component: CreateGroupComponent},
    {path: 'comment-details', component: CommentDetailsComponent},
-  {path: 'comment-deleted', component: CommentDeletedComponent}
+  {path: 'comment-deleted', component: CommentDeletedComponent},
+  {path: 'friend-requests', component: FriendRequestsComponent},
+  {path: 'friends', component: UsersComponent},
+  {path: 'users', component: SendFriendRequestsComponent}
 
   ];
 
