@@ -14,7 +14,7 @@ public interface GroupRequestRepo extends JpaRepository<GroupRequest,Long> {
 	
     GroupRequest findByUserAndGroup(User user, Group group);
     
-    List<GroupRequest> findByUser(User user);
+    List<GroupRequest> findByUserAndApprovedTrue(User user);
 
 
 }

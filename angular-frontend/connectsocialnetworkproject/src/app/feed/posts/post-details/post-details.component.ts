@@ -118,6 +118,7 @@ import { ReactionType } from 'src/app/reactionType';
          this.isCommentCreated = true;
         setTimeout(() => {
           this.isCommentCreated = false;
+          this.comments = [];
           this.getPostComments();
         }, 5000);
         return;  
@@ -130,7 +131,7 @@ import { ReactionType } from 'src/app/reactionType';
   }
 
   postReaction(type: ReactionType) {
-      const reaction = { type: type };
+  const reaction = { type: type };
 
 
   this.backendService.reactToPost(this.post['postId'],reaction).subscribe({
@@ -140,7 +141,6 @@ import { ReactionType } from 'src/app/reactionType';
         this.isPostLiked = true;
         this.isPostDisliked = false;
         this.isPostHearted = false;
-        console.log("here")
       } else if (type === ReactionType.DISLIKE) {
         this.isPostLiked = false;
         this.isPostDisliked = true;

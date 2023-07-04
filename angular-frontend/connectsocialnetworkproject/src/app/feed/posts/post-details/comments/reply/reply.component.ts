@@ -113,10 +113,8 @@ refreshReplies(): void {
 
 
 
-  replyReaction(type: ReactionType) {
+  replyReaction(reply: Comment, type: ReactionType) {
       const reaction = { type: type };
-
-      for (let reply of this.comment.replies){
 
   this.backendService.reactToComment(reply.id,reaction).subscribe({
     next: () => {
@@ -147,7 +145,7 @@ refreshReplies(): void {
     }
   
   });
-  }
+  
       }
 
     getReplyReactions(reply: Comment){

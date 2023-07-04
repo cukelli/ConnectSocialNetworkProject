@@ -247,7 +247,7 @@ refreshComments(): void {
       this.backendService.countReactions(comment.id).subscribe(
       (countReactions: CountReactions) => {
         comment.reactions = countReactions;
-        this.comments.push(comment);
+        
       },
       (error: any) => {
         console.error('Error counting reactions', error);
@@ -256,42 +256,42 @@ refreshComments(): void {
       }
     }
 
-    commentReaction(type: ReactionType) {
+    commentReaction(comment: Comment,type: ReactionType) {
       const reaction = { type: type };
+      console.log(comment.id)
 
-      for (let comment of this.comments){
+      this.backendService.reactToComment(comment.id,reaction).subscribe({
+        next: () => {
+            this.getCommntReactions();
+          //console.log("reacted succesfuly")
+        if (type === ReactionType.LIKE) {
+            this.isCommentLiked = true;
+            this.isCommentDisliked = false;
+            this.isCommentHearted = false;
+            console.log("here")
+          } else if (type === ReactionType.DISLIKE) {
+          this.isCommentLiked = false;
+            this.isCommentDisliked = true;
+            this.isCommentHearted = false;
+              console.log("here")
 
-  this.backendService.reactToComment(comment.id,reaction).subscribe({
-    next: () => {
-         this.getCommntReactions();
-      //console.log("reacted succesfuly")
-     if (type === ReactionType.LIKE) {
-        this.isCommentLiked = true;
-        this.isCommentDisliked = false;
-        this.isCommentHearted = false;
-        console.log("here")
-      } else if (type === ReactionType.DISLIKE) {
-       this.isCommentLiked = false;
-        this.isCommentDisliked = true;
-        this.isCommentHearted = false;
-          console.log("here")
+          } else if (type === ReactionType.HEART) {
+          this.isCommentLiked = false;
+            this.isCommentDisliked = false;
+            this.isCommentHearted = true;
+            console.log("here")
 
-      } else if (type === ReactionType.HEART) {
-       this.isCommentLiked = false;
-        this.isCommentDisliked = false;
-        this.isCommentHearted = true;
-         console.log("here")
+          }
 
-      }
+          
+        },
 
+        error: er => {
+          console.error('Error creating reaction', er);
+        }
       
-    },
-    error: er => {
-      console.error('Error creating reaction', er);
-    }
+      });
   
-  });
-  }
       }
 
        public get ReactionType() {

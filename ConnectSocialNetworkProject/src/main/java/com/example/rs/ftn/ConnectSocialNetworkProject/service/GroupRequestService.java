@@ -53,7 +53,7 @@ public class GroupRequestService {
 		 }
 		 
 		 public List<GroupRequest> findByUser(User user) {
-			 return groupRequestRepo.findByUser(user);
+			 return groupRequestRepo.findByUserAndApprovedTrue(user);
 		 }
 }
 
