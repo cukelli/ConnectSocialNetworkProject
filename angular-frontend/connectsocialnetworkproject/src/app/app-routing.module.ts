@@ -29,19 +29,19 @@ import { SendFriendRequestsComponent } from './send-friend-requests/send-friend-
   {path: 'registrationsuccess',component: RegistrationSuccesfulComponent},
   { path: 'login',component: LoginComponent },
   { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard]},
-  { path: 'feed',component:FeedComponent},
-  {path: 'group-detail',component: GroupDetailComponent},
-  {path: 'group-reqest', component: GroupReqestComponent},
-  {path: 'success-deletion-group',component: SuccesDeletionGroupComponent},
-  {path: 'post-details', component: PostDetailsComponent},
-  {path: 'post-deleted', component: PostDeletedComponent},
-   {path: 'add-post', component: CreatePostComponent},
-   {path: 'add-group', component: CreateGroupComponent},
-   {path: 'comment-details', component: CommentDetailsComponent},
-  {path: 'comment-deleted', component: CommentDeletedComponent},
-  {path: 'friend-requests', component: FriendRequestsComponent},
-  {path: 'friends', component: UsersComponent},
-  {path: 'users', component: SendFriendRequestsComponent}
+  { path: 'feed',component:FeedComponent, canActivate: [AuthGuard]},
+  {path: 'group-detail',component: GroupDetailComponent, canActivate: [AuthGuard]},
+  {path: 'group-reqest', component: GroupReqestComponent, canActivate: [AuthGuard]},
+  {path: 'success-deletion-group',component: SuccesDeletionGroupComponent, canActivate: [AuthGuard]},
+  {path: 'post-details', component: PostDetailsComponent,canActivate: [AuthGuard]},
+  {path: 'post-deleted', component: PostDeletedComponent,canActivate: [AuthGuard]},
+   {path: 'add-post', component: CreatePostComponent,canActivate: [AuthGuard]},
+   {path: 'add-group', component: CreateGroupComponent,canActivate: [AuthGuard]},
+   {path: 'comment-details', component: CommentDetailsComponent,canActivate: [AuthGuard]},
+  {path: 'comment-deleted', component: CommentDeletedComponent,canActivate: [AuthGuard]},
+  {path: 'friend-requests', component: FriendRequestsComponent,canActivate: [AuthGuard]},
+  {path: 'friends', component: UsersComponent,canActivate: [AuthGuard]},
+  {path: 'users', component: SendFriendRequestsComponent,canActivate: [AuthGuard]}
 
   ];
 
