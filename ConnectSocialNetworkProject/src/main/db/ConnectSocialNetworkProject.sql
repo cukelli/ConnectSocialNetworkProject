@@ -1,3 +1,4 @@
+CREATE ConnectSocialNetworkProject
 use  ConnectSocialNetworkProject
 select * from users
 select * from post

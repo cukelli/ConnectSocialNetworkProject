@@ -1,0 +1,25 @@
+Omogućiti indeksiranje grupa i objava u Elasticsearch-u, omogućiti čuvanje 
+dokumenata u MinIO bazi. 
+[S1] Pretraga grupa: 
+• Pretraživanje grupa po nazivu 
+• Pretraživanje grupa po opisu 
+• Pretraživanje grupa po opisu iz zakačenog PDF fajla
+Pretprocesirati upit, tako da bude nezavisan od velikog i malog slova, kao i 
+ćiriličnog ili latiničnog pisma 
+
+Prilikom prikaza rezultata prikazati naziv grupe, broj objava, prosečan broj 
+lajkova
+Pretraživanje objava po naslovu 
+• Pretraživanje objava po tekstu  
+• Pretraživanje objava po tekstu iz zakačenog PDF fajla 
+• Pretprocesirati upit, tako da bude nezavisan od velikog i malog slova, kao i 
+ćiriličnog i latiničnog pisma 
+• Obezbediti podršku u poljima f
+ Prilikom prikaza rezultata prikazati naslov objave, tekst objave 
+
+
+ZA 7
+ Pretraživanje objava po tekstovima u komentarima 
+• Pretraživanje objava po broju lajkova (od – do, računaju se lajkovi na samoj 
+objavi + broj lajkova u komentarima), gde može biti zadata donja i/ili gornja 
+granica opsega 
