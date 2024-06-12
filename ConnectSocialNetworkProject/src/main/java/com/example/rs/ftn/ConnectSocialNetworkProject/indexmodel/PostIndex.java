@@ -34,6 +34,12 @@ private String content;
 
 @Getter
 @Setter
+@Field(type = FieldType.Text, store = true, name = "title",
+            analyzer = "serbian_simple", searchAnalyzer = "serbian_simple")
+    private String title;
+
+@Getter
+@Setter
 @Field(type = FieldType.Date, store = true, name = "creation_date")
 private LocalDateTime creationDate;
 

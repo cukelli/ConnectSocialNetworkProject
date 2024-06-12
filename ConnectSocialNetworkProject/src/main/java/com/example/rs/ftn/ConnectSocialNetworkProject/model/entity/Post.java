@@ -1,9 +1,7 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.model.entity;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +20,9 @@ public class Post {
 	   
 	   @Column(nullable = false,unique = false)
 	   private String content;
+
+	  @Column(nullable = false,unique = false)
+	  private String title;
 	   
 	   @Column(nullable = false,unique = false)
 	   private LocalDateTime creationDate;
@@ -72,6 +73,14 @@ public class Post {
 
 	public String getContent() {
 		return content;
+	}
+
+	public String getTitle() {
+		   return title;
+	}
+
+	public void setTitle(String title) {
+		   this.title = title;
 	}
 
 	public void setContent(String content) {

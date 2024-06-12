@@ -1,24 +1,16 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
-
-
-
 import java.time.LocalDate;
 import java.util.List;
-
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
 import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Group;
@@ -38,19 +30,27 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 public class GroupController {
 	
 	private final GroupService groupService;
+
+	private ElasticsearchOperations elasticOperations;
 	
 	private final UserService userService;
 	
 	private final GroupAdminService groupAdminService;
-	
+
+	private final SearchService searchService;
+
+
 	private final PostService postService;
 	
-	public GroupController(GroupService groupService,UserService userService,GroupAdminService groupAdminService,PostService
-			postService) {
+	public GroupController(GroupService groupService,UserService userService,GroupAdminService
+			groupAdminService,PostService
+			postService, SearchService searchService, ElasticsearchOperations elasticOperations) {
 		this.groupAdminService = groupAdminService;
 		this.groupService = groupService;
 		this.userService = userService;
 		this.postService = postService;
+		this.searchService = searchService;
+		this.elasticOperations = elasticOperations;
 		
 	}
 	
@@ -71,12 +71,13 @@ public class GroupController {
 		newGroup.setSuspended(false);
 		newGroup.setDeleted(false);
 		newGroup.setSuspendedReason(null);
-
-		
 		Group groupCreated = groupService.addGroup(newGroup);
 		GroupAdmin newGroupAdmin = new GroupAdmin(userLogged,groupCreated);
 		groupAdminService.addGroupAdmin(newGroupAdmin);
-		
+		GroupIndex groupIndex = new GroupIndex();
+		groupIndex.setName(newGroup.getName());
+		groupIndex.setDescription(newGroup.getDescription());
+		searchService.save(groupIndex);
 		return new ResponseEntity<>(newGroup,HttpStatus.OK);
 	}
 	
@@ -329,5 +330,25 @@ public class GroupController {
 	        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	    }
 	}
+
+
+	@GetMapping("/searchByName")
+	public ResponseEntity<Page<GroupIndex>> searchGroupsByName(@RequestParam String name,
+															   @RequestParam(defaultValue = "0") int page,
+															   @RequestParam(defaultValue = "10") int size) {
+		Page<GroupIndex> searchResults = searchService.searchGroupsByName(name, PageRequest.of(page, size));
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+	@GetMapping("/searchByDescription")
+	public ResponseEntity<Page<GroupIndex>> searchGroupsByDescription(@RequestParam String description,
+																	  @RequestParam(defaultValue = "0") int page,
+																	  @RequestParam(defaultValue = "10") int size) {
+		Page<GroupIndex> searchResults = searchService.searchGroupsByDescription(description, PageRequest.of(page, size));
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+
+
 
 }
