@@ -77,6 +77,8 @@ public class GroupController {
 		GroupIndex groupIndex = new GroupIndex();
 		groupIndex.setName(newGroup.getName());
 		groupIndex.setDescription(newGroup.getDescription());
+		groupIndex.setCreatedAt(newGroup.getCreatedAt());
+		groupIndex.setDeleted(newGroup.isDeleted());
 		searchService.save(groupIndex);
 		return new ResponseEntity<>(newGroup,HttpStatus.OK);
 	}
@@ -332,10 +334,20 @@ public class GroupController {
 	}
 
 
+	//TODO ELASTIC SEARCH
 	@GetMapping("/searchByName")
-	public ResponseEntity<Page<GroupIndex>> searchGroupsByName(@RequestParam String name,
+	public ResponseEntity<Page<GroupIndex>> searchGroupsByName(Authentication authentication,
+															   @RequestParam String name,
 															   @RequestParam(defaultValue = "0") int page,
 															   @RequestParam(defaultValue = "10") int size) {
+
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
 		Page<GroupIndex> searchResults = searchService.searchGroupsByName(name, PageRequest.of(page, size));
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
@@ -347,8 +359,6 @@ public class GroupController {
 		Page<GroupIndex> searchResults = searchService.searchGroupsByDescription(description, PageRequest.of(page, size));
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
-
-
 
 
 }

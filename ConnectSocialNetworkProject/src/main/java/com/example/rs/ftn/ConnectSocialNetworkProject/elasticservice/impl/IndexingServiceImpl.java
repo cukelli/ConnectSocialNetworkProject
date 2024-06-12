@@ -58,13 +58,16 @@ public class IndexingServiceImpl implements IndexingService {
         newGroup.setDescription(documentContent);
 
         var serverFilename = fileService.store(documentFile, UUID.randomUUID().toString());
-        newGroup.setSuspendedReason(serverFilename);
-
+        newGroup.setSuspendedReason(null);
         newGroup.setCreatedAt(LocalDate.now());
         newGroup.setSuspended(false);
         newGroup.setDeleted(false);
 
         var savedGroup = groupRepository.save(newGroup);
+        newGroupIndex.setCreatedAt(newGroup.getCreatedAt());
+        newGroupIndex.setSuspendedReason(newGroup.getSuspendedReason());
+        newGroupIndex.setSuspended(false);
+        newGroupIndex.setSuspendedReason(null);
         newGroupIndex.setDatabaseId(savedGroup.getId());
         groupIndexRepository.save(newGroupIndex);
 
