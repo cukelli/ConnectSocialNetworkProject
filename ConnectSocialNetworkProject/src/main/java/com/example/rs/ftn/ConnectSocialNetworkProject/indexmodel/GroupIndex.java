@@ -39,7 +39,6 @@ public class GroupIndex {
     @Field(type = FieldType.Text, store = true, name = "suspended_reason", index = false)
     private String suspendedReason;
 
-
     @Field(type = FieldType.Long, store = true, name = "database_id")
     private Long databaseId;
 

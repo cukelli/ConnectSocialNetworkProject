@@ -25,9 +25,9 @@ public class SearchServiceImpl implements SearchService {
 
 
     @Override
-    public Page<GroupIndex> searchGroupsByName(String name, Pageable pageable) {
+    public List<GroupIndex> searchGroupsByName(String name) {
         List<GroupIndex> groupIndexes = groupIndexRepository.findByName(name);
-        return getPageableResults(groupIndexes, pageable);
+        return groupIndexes;
     }
 
     @Override
@@ -42,6 +42,11 @@ public class SearchServiceImpl implements SearchService {
 
         List<GroupIndex> sublist = groupIndexes.subList(start, end);
         return new PageImpl<>(sublist, pageable, groupIndexes.size());
+    }
+
+    @Override
+    public List<GroupIndex> getAllGroupIndexes() {
+        return groupIndexRepository.findAll();
     }
 
     public void save(GroupIndex groupIndex) {

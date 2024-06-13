@@ -5,6 +5,7 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchServi
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,7 @@ public class GroupController {
 		groupAdminService.addGroupAdmin(newGroupAdmin);
 		GroupIndex groupIndex = new GroupIndex();
 		groupIndex.setName(newGroup.getName());
+		groupIndex.setDatabaseId(newGroup.getGroupId());
 		groupIndex.setDescription(newGroup.getDescription());
 		groupIndex.setCreatedAt(newGroup.getCreatedAt());
 		groupIndex.setDeleted(newGroup.isDeleted());
@@ -240,7 +242,7 @@ public class GroupController {
 	    }
 	    
 	    Group group = groupService.findOne(groupId);
-	    
+
 	    boolean isMemberOrAdmin = false;
 	    
 	    for (GroupAdmin groupAdmin : group.getAdmins()) {
@@ -336,7 +338,7 @@ public class GroupController {
 
 	//TODO ELASTIC SEARCH
 	@GetMapping("/searchByName")
-	public ResponseEntity<Page<GroupIndex>> searchGroupsByName(Authentication authentication,
+	public ResponseEntity<List<GroupIndex>> searchGroupsByName(Authentication authentication,
 															   @RequestParam String name,
 															   @RequestParam(defaultValue = "0") int page,
 															   @RequestParam(defaultValue = "10") int size) {
@@ -348,7 +350,7 @@ public class GroupController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		Page<GroupIndex> searchResults = searchService.searchGroupsByName(name, PageRequest.of(page, size));
+		List<GroupIndex> searchResults = searchService.searchGroupsByName(name);
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 
@@ -360,5 +362,18 @@ public class GroupController {
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 
+	@GetMapping("/all/elastic")
+	public ResponseEntity<List<GroupIndex>> getAllGroupIndexes(
+			Authentication authentication) {
 
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<GroupIndex> searchResults = searchService.getAllGroupIndexes();
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
 }

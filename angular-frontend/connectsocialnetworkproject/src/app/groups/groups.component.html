@@ -1,12 +1,19 @@
+<div>
+  <input type="text" [(ngModel)]="name" placeholder="Search by description">
+  <button (click)="searchGroupsByName()">Search groups by name</button>
+  <button (click)="getAllGroups()">Refresh</button>
+</div>
 
+<br>
+<br>
 
 <div class="card-deck">
-    <div *ngFor="let group of groups" class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{group.name}}</h5>
-            <p class="card-text">{{ group.description}}</p>
-            <p class="card-text"><small class="text-muted">{{group.createdAt}}</small></p>
-            <button type="button" class="btn btn-info"  (click)="isMemberOrAdmin(group)">Info</button>
-
-        </div>
+  <div *ngFor="let group of groupIndexes" class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ group.name }}</h5>
+      <p class="card-text">{{ group.description }}</p>
+      <p class="card-text"><small class="text-muted">{{ group.createdAt }}</small></p>
+      <button type="button" class="btn btn-info" (click)="isMemberOrAdmin(group)">Info</button>
     </div>
+  </div>
+</div>

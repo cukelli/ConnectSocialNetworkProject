@@ -5,10 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface SearchService {
 
-    Page<GroupIndex> searchGroupsByName(String name, Pageable pageable);
+    List<GroupIndex> searchGroupsByName(String name);
+
+    List<GroupIndex> getAllGroupIndexes();
 
     Page<GroupIndex> searchGroupsByDescription(String description, Pageable pageable);
 

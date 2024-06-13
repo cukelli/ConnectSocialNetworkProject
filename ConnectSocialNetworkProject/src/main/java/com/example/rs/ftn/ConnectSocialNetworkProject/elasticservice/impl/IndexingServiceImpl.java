@@ -68,7 +68,7 @@ public class IndexingServiceImpl implements IndexingService {
         newGroupIndex.setSuspendedReason(newGroup.getSuspendedReason());
         newGroupIndex.setSuspended(false);
         newGroupIndex.setSuspendedReason(null);
-        newGroupIndex.setDatabaseId(savedGroup.getId());
+        newGroupIndex.setDatabaseId(savedGroup.getGroupId());
         groupIndexRepository.save(newGroupIndex);
 
         return serverFilename;

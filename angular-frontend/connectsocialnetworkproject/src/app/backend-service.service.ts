@@ -21,6 +21,7 @@ import { ReactionType } from './reactionType';
 import { UserUpdate } from './userUpdate';
 import { FriendRequest } from './friendRequest';
 import { SendFriendRequest } from './sendFriendRequest';
+import { GroupIndex } from './GroupIndex';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +71,17 @@ getUserPosts(sortOrder?: string) {
     return this.http.get(this.apiUrl + '/group/all', requestOptions);
   }
 
+
+  getGroupsElastic() {
+
+    let headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }) 
+
+    let requestOptions = { headers: headers };  
+    return this.http.get(this.apiUrl + '/group/all/elastic', requestOptions);
+  }
 
 
   getUser(): Observable<RegistrationUser> {
@@ -416,5 +428,17 @@ sendFriendRequest(sendFriendRequest: SendFriendRequest) {
 
 }
 
+//TODO APIS FOR ELASTIC SEARCH
+
+searchGroupsByNameBackend(name: string): Observable<GroupIndex[]> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams()
+    .set('name', name)
+  return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByName`, { params, headers });
+}
 
 }

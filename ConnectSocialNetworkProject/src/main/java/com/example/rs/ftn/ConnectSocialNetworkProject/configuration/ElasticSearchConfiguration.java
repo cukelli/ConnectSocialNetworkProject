@@ -36,69 +36,6 @@ public class ElasticSearchConfiguration extends org.springframework.data.elastic
 
     @Override
     public ClientConfiguration clientConfiguration() {
-        CertificateFactory cf = null;
-        try {
-            cf = CertificateFactory.getInstance("X.509");
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        }
-
-        Certificate ca;
-        try (InputStream certificateInputStream = new FileInputStream("http_ca.crt")) {
-            ca = cf.generateCertificate(certificateInputStream);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException | CertificateException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = null;
-        try {
-            keyStore = KeyStore.getInstance(keyStoreType);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            keyStore.load(null, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (CertificateException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            keyStore.setCertificateEntry("ca", ca);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = null;
-        try {
-            tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            tmf.init(keyStore);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException(e);
-        }
-        SSLContext context = null;
-        try {
-            context = SSLContext.getInstance("TLS");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            context.init(null, tmf.getTrustManagers(), null);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
         return ClientConfiguration.builder().
                 connectedTo(host + ":" + port)
 //                usingSsl(context) //add the generated sha-256 fingerprint
