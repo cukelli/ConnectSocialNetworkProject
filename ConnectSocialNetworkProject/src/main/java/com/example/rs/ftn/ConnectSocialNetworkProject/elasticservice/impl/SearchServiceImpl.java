@@ -7,26 +7,36 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.exception.MalformedQueryEx
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexrepository.GroupIndexRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class SearchServiceImpl implements SearchService {
 
     private final GroupIndexRepository groupIndexRepository;
 
-    private final ElasticsearchOperations elasticsearchOperations;
+    private final ElasticsearchTemplate elasticsearchTemplate;
 
 
+    public  SearchServiceImpl(GroupIndexRepository groupIndexRepository, ElasticsearchTemplate elasticsearchTemplate){
+        this.groupIndexRepository = groupIndexRepository;
+        this.elasticsearchTemplate = elasticsearchTemplate;
+    }
 
     @Override
     public List<GroupIndex> searchGroupsByName(String name) {
         List<GroupIndex> groupIndexes = groupIndexRepository.findByName(name);
+        return groupIndexes;
+    }
+
+    @Override
+    public List<GroupIndex> searchGroupsByDescription(String description) {
+        List<GroupIndex> groupIndexes = groupIndexRepository.findByDescription(description);
         return groupIndexes;
     }
 
@@ -50,7 +60,15 @@ public class SearchServiceImpl implements SearchService {
     }
 
     public void save(GroupIndex groupIndex) {
-        elasticsearchOperations.save(groupIndex, IndexCoordinates.of("group_index"));
+        elasticsearchTemplate.save(groupIndex, IndexCoordinates.of("group_index"));
+    }
+
+    private String preprocessQuery(String query) {
+        return query.toLowerCase().chars()
+                .mapToObj(c -> (char) c)
+                .map(c -> Character.isLetter(c) ? c : ' ')
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 
 }

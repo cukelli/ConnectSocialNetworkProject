@@ -1,11 +1,13 @@
 <div>
-  <input type="text" [(ngModel)]="name" placeholder="Search by description">
+  <input type="text" [(ngModel)]="name" placeholder="Search by name">
   <button (click)="searchGroupsByName()">Search groups by name</button>
-  <button (click)="getAllGroups()">Refresh</button>
 </div>
+<div>
+  <input type="text" [(ngModel)]="description" placeholder="Search by description">
+  <button (click)="searchGroupsByDescription()">Search groups by description</button>
+</div>
+<button (click)="getAllGroupsElastic()">Refresh</button>
 
-<br>
-<br>
 
 <div class="card-deck">
   <div *ngFor="let group of groupIndexes" class="card">

@@ -5,7 +5,6 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchServi
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,7 @@ public class GroupController {
 	
 	private final GroupService groupService;
 
-	private ElasticsearchOperations elasticOperations;
-	
+	private final ElasticsearchOperations elasticOperations;
 	private final UserService userService;
 	
 	private final GroupAdminService groupAdminService;
@@ -339,9 +337,7 @@ public class GroupController {
 	//TODO ELASTIC SEARCH
 	@GetMapping("/searchByName")
 	public ResponseEntity<List<GroupIndex>> searchGroupsByName(Authentication authentication,
-															   @RequestParam String name,
-															   @RequestParam(defaultValue = "0") int page,
-															   @RequestParam(defaultValue = "10") int size) {
+															   @RequestParam String name) {
 
 		String username = authentication.getName();
 		User userLogged = null;
@@ -355,10 +351,16 @@ public class GroupController {
 	}
 
 	@GetMapping("/searchByDescription")
-	public ResponseEntity<Page<GroupIndex>> searchGroupsByDescription(@RequestParam String description,
-																	  @RequestParam(defaultValue = "0") int page,
-																	  @RequestParam(defaultValue = "10") int size) {
-		Page<GroupIndex> searchResults = searchService.searchGroupsByDescription(description, PageRequest.of(page, size));
+	public ResponseEntity<List<GroupIndex>> searchGroupsByDescription(Authentication authentication,
+																	  @RequestParam String description) {
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<GroupIndex> searchResults = searchService.searchGroupsByDescription(description);
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 

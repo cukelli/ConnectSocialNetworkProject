@@ -7,10 +7,9 @@ import java.util.List;
 @Lazy
 @Repository
 public interface GroupIndexRepository extends ElasticsearchRepository<GroupIndex, String> {
-
     List<GroupIndex> findByName(String name);
-
     List<GroupIndex> findByDescription(String description);
-
     List<GroupIndex> findAll();
+    GroupIndex save(GroupIndex groupIndex);
+
 }

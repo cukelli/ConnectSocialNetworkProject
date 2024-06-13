@@ -441,4 +441,15 @@ searchGroupsByNameBackend(name: string): Observable<GroupIndex[]> {
   return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByName`, { params, headers });
 }
 
+searchGroupsByDescriptionBackend(description: string): Observable<GroupIndex[]> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams()
+    .set('description', description)
+  return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByDescription`, { params, headers });
+}
+
 }

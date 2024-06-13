@@ -15,16 +15,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(indexName = "group_index")
-@Setting(settingPath = "/configuration/serbian-analyzer-config.json")
 public class GroupIndex {
 
     @Id
     private String id;
 
-    @Field(type = FieldType.Text, store = true, name = "name")
+    @Field(type = FieldType.Text, store = true, name = "name",analyzer = "serbian", searchAnalyzer = "serbian")
     private String name;
 
-    @Field(type = FieldType.Text, store = true, name = "description", analyzer = "serbian_simple", searchAnalyzer = "serbian_simple")
+    @Field(type = FieldType.Text, store = true, name = "description", analyzer = "serbian", searchAnalyzer = "serbian")
     private String description;
 
     @Field(type = FieldType.Date, store = true, name = "created_at")

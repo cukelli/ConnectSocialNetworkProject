@@ -12,6 +12,8 @@ public interface SearchService {
 
     List<GroupIndex> searchGroupsByName(String name);
 
+    List<GroupIndex> searchGroupsByDescription(String description);
+
     List<GroupIndex> getAllGroupIndexes();
 
     Page<GroupIndex> searchGroupsByDescription(String description, Pageable pageable);

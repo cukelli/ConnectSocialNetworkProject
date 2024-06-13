@@ -67,6 +67,20 @@ export class GroupsComponent implements OnInit {
     );
   }
 
+
+  
+  searchGroupsByDescription(): void {
+    this.backendService.searchGroupsByDescriptionBackend(this.description).subscribe(
+      (data: GroupIndex[]) => {
+        this.groupsSearch = data;
+        this.groupIndexes = data; 
+      },
+      (error: any) => {
+        console.error('Error occurred:', error);
+      }
+    );
+  }
+
 getAllGroups() {
   this.backendService.getGroups().subscribe({
     next: (data: any)=> {  
