@@ -3,12 +3,16 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.FileService
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.NotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.StorageException;
 import io.minio.*;
+import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -25,7 +29,6 @@ public class FileServiceImpl implements FileService {
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
         }
-
         var originalFilenameTokens =
                 Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
         var extension = originalFilenameTokens[originalFilenameTokens.length - 1];
@@ -39,7 +42,10 @@ public class FileServiceImpl implements FileService {
                     .stream(file.getInputStream(), file.getInputStream().available(), -1)
                     .build();
             minioClient.putObject(args);
-        } catch (Exception e) {
+        } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
+                 InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
+                 XmlParserException e) {
+            e.getMessage();
             throw new StorageException("Error while storing file in Minio.");
         }
 

@@ -5,8 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface IndexingService {
 
-    String indexGroupDocument(MultipartFile documentFile);
-
-//    String indexPostDocument(MultipartFile documentFile);
+    String indexDocument(MultipartFile documentFile);
 
 }

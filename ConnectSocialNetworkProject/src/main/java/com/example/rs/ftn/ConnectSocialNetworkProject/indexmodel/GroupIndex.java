@@ -23,6 +23,9 @@ public class GroupIndex {
     @Field(type = FieldType.Text, store = true, name = "name",analyzer = "serbian", searchAnalyzer = "serbian")
     private String name;
 
+    @Field(type = FieldType.Text, store = true, name = "groupDescriptionPdf",analyzer = "serbian", searchAnalyzer = "serbian")
+    private String groupDescriptionPdf;
+
     @Field(type = FieldType.Text, store = true, name = "description", analyzer = "serbian", searchAnalyzer = "serbian")
     private String description;
 

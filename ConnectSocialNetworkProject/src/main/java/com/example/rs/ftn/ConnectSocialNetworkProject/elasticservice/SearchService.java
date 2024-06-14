@@ -1,5 +1,6 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
@@ -16,9 +17,15 @@ public interface SearchService {
 
     List<GroupIndex> getAllGroupIndexes();
 
-    Page<GroupIndex> searchGroupsByDescription(String description, Pageable pageable);
-
     void save(GroupIndex groupIndex);
+
+    List<PostIndex> searchPostByTitle(String title);
+
+    List<PostIndex> searchPostByContent(String content);
+
+    List<PostIndex> getAllPostIndexes();
+
+    void save(PostIndex postIndex);
 
 
 }

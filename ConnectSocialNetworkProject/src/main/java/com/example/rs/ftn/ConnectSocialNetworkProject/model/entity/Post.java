@@ -53,7 +53,7 @@ public class Post {
 	   
 	   public Post() {}
 
-	public Post(Long postId, String content, LocalDateTime creationDate, User user,boolean isDeleted) {
+	public Post(Long postId, String content, LocalDateTime creationDate, User user,boolean isDeleted,String title) {
 		super();
 		this.postId = postId;
 		this.content = content;
@@ -61,6 +61,7 @@ public class Post {
 		//this.imagePaths = imagePaths;
 		this.user = user;
 		this.isDeleted = false;
+		this.title = title;
 	}
 
 	public Long getId() {

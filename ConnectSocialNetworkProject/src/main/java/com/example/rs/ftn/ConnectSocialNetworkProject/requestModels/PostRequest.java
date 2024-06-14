@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 
 public class PostRequest {
-	   
+
+	   private String title;
 	   private String content;
 	   
 	   private String image;
@@ -13,25 +14,28 @@ public class PostRequest {
 	   	   
 	   
 	
-		public PostRequest(String content,String image, LocalDateTime creationDate) {
+		public PostRequest(String title,String content,String image, LocalDateTime creationDate) {
 			this.content = content;
+			this.title = title;
 			this.image = image;
 			this.creationDate = creationDate;
 		}
 
+	public String getTitle() {
+		return title;
+	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-		public String getContent() {
+	public String getContent() {
 			return content;
 		}
-
-
 
 		public void setContent(String content) {
 			this.content = content;
 		}
-
-
 
 		public LocalDateTime getCreationDate() {
 			return creationDate;

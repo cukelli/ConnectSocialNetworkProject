@@ -19,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -28,8 +30,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class IndexingServiceImpl implements IndexingService {
-
+public class IndexingServiceImpl {
     private final GroupIndexRepository groupIndexRepository;
 
     private final GroupRepo groupRepository;
@@ -39,95 +40,12 @@ public class IndexingServiceImpl implements IndexingService {
     private final LanguageDetector languageDetector;
 
 
-    @Override
-    @Transactional
-    public String indexGroupDocument(MultipartFile documentFile) {
-        var newGroup = new Group();
-        var newGroupIndex = new GroupIndex();
 
-        var title = Objects.requireNonNull(documentFile.getOriginalFilename()).split("\\.")[0];
-        newGroupIndex.setName(title);
-        newGroup.setName(title);
-
-        var documentContent = extractDocumentContent(documentFile);
-        if (detectLanguage(documentContent).equals("SR")) {
-            newGroupIndex.setDescription(documentContent);
-        } else {
-            newGroupIndex.setDescription(documentContent);
-        }
-        newGroup.setDescription(documentContent);
-
-        var serverFilename = fileService.store(documentFile, UUID.randomUUID().toString());
-        newGroup.setSuspendedReason(null);
-        newGroup.setCreatedAt(LocalDate.now());
-        newGroup.setSuspended(false);
-        newGroup.setDeleted(false);
-
-        var savedGroup = groupRepository.save(newGroup);
-        newGroupIndex.setCreatedAt(newGroup.getCreatedAt());
-        newGroupIndex.setSuspendedReason(newGroup.getSuspendedReason());
-        newGroupIndex.setSuspended(false);
-        newGroupIndex.setSuspendedReason(null);
-        newGroupIndex.setDatabaseId(savedGroup.getGroupId());
-        groupIndexRepository.save(newGroupIndex);
-
-        return serverFilename;
-    }
-
-
-//    @Override
-//    @Transactional
-//    public String indexPostDocument(MultipartFile documentFile) {
-//        var newPost = new Post();
-//        var newPostIndex = new PostIndex();
-//
-//        var title = Objects.requireNonNull(documentFile.getOriginalFilename()).split("\\.")[0];
-//        newPostIndex.setTitle(title);
-//        newPost.setTitle(title);
-//
-//        var documentContent = extractDocumentContent(documentFile);
-//        newPostIndex.setContent(documentContent);
-//        newPost.setContent(documentContent);
-//
-//        var serverFilename = fileService.store(documentFile, UUID.randomUUID().toString());
-//        newPostIndex.setId(serverFilename);
-//        // Pretpostavimo da Post ima polje za čuvanje serverFilename ako je potrebno
-//        // newPost.setServerFilename(serverFilename);
-//
-//        newPost.setCreationDate(LocalDateTime.now());
-//        newPostIndex.setCreationDate(LocalDateTime.now());
-//
-//        // Podesite ostale atribute Post i PostIndex entiteta
-//        newPost.setDeleted(false);
-//        newPostIndex.setDeleted(false);
-//
-//        // Pretpostavimo da User entitet i Group entitet dolaze iz konteksta ili drugog izvora
-//        var user = getCurrentUser(); // Metoda za dobijanje trenutnog korisnika
-//        var group = getCurrentGroup(); // Metoda za dobijanje trenutne grupe
-//
-//        newPost.setUser(user);
-//        newPostIndex.setUser(user.getUsername());
-//
-//        newPost.setGroupPosted(group);
-//        newPostIndex.setGroupPosted(group != null ? group.getGroupId() : null);
-//
-//        // Pretpostavimo da je lista imagePaths dobijena iz fajla ili drugog izvora
-//        var imagePaths = extractImagePaths(documentFile);
-//        newPost.setImagePaths(imagePaths);
-//        newPostIndex.setImagePaths(imagePaths.stream().map(Image::getPath).collect(Collectors.toList()));
-//
-//        var savedPost = postRepository.save(newPost);
-//        newPostIndex.setId(savedPost.getPostId().toString());
-//        postIndexRepository.save(newPostIndex);
-//
-//        return serverFilename;
-//    }
-
-    private String extractDocumentContent(MultipartFile multipartPdfFile) {
+    public String extractDocumentContent(MultipartFile multipartPdfFile) {
         String documentContent;
-        try (var pdfFile = multipartPdfFile.getInputStream()) {
-            var pdDocument = PDDocument.load(pdfFile);
-            var textStripper = new PDFTextStripper();
+        try (InputStream pdfFile = multipartPdfFile.getInputStream()) {
+            PDDocument pdDocument = PDDocument.load(pdfFile);
+            PDFTextStripper textStripper = new PDFTextStripper();
             documentContent = textStripper.getText(pdDocument);
             pdDocument.close();
         } catch (IOException e) {
@@ -137,7 +55,7 @@ public class IndexingServiceImpl implements IndexingService {
         return documentContent;
     }
 
-    private String detectLanguage(String text) {
+    public String detectLanguage(String text) {
         var detectedLanguage = languageDetector.detect(text).getLanguage().toUpperCase();
         if (detectedLanguage.equals("HR")) {
             detectedLanguage = "SR";
@@ -146,7 +64,7 @@ public class IndexingServiceImpl implements IndexingService {
         return detectedLanguage;
     }
 
-    private String detectMimeType(MultipartFile file) {
+    public String detectMimeType(MultipartFile file) {
         var contentAnalyzer = new Tika();
 
         String trueMimeType;
@@ -167,3 +85,4 @@ public class IndexingServiceImpl implements IndexingService {
         return trueMimeType;
     }
 }
+

@@ -96,6 +96,7 @@ public class PostController {
 		
 		Post newPost = new Post();
 		newPost.setContent(post.getContent());
+		newPost.setTitle(post.getTitle());
 		newPost.setCreationDate(LocalDateTime.now());
 		newPost.setUser(userLogged);
 		

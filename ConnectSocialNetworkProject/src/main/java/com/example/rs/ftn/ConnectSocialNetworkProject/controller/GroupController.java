@@ -1,15 +1,20 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.FileService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.impl.IndexingServiceImpl;
+import com.example.rs.ftn.ConnectSocialNetworkProject.exception.LoadingException;
+import com.example.rs.ftn.ConnectSocialNetworkProject.exception.StorageException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
@@ -38,23 +43,36 @@ public class GroupController {
 
 	private final SearchService searchService;
 
-
 	private final PostService postService;
-	
+
+//	private final IndexingService indexingService;
+	private final IndexingServiceImpl indexingServiceImpl;
+
+	private final FileService fileService;
+
+
 	public GroupController(GroupService groupService,UserService userService,GroupAdminService
 			groupAdminService,PostService
-			postService, SearchService searchService, ElasticsearchOperations elasticOperations) {
+			postService, SearchService searchService, ElasticsearchOperations elasticOperations,
+						  IndexingServiceImpl indexingServiceImpl, FileService fileService) {
 		this.groupAdminService = groupAdminService;
 		this.groupService = groupService;
 		this.userService = userService;
 		this.postService = postService;
 		this.searchService = searchService;
 		this.elasticOperations = elasticOperations;
+//		this.indexingService = indexingService;
+		this.indexingServiceImpl = indexingServiceImpl;
+		this.fileService = fileService;
 		
 	}
-	
-	@PostMapping("/add")
-	public ResponseEntity<Group> addGroup(Authentication authentication,@RequestBody GroupRequestCreate group) {
+
+	@PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Group> addGroup(
+			Authentication authentication,
+			@RequestParam(value = "groupDescriptionPdf", required = false) MultipartFile groupDescriptionPdf,
+			@RequestPart("groupRequest") GroupRequestCreate groupRequest) {
+
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -62,28 +80,44 @@ public class GroupController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		
+
 		Group newGroup = new Group();
-		newGroup.setName(group.getName());
-		newGroup.setDescription(group.getDescription());
+		newGroup.setName(groupRequest.getName());
+		newGroup.setDescription(groupRequest.getDescription());
 		newGroup.setCreatedAt(LocalDate.now());
 		newGroup.setSuspended(false);
 		newGroup.setDeleted(false);
 		newGroup.setSuspendedReason(null);
+
 		Group groupCreated = groupService.addGroup(newGroup);
-		GroupAdmin newGroupAdmin = new GroupAdmin(userLogged,groupCreated);
+
+		GroupAdmin newGroupAdmin = new GroupAdmin(userLogged, groupCreated);
 		groupAdminService.addGroupAdmin(newGroupAdmin);
+
 		GroupIndex groupIndex = new GroupIndex();
 		groupIndex.setName(newGroup.getName());
 		groupIndex.setDatabaseId(newGroup.getGroupId());
 		groupIndex.setDescription(newGroup.getDescription());
 		groupIndex.setCreatedAt(newGroup.getCreatedAt());
 		groupIndex.setDeleted(newGroup.isDeleted());
+
+		if (groupDescriptionPdf != null && !groupDescriptionPdf.isEmpty()) {
+			try {
+				String mimeType = indexingServiceImpl.detectMimeType(groupDescriptionPdf);
+				System.out.println(mimeType + " mime type");
+				String extractedDocumentIndex = indexingServiceImpl.extractDocumentContent(groupDescriptionPdf);
+				groupIndex.setGroupDescriptionPdf(extractedDocumentIndex);
+				fileService.store(groupDescriptionPdf, groupIndex.getName() + "group description pdf" + UUID.randomUUID().toString());
+			} catch (StorageException | LoadingException e) {
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			}
+		}
 		searchService.save(groupIndex);
-		return new ResponseEntity<>(newGroup,HttpStatus.OK);
+
+		return new ResponseEntity<>(newGroup, HttpStatus.OK);
 	}
-	
-	
+
+
 	@GetMapping("/all")
 	@ResponseBody
 	public List<Group> getAllGroups(Authentication authentication) {
