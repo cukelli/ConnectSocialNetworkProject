@@ -1,29 +1,44 @@
 <div>
-    <div  *ngFor="let post of posts" class="" style="max-width: 100%;">
 
-            <div class="">
-                    <div *ngFor="let image of post.imagePaths" class="" style="max-width: 540px;">
-        <img  [src]="image"alt="Selected Image">
-        </div>
-            </div>
+    <div>
+        <input type="text" [(ngModel)]="title" placeholder="Search by title">   
+        <button (click)="searchPostsByTitle()">Search posts by title</button>
+      </div>
+      <div>
+        <input type="text" [(ngModel)]="content" placeholder="Search by content"> <input type="text" [(ngModel)]="pdfContent" placeholder="Search by pdf content">
+        <button (click)="searchPostsByContent()">Search groups by content</button>
+      </div>
+      <button (click)="getAllUserPostElastic()">Refresh</button>
+      <br>
+      <br>
+
+
+    <div  *ngFor="let post of postIndexes" class="" style="max-width: 100%;">
+
+            <!-- <div class=""> -->
+                    <!-- <div *ngFor="let image of post.imagePaths" class="" style="max-width: 540px;"> -->
+        <!-- <img  [src]="image"alt="Selected Image"> -->
+        <!-- </div> -->
             <h5> {{ post.title }}</h5>
             <h5> {{ post.user }}</h5>
-            <h3> {{post.creationDate}} </h3>
 
             <p> {{post.content}}</p>
                 
              <button type="button" class="btn btn-info" (click)="getPostDetails(post)">Info</button>
              <br>
-             <p> Total hearts: {{post.reactions.hearts}}</p>
+             <!-- <p> Total hearts: {{post.reactions.hearts}}</p>
              <p> Total likes: {{post.reactions.like}}</p>
-             <p> Total dislikes: {{post.reactions.dislike}}</p>
+             <p> Total dislikes: {{post.reactions.dislike}}</p> -->
+            </div>
+
 <hr class="hr" />
 
 
 
     <div class="w-100"></div> <!-- Add this line to create a line break after each post -->
+<!-- </div> -->
 
-    </div>
+    <!-- </div> -->
     <br>
     <button type="button" class="btn btn-success" (click)="sortPostsAscendingByDate()">Sort posts by date (ascending)</button>
 <button type="button" class="btn btn-success" (click)="sortPostsDescendingByDate()">Sort posts by date (descending)</button>

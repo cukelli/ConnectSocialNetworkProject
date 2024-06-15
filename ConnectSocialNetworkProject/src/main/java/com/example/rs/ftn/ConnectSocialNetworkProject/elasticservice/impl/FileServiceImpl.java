@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +40,7 @@ public class FileServiceImpl implements FileService {
                             "attachment; filename=\"" + file.getOriginalFilename() + "\""))
                     .stream(file.getInputStream(), file.getInputStream().available(), -1)
                     .build();
+//            file.getInputStream().close();
             minioClient.putObject(args);
         } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |

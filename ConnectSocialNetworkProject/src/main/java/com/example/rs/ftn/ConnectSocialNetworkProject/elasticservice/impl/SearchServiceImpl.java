@@ -58,6 +58,11 @@ public class SearchServiceImpl implements SearchService {
         return postIndexRepository.findAll();
     }
 
+    @Override
+    public List<PostIndex> findByUserAndIsDeletedIsFalse(String user) {
+        return postIndexRepository.findByUserAndIsDeletedIsFalse(user);
+    }
+
     public void save(GroupIndex groupIndex) {
         elasticsearchTemplate.save(groupIndex, IndexCoordinates.of("group_index"));
     }

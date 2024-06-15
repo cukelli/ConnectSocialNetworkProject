@@ -24,6 +24,9 @@ public interface SearchService {
 
     List<PostIndex> getAllPostIndexes();
 
+    List<PostIndex> findByUserAndIsDeletedIsFalse(String user);
+
+
     void save(PostIndex postIndex);
 
 

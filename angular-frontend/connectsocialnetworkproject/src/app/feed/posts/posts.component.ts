@@ -5,6 +5,7 @@ import { User } from 'src/app/user.model';
 import { Post } from 'src/app/post';
 import { Router } from '@angular/router';
 import { CountReactions } from 'src/app/countReactions';
+import { PostIndex } from 'src/app/postIndex';
 
 @Component({
   selector: 'app-posts',
@@ -15,6 +16,14 @@ export class PostsComponent implements OnInit {
   posts!: Array<Post>;
   sort: string = 'desc';
   user: User;
+  postsSearch: PostIndex[] = [];
+  postIndexes!: Array<PostIndex>;
+  content: string = '';
+  pdfContent: string = ''
+  title: string = '';
+  post!: Post;
+  page: number = 0;
+  size: number = 10;
    reactionsCounter: CountReactions = {  hearts: 0,
     dislike: 0,
     like: 0}
@@ -23,26 +32,28 @@ export class PostsComponent implements OnInit {
     private router: Router) { 
         this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
-        this.backendService.getUserPosts('asc').subscribe({
-       next: (data: Array<Post>)=> {  
-          this.posts = data;
-          this.getPostReactions();
-       },
-       error: er => {
-          //  console.error(er.error.message);
-       }
-   }); 
+  //       this.backendService.getUserPostElastic().subscribe({
+  //      next: (data: Array<PostIndex>)=> {  
+  //         this.postIndexes = data;
+  //         this.getPostReactions();
+  //      },
+  //      error: er => {
+  //         //  console.error(er.error.message);
+  //      }
+  //  }); 
+  this.getAllUserPostElastic();
 
   }
 
  ngOnInit(): void {
   }
-   getPostDetails(post: Post): void {
-    const postId = post.postId;
+  getPostDetails(postI: PostIndex): void {
+
+    const postId = postI.databaseId == null ? 0: postI.databaseId;
 
     this.backendService.getPostDetails(postId).subscribe(
       (postDetails: Post) => {
-        post = postDetails;
+        let post = postDetails;
         this.router.navigate(['/post-details',post])
         console.log(this.user + "user");
 
@@ -51,6 +62,21 @@ export class PostsComponent implements OnInit {
         this.router.navigate(['/feed']);
       }
     
+    );
+  }
+
+
+
+    
+  searchPostsByContent(): void {
+    this.backendService.searchPostsByContent(this.content, this.pdfContent).subscribe(
+      (data: PostIndex[]) => {
+        this.postsSearch = data;
+        this.postIndexes = data; 
+      },
+      (error: any) => {
+        console.error('Error occurred:', error);
+      }
     );
   }
 
@@ -65,6 +91,18 @@ export class PostsComponent implements OnInit {
    });  
    }
 
+
+   searchPostsByTitle(): void {
+    this.backendService.searchPostsByTitle(this.title).subscribe(
+      (data: PostIndex[]) => {
+        this.postsSearch = data;
+        this.postIndexes = data; 
+      },
+      (error: any) => {
+        console.error('Error occurred:', error);
+      }
+    );
+  }
   
 
   sortPostsDescendingByDate() {
@@ -93,5 +131,18 @@ export class PostsComponent implements OnInit {
     );
   }
 }
+
+
+getAllUserPostElastic() {
+  this.backendService.getUserPostElastic().subscribe({
+    next: (data: any)=> {  
+       this.postIndexes = data;
+       
+    },
+    error: er => {
+       //  console.error(er.error.message);
+    }
+});  }
+
 
 }

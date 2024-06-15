@@ -22,6 +22,7 @@ import { UserUpdate } from './userUpdate';
 import { FriendRequest } from './friendRequest';
 import { SendFriendRequest } from './sendFriendRequest';
 import { GroupIndex } from './GroupIndex';
+import { PostIndex } from './postIndex';
 
 @Injectable({
   providedIn: 'root'
@@ -436,8 +437,6 @@ searchGroupsByDescriptionBackend(description: string, pdfDescription: string): O
 }
 
 
-
-
 createGroup(group: updatedGroupData, groupDescriptionPdf: File | null): Observable<Group> {
   const formData: FormData = new FormData();
   
@@ -475,6 +474,54 @@ createPost(post: updatedPostData, postContentPdf: File | null): Observable<Post>
 
   const url = `${this.apiUrl}/post/add`;
   return this.http.post<Post>(url, formData, { headers });
+}
+
+
+
+
+searchPostsByTitle(title: string): Observable<PostIndex[]> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams()
+    .set('title', title)
+  return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByTitle`, { params, headers });
+}
+
+
+searchPostsByContent(content: string, pdfContent: string): Observable<PostIndex[]> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams()
+    .set('content', content)
+    .set('pdfContent', pdfContent)
+  return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByContentOrPdfContent`, { params, headers });
+}
+
+getPostsElastic() {
+
+  let headers = new HttpHeaders({
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }) 
+
+  let requestOptions = { headers: headers };  
+  return this.http.get(this.apiUrl + '/post/all/elastic', requestOptions);
+}
+
+
+getUserPostElastic() {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  return this.http.get<Array<PostIndex>>(this.apiUrl + `/post/user/elastic`, { headers });
 }
 
 }

@@ -134,7 +134,6 @@ public class PostController {
 		if (postContentPdf != null && !postContentPdf.isEmpty()) {
 			try {
 				String mimeType = indexingServiceImpl.detectMimeType(postContentPdf);
-				System.out.println(mimeType + " mime type");
 				String extractedDocumentIndex = indexingServiceImpl.extractDocumentContent(postContentPdf);
 				System.out.println(extractedDocumentIndex + " extracted text from pdf group");
 				postIndex.setPdfContent(extractedDocumentIndex);
@@ -345,6 +344,40 @@ public class PostController {
 		}
 		List<PostIndex> searchResults = searchService.getAllPostIndexes();
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+
+	@GetMapping("/user/elastic")
+	@ResponseBody
+	public ResponseEntity<List<PostIndex>> getUserPostIndexes(
+			Authentication authentication,
+			@RequestParam(value = "sort", defaultValue = "asc") String sort) {
+		String userUsername = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(userUsername);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+
+		if (!userLogged.getUsername().equals(userUsername) && !userLogged.getRole().toString().equals("ADMIN")) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin/you are not the creator of those posts.");
+		}
+
+		List<PostIndex> postIndexes;
+		if (userLogged.getRole().toString().equals("ADMIN")) {
+			postIndexes = searchService.getAllPostIndexes();
+		} else {
+			postIndexes = searchService.findByUserAndIsDeletedIsFalse(userLogged.getUsername());
+		}
+
+		if (sort.equalsIgnoreCase("asc")) {
+			postIndexes.sort(Comparator.comparing(PostIndex::getCreationDate));
+		} else if (sort.equalsIgnoreCase("desc")) {
+			postIndexes.sort(Comparator.comparing(PostIndex::getCreationDate).reversed());
+		}
+
+		return new ResponseEntity<>(postIndexes, HttpStatus.OK);
 	}
 
 	

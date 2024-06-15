@@ -11,6 +11,7 @@ import java.util.List;
 public interface PostIndexRepository extends ElasticsearchRepository<PostIndex,String> {
 
     List<PostIndex> findByTitle(String title);
+    List<PostIndex> findByUserAndIsDeletedIsFalse(String user);
     List<PostIndex> findByContentOrPdfContent(String content, String pdfContent);
     List<PostIndex> findAll();
     PostIndex save(PostIndex postIndex);
