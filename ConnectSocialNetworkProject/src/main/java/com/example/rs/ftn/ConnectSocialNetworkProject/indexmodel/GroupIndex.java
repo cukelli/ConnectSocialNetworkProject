@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Setting;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
@@ -23,8 +22,8 @@ public class GroupIndex {
     @Field(type = FieldType.Text, store = true, name = "name",analyzer = "serbian", searchAnalyzer = "serbian")
     private String name;
 
-    @Field(type = FieldType.Text, store = true, name = "groupDescriptionPdf",analyzer = "serbian", searchAnalyzer = "serbian")
-    private String groupDescriptionPdf;
+    @Field(type = FieldType.Text, store = true, name = "pdfDescription",analyzer = "serbian", searchAnalyzer = "serbian")
+    private String pdfDescription;
 
     @Field(type = FieldType.Text, store = true, name = "description", analyzer = "serbian", searchAnalyzer = "serbian")
     private String description;
@@ -38,7 +37,7 @@ public class GroupIndex {
     @Field(type = FieldType.Boolean, store = true, name = "is_deleted")
     private boolean isDeleted;
 
-    @Field(type = FieldType.Text, store = true, name = "suspended_reason", index = false)
+    @Field(type = FieldType.Text, store = true, name = "suspended_reason")
     private String suspendedReason;
 
     @Field(type = FieldType.Long, store = true, name = "database_id")

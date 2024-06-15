@@ -13,15 +13,14 @@ public interface SearchService {
 
     List<GroupIndex> searchGroupsByName(String name);
 
-    List<GroupIndex> searchGroupsByDescription(String description);
+    List<GroupIndex> searchGroupsByDescriptionOrPdfDescription(String description, String pdfDescription);
 
     List<GroupIndex> getAllGroupIndexes();
 
     void save(GroupIndex groupIndex);
 
     List<PostIndex> searchPostByTitle(String title);
-
-    List<PostIndex> searchPostByContent(String content);
+    List<PostIndex> searchPostsByContentOrPdfContent(String content, String pdfContent);
 
     List<PostIndex> getAllPostIndexes();
 

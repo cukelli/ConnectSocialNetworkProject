@@ -12,14 +12,23 @@
   })
   export class CreatePostComponent implements OnInit {
       postContent!: string;
+      postTitle!: string;
       isPostCreated: boolean = false;
       selectedImage!: File;
+      postContentPdf!: File;
       imageToShow!: String;
 
       constructor(private backendService: BackendServiceService, private imageCompressService: NgxImageCompressService,
         private domSanitizer: DomSanitizer) { }
 
     ngOnInit(): void {
+    }   
+
+    onFileSelected(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        this.postContentPdf = input.files[0];
+      }
     }
 
     createPost(): void {
@@ -29,6 +38,7 @@
       const imageBase64 = reader.result as string;
       this.imageCompressService.compressFile(imageBase64, -1, 7, 17).then((compressedImage: string) => {
         const postForCreation: updatedPostData = {
+          title: this.postTitle,
           content: this.postContent,
           image: compressedImage
         };
@@ -39,6 +49,7 @@
     reader.readAsDataURL(this.selectedImage);
   } else {
     const postForCreation: updatedPostData = {
+      title: this.postTitle,
       content: this.postContent,
       image: ""
     };
@@ -47,10 +58,11 @@
   }
 
     }
-
+    
+  
 
     createPostWithImage(postForCreation: updatedPostData): void {
-  this.backendService.createPost(postForCreation).subscribe({
+  this.backendService.createPost(postForCreation, this.postContentPdf).subscribe({
     next: () => {
       this.isPostCreated = true;
       setTimeout(() => {

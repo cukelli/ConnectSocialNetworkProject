@@ -16,6 +16,7 @@ import { GroupIndex } from '../GroupIndex';
 export class GroupsComponent implements OnInit {
   groupsSearch: GroupIndex[] = [];
   description: string = '';
+  pdfDescription: string = ''
   name: string = '';
   page: number = 0;
   size: number = 10;
@@ -70,7 +71,7 @@ export class GroupsComponent implements OnInit {
 
   
   searchGroupsByDescription(): void {
-    this.backendService.searchGroupsByDescriptionBackend(this.description).subscribe(
+    this.backendService.searchGroupsByDescriptionBackend(this.description, this.pdfDescription).subscribe(
       (data: GroupIndex[]) => {
         this.groupsSearch = data;
         this.groupIndexes = data; 

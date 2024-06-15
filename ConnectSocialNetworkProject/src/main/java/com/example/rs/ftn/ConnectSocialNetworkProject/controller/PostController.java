@@ -1,22 +1,24 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.FileService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.impl.IndexingServiceImpl;
+import com.example.rs.ftn.ConnectSocialNetworkProject.exception.LoadingException;
+import com.example.rs.ftn.ConnectSocialNetworkProject.exception.StorageException;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
@@ -40,22 +42,30 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 public class PostController {
 	
 	private final PostService postService;
+	private final FileService fileService;
 	private final UserService userService;
 	private final ImageService imageService;
+	private final SearchService searchService;
 	private final ReactionService reactionService;
 	private final CommentService commentService;
 	private final JwtUtil jwtUtil;
+	private final IndexingServiceImpl indexingServiceImpl;
 
-	
-	public PostController(PostService postService,UserService
-			userService,ImageService imageService,ReactionService reactionService,
-			CommentService commentService,JwtUtil jwtUtil) {
+
+
+	public PostController(PostService postService, FileService fileService, UserService
+			userService, ImageService imageService, ReactionService reactionService,
+                          CommentService commentService, JwtUtil jwtUtil, SearchService searchService,
+                          IndexingServiceImpl indexingServiceImpl) {
 		this.postService = postService;
-		this.userService = userService;
+        this.fileService = fileService;
+        this.userService = userService;
 		this.imageService = imageService;
 		this.reactionService = reactionService;
 		this.commentService = commentService;
+		this.searchService = searchService;
 		this.jwtUtil = jwtUtil;
+		this.indexingServiceImpl = indexingServiceImpl;
 	}
 	
 	 @GetMapping("/all")
@@ -84,8 +94,11 @@ public class PostController {
 	        return posts;
 	    }
 	
-	@PostMapping("/add")
-	public ResponseEntity<Post> addPost(Authentication authentication,@RequestBody PostRequest post) {
+	@PostMapping(value ="/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Post> addPost(Authentication authentication,
+										@RequestParam(value = "postContentPdf", required = false)
+										MultipartFile postContentPdf,
+										@RequestPart("postRequest") PostRequest post) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -93,7 +106,7 @@ public class PostController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		
+
 		Post newPost = new Post();
 		newPost.setContent(post.getContent());
 		newPost.setTitle(post.getTitle());
@@ -110,7 +123,30 @@ public class PostController {
 		        imageService.addImage(image);
 		    }
 
-		    return new ResponseEntity<>(dbPost, HttpStatus.OK);
+		  PostIndex postIndex = new PostIndex();
+		  postIndex.setTitle(newPost.getTitle());
+		  postIndex.setContent(newPost.getContent());
+		  postIndex.setCreationDate(LocalDate.now());
+		postIndex.setDatabaseId(newPost.getId());
+		postIndex.setDeleted(newPost.isDeleted());
+		  postIndex.setUser(newPost.getUser());
+
+		if (postContentPdf != null && !postContentPdf.isEmpty()) {
+			try {
+				String mimeType = indexingServiceImpl.detectMimeType(postContentPdf);
+				System.out.println(mimeType + " mime type");
+				String extractedDocumentIndex = indexingServiceImpl.extractDocumentContent(postContentPdf);
+				System.out.println(extractedDocumentIndex + " extracted text from pdf group");
+				postIndex.setPdfContent(extractedDocumentIndex);
+				fileService.store(postContentPdf, postIndex.getTitle() +
+						" post description pdf" + UUID.randomUUID().toString());
+			} catch (StorageException | LoadingException e) {
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			}
+		}
+		searchService.save(postIndex);
+
+		return new ResponseEntity<>(dbPost, HttpStatus.OK);
 	}
 	
 //	@PostMapping("/images/{postId}")
@@ -265,12 +301,51 @@ public class PostController {
 	    ReactionCount reactionCount = new ReactionCount(hearts,dislikes,likes);
 	    
 	    return reactionCount;
-
-	  
 	}
-	
-	
-	
-	
+
+	@GetMapping("/searchByTitle")
+	public ResponseEntity<List<PostIndex>> searchPostsByTitle(Authentication authentication,
+																	 @RequestParam(required = true) String title) {
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<PostIndex> searchResults = searchService.searchPostByTitle(title);
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+	@GetMapping("/searchByContentOrPdfContent")
+	public ResponseEntity<List<PostIndex>> searchPostsByContent(Authentication authentication,
+																	 @RequestParam(required = false) String content,
+																	 @RequestParam(required = false) String pdfContent) {
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<PostIndex> searchResults = searchService.searchPostsByContentOrPdfContent(content,pdfContent);
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+	@GetMapping("/all/elastic")
+	public ResponseEntity<List<PostIndex>> getAllPostIndexes(
+			Authentication authentication) {
+
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<PostIndex> searchResults = searchService.getAllPostIndexes();
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
 	
 }

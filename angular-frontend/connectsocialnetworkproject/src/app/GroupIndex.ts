@@ -5,5 +5,6 @@ export interface GroupIndex {
   suspendedReason?: null;
   databaseId?: number;
   suspended: boolean,
-  deleted: boolean
+  deleted: boolean,
+  pdfDescription: string;
 }

@@ -7,14 +7,14 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import javax.persistence.Id;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "dummy_index")
+@Document(indexName = "post_index")
 public class PostIndex {
 
 @Id
@@ -23,17 +23,17 @@ private String id;
 @Field(type = FieldType.Text, store = true, name = "content",analyzer = "serbian", searchAnalyzer = "serbian")
 private String content;
 
+@Field(type = FieldType.Text, store = true, name = "pdfContent",analyzer = "serbian", searchAnalyzer = "serbian")
+private String pdfContent;
+
 @Field(type = FieldType.Text, store = true, name = "title",analyzer = "serbian", searchAnalyzer = "serbian")
 private String title;
 
 @Field(type = FieldType.Date, store = true, name = "creation_date")
-private LocalDateTime creationDate;
+private LocalDate creationDate;
 
 @Field(type = FieldType.Boolean, store = true, name = "is_deleted")
 private boolean isDeleted;
-
-@Field(type = FieldType.Text, store = true, name = "image_paths")
-private List<String> imagePaths;
 
 @Field(type = FieldType.Text, store = true, name = "user")
 private String user;

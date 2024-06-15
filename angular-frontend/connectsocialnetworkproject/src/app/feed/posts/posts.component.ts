@@ -27,8 +27,6 @@ export class PostsComponent implements OnInit {
        next: (data: Array<Post>)=> {  
           this.posts = data;
           this.getPostReactions();
-
-          
        },
        error: er => {
           //  console.error(er.error.message);

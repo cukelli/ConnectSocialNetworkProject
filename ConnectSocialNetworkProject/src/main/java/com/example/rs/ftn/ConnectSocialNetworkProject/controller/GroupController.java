@@ -106,7 +106,8 @@ public class GroupController {
 				String mimeType = indexingServiceImpl.detectMimeType(groupDescriptionPdf);
 				System.out.println(mimeType + " mime type");
 				String extractedDocumentIndex = indexingServiceImpl.extractDocumentContent(groupDescriptionPdf);
-				groupIndex.setGroupDescriptionPdf(extractedDocumentIndex);
+				System.out.println(extractedDocumentIndex + " extracted text from pdf");
+				groupIndex.setPdfDescription(extractedDocumentIndex);
 				fileService.store(groupDescriptionPdf, groupIndex.getName() + "group description pdf" + UUID.randomUUID().toString());
 			} catch (StorageException | LoadingException e) {
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -384,9 +385,10 @@ public class GroupController {
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 
-	@GetMapping("/searchByDescription")
+	@GetMapping("/searchByDescriptionOrPdfDescription")
 	public ResponseEntity<List<GroupIndex>> searchGroupsByDescription(Authentication authentication,
-																	  @RequestParam String description) {
+																	  @RequestParam(required = false) String description,
+																	  @RequestParam(required = false) String pdfDescription) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -394,7 +396,7 @@ public class GroupController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		List<GroupIndex> searchResults = searchService.searchGroupsByDescription(description);
+		List<GroupIndex> searchResults = searchService.searchGroupsByDescriptionOrPdfDescription(description, pdfDescription);
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 

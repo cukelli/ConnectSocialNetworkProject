@@ -19,7 +19,7 @@ public class Post {
 	   private Long postId;
 	   
 	   @Column(nullable = false,unique = false)
-	   private String content;
+		   private String content;
 
 	  @Column(nullable = false,unique = false)
 	  private String title;

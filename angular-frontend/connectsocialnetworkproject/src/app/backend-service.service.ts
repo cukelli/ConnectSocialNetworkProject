@@ -184,25 +184,7 @@ updateGroup(groupId: number, updatedGroupData: updatedGroupData) {
   return this.http.put<Group>(url, updatedGroupData, requestOptions);
 }
 
-createPost(post: updatedPostData) {
-  let headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  });
-  let requestOptions = { headers: headers }; 
-  const url = `${this.apiUrl}/post/add`;
-  return this.http.post<Post>(url,post, requestOptions);
-}
 
-createGroup(group: updatedGroupData) {
-  let headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  });
-  let requestOptions = { headers: headers }; 
-  const url = `${this.apiUrl}/group/add`;
-  return this.http.post<Group>(url,group, requestOptions);
-}
 
 joinGroup(groupRequest: GroupRequest) {
     let headers = new HttpHeaders({
@@ -441,7 +423,7 @@ searchGroupsByNameBackend(name: string): Observable<GroupIndex[]> {
   return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByName`, { params, headers });
 }
 
-searchGroupsByDescriptionBackend(description: string): Observable<GroupIndex[]> {
+searchGroupsByDescriptionBackend(description: string, pdfDescription: string): Observable<GroupIndex[]> {
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -449,7 +431,50 @@ searchGroupsByDescriptionBackend(description: string): Observable<GroupIndex[]> 
 
   let params = new HttpParams()
     .set('description', description)
-  return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByDescription`, { params, headers });
+    .set('pdfDescription', pdfDescription)
+  return this.http.get<GroupIndex[]>(`${this.apiUrl}/group/searchByDescriptionOrPdfDescription`, { params, headers });
+}
+
+
+
+
+createGroup(group: updatedGroupData, groupDescriptionPdf: File | null): Observable<Group> {
+  const formData: FormData = new FormData();
+  
+  formData.append('groupRequest', new Blob([JSON.stringify(group)], {
+    type: 'application/json'
+  }));
+
+  if (groupDescriptionPdf) {
+    formData.append('groupDescriptionPdf', groupDescriptionPdf);
+  }
+
+  let headers = new HttpHeaders({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  const url = `${this.apiUrl}/group/add`;
+  return this.http.post<Group>(url, formData, { headers });
+}
+
+
+createPost(post: updatedPostData, postContentPdf: File | null): Observable<Post> {
+  const formData: FormData = new FormData();
+  
+  formData.append('postRequest', new Blob([JSON.stringify(post)], {
+    type: 'application/json'
+  }));
+
+  if (postContentPdf) {
+    formData.append('postContentPdf', postContentPdf);
+  }
+
+  let headers = new HttpHeaders({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  const url = `${this.apiUrl}/post/add`;
+  return this.http.post<Post>(url, formData, { headers });
 }
 
 }

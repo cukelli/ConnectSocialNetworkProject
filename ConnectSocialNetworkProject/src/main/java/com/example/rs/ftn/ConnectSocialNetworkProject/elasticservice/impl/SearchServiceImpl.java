@@ -31,14 +31,14 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<GroupIndex> searchGroupsByDescription(String description) {
-        List<GroupIndex> groupIndexes = groupIndexRepository.findByDescription(description);
+    public List<GroupIndex> searchGroupsByDescriptionOrPdfDescription(String description, String pdfDescription) {
+        List<GroupIndex> groupIndexes = groupIndexRepository.findByDescriptionOrPdfDescription(description,pdfDescription);
         return groupIndexes;
     }
 
     @Override
-    public List<PostIndex> searchPostByContent(String content) {
-        List<PostIndex> postIndexes = postIndexRepository.findByContent(content);
+    public List<PostIndex> searchPostsByContentOrPdfContent(String content, String pdfContent) {
+        List<PostIndex> postIndexes = postIndexRepository.findByContentOrPdfContent(content,pdfContent);
         return postIndexes;
     }
 
@@ -63,7 +63,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     public void save(PostIndex postIndex) {
-        elasticsearchTemplate.save(postIndex, IndexCoordinates.of("group_index"));
+        elasticsearchTemplate.save(postIndex, IndexCoordinates.of("post_index"));
     }
 
 }

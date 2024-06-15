@@ -1,25 +1,23 @@
 <app-header-registered-user></app-header-registered-user>
 <div class="d-flex justify-content-center">
-
-    <form>
-        <h1> Create group </h1>
-        <div class="form-group">
-            <label for="inputContent"> Name </label>
-            <input type="text" class="form-control" id="inputContent" placeholder="Name" name="groupName"
-                [(ngModel)]="groupName">
-        </div>
-        <div class="form-group">
-            <label for="inputContent"> Description </label>
-            <input type="text" class="form-control" id="inputContent" placeholder="Description" name="groupDescription"
-                [(ngModel)]="groupDescription">
-        </div>
-        <button type="submit" class="btn btn-primary" (click)="createGroup()"> Create! </button>
-
-        <br>
-        <br>
-
-        <div class="alert alert-success" *ngIf="isGroupCreated">
-            Group created successfully.
-        </div>
-    </form>
+  <form>
+    <h1>Create Group</h1>
+    <div class="form-group">
+      <label for="inputContent">Name</label>
+      <input type="text" class="form-control" id="inputContent" placeholder="Name" name="groupName" [(ngModel)]="groupName">
+    </div>
+    <div class="form-group">
+      <label for="inputContent">Description</label>
+      <input type="text" class="form-control" id="inputContent" placeholder="Description" name="groupDescription" [(ngModel)]="groupDescription">
+    </div>
+    <br>
+    <label for="groupDescriptionPdf">Attach PDF with group description</label><br>
+    <input type="file" id="groupDescriptionPdf" class="file-upload" (change)="onFileSelected($event)">
+    <br><br>
+    <button type="submit" class="btn btn-primary" (click)="createGroup()">Create!</button>
+    <br><br>
+    <div class="alert alert-success" *ngIf="isGroupCreated">
+      Group created successfully.
+    </div>
+  </form>
 </div>
