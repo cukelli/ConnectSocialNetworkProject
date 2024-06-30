@@ -477,6 +477,27 @@ createPost(post: updatedPostData, postContentPdf: File | null): Observable<Post>
 }
 
 
+createPostInGroup(post: updatedPostData, postContentPdf: File | null, groupId: number): Observable<Post> {
+  const formData: FormData = new FormData();
+  
+  formData.append('postRequest', new Blob([JSON.stringify(post)], {
+    type: 'application/json'
+  }));
+
+  if (postContentPdf) {
+    formData.append('postContentPdf', postContentPdf);
+  }
+
+  let headers = new HttpHeaders({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  const url = `${this.apiUrl}/group/${groupId}/post`;
+  return this.http.post<Post>(url, formData, { headers });
+}
+
+
+
 
 
 searchPostsByTitle(title: string): Observable<PostIndex[]> {
@@ -503,6 +524,19 @@ searchPostsByContent(content: string, pdfContent: string): Observable<PostIndex[
   return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByContentOrPdfContent`, { params, headers });
 }
 
+
+searchPostsInGroupByContent(content: string, pdfContent: string, groupId: number): Observable<PostIndex[]> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams()
+    .set('content', content)
+    .set('pdfContent', pdfContent)
+  return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByContentOrPdfContent/${groupId}`, { params, headers });
+}
+
 getPostsElastic() {
 
   let headers = new HttpHeaders({
@@ -522,6 +556,16 @@ getUserPostElastic() {
   });
 
   return this.http.get<Array<PostIndex>>(this.apiUrl + `/post/user/elastic`, { headers });
+}
+
+getGroupPostsELastic(groupId: number) {
+  console.log(this.apiUrl + `group/all/elastic/${groupId}`)
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  return this.http.get<Array<PostIndex>>(this.apiUrl + `/group/all/elastic/${groupId}`, { headers });
 }
 
 }

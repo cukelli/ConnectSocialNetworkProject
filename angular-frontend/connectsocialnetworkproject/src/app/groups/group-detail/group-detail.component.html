@@ -29,21 +29,37 @@
 
 
 <div class="d-flex justify-content-center">
-    <div *ngFor="let post of posts" class="card mb-3" style="max-width: 540px;">
-        <div class="row no-gutters">
-            <div class="col-md-4">
-                <img src="assets/post.png" class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.content }}</h5>
-                    <p class="card-text">{{ post.user }}</p>
-                    <p class="card-text"><small class="text-muted">{{ post.creationDate }}</small></p>
+
+
+
+    <div>
+        <input type="text" name="title" [(ngModel)]="title" placeholder="Search by title">   
+        <button (click)="searchPostsByTitle()">Search posts by title</button>
+      </div>
+      <div>
+        <input type="text" name="content" [(ngModel)]="content" placeholder="Search by content"> <input type="text" [(ngModel)]="pdfContent" name="pdfContent" placeholder="Search by pdf content">
+        <button (click)="searchPostsByContent()">Search groups by content</button>
+      </div>
+      <button (click)="getAllPostsGroup()">Refresh</button>
+      <br>
+      <br>
+
+
+        <div *ngFor="let post of postIndexes" class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="assets/post.png" class="card-img" alt="...">
                 </div>
-                <button type="button" class="btn btn-info" (click)="getPostDetails(post)">Info</button>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.content }}</h5>
+                        <p class="card-text">{{ post.user }}</p>
+                        <!-- <p class="card-text"><small class="text-muted">{{ post.creationDate }}</small></p> -->
+                    </div>
+                    <button type="button" class="btn btn-info" (click)="getPostDetails(post)">Info</button>
+                </div>
             </div>
         </div>
-    </div>
 </div>
 
 
@@ -56,3 +72,35 @@
 <div class="alert alert-success" *ngIf="isGroupUpdated">
     Group updated successfully.
 </div>
+
+
+
+<form>
+    <h1> Post something inside group, what's on your mind? </h1>
+    <div class="form-group">
+        <label for="inputContent"> Title </label>
+        <input type="text" class="form-control" id="inputTitle" placeholder="Title"
+          name="post"[(ngModel)]="postTitle">
+    </div>
+    <div class="form-group">
+        <label for="inputContent"> Content </label>
+        <input type="text" class="form-control" id="inputContent" placeholder="Content"
+          name="postContent"[(ngModel)]="postContent">
+    </div>
+    <div class="form-group">
+        <label for="inputImage">Image</label>
+        <input type="file" class="form-control" id="inputImage" name="image" (change)="onImageSelected($event)">
+    </div>
+
+    <label for="postContentPdf">Attach PDF with post content</label><br>
+    <input type="file" id="postContentPdf" class="file-upload" (change)="onFileSelected($event)">
+    <br><br>
+    <button type="submit" class="btn btn-primary" (click)="createPost()"> Post! </button>
+    <br>
+    <br>
+    <div class="alert alert-success" *ngIf="isPostCreated">
+        Post created successfully.
+    </div>
+
+        <img *ngIf="selectedImage" [src]="imageToShow" alt="Selected Image">
+</form>
