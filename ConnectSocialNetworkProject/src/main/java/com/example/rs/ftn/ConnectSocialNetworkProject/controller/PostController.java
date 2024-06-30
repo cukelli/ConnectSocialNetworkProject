@@ -316,10 +316,11 @@ public class PostController {
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 
-	@GetMapping("/searchByContentOrPdfContent")
+	@GetMapping("/searchByContentOrPdfContentAndGroupId")
 	public ResponseEntity<List<PostIndex>> searchPostsByContent(Authentication authentication,
 																	 @RequestParam(required = false) String content,
-																	 @RequestParam(required = false) String pdfContent) {
+																	 @RequestParam(required = false) String pdfContent
+																    ) {
 		String username = authentication.getName();
 		User userLogged = null;
 		try {
@@ -330,6 +331,27 @@ public class PostController {
 		List<PostIndex> searchResults = searchService.searchPostsByContentOrPdfContent(content,pdfContent);
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
+
+
+
+	@GetMapping("/searchByContentOrPdfContent/{groupId}")
+	public ResponseEntity<List<PostIndex>> searchPostsByContentAndGroupId(Authentication authentication,
+																@RequestParam(required = false) String content,
+																@RequestParam(required = false) String pdfContent,
+																					  @PathVariable("groupId") Long groupId) {
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<PostIndex> searchResults = searchService.searchPostsByContentOrPdfContent(content,pdfContent);
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+
+
 
 	@GetMapping("/all/elastic")
 	public ResponseEntity<List<PostIndex>> getAllPostIndexes(
