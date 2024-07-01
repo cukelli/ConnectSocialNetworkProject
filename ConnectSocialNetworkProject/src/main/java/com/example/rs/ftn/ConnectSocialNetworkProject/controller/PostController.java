@@ -2,9 +2,8 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.FileService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
@@ -13,10 +12,13 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.exception.LoadingException
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.StorageException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.FriendRequest;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,17 +33,13 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.PostUpdate;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.ReactionCount;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.CommentService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.ImageService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.ReactionService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
 @RequestMapping("/post")
 public class PostController {
 	
 	private final PostService postService;
+	private final FriendRequestService friendRequestService;
 	private final FileService fileService;
 	private final UserService userService;
 	private final ImageService imageService;
@@ -56,7 +54,7 @@ public class PostController {
 	public PostController(PostService postService, FileService fileService, UserService
 			userService, ImageService imageService, ReactionService reactionService,
                           CommentService commentService, JwtUtil jwtUtil, SearchService searchService,
-                          IndexingServiceImpl indexingServiceImpl) {
+                          IndexingServiceImpl indexingServiceImpl, FriendRequestService friendRequestService) {
 		this.postService = postService;
         this.fileService = fileService;
         this.userService = userService;
@@ -66,6 +64,7 @@ public class PostController {
 		this.searchService = searchService;
 		this.jwtUtil = jwtUtil;
 		this.indexingServiceImpl = indexingServiceImpl;
+		this.friendRequestService = friendRequestService;
 	}
 	
 	 @GetMapping("/all")
@@ -129,6 +128,7 @@ public class PostController {
 		  postIndex.setCreationDate(LocalDate.now());
 		postIndex.setDatabaseId(newPost.getId());
 		postIndex.setDeleted(newPost.isDeleted());
+		postIndex.setPostLikes(0L);
 		  postIndex.setUser(newPost.getUser());
 
 		if (postContentPdf != null && !postContentPdf.isEmpty()) {
@@ -255,8 +255,49 @@ public class PostController {
 	    return new ResponseEntity<>(posts, HttpStatus.OK);
 	}
 
-	
-	
+	@GetMapping("/search/byLikeRange")
+	public List<PostIndex> searchPostsByLikeRange(Authentication authentication,@RequestParam(required = false) Long minLikes,
+													@RequestParam(required = false) Long maxLikes) {
+		User userLogged = null;
+		String username = authentication.getName();
+
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+
+		List<FriendRequest> friendRequestsSentBy;
+		friendRequestsSentBy = friendRequestService.findAllByApprovedTrueAndSentBy(userLogged);
+		List<String> usernames = friendRequestsSentBy.stream().map(FriendRequest::getSentFor).collect(Collectors.toList());
+		List<FriendRequest> friendRequestsSentFor;
+		friendRequestsSentFor = friendRequestService.findAllByApprovedTrueAndSentFor(userLogged);
+		usernames.addAll(friendRequestsSentFor.stream().map(FriendRequest::getSentBy).collect(Collectors.toList()));
+		usernames.add(username);
+
+		List<PostIndex> postIndexes;
+
+		return searchService.findByPostLikesBetween((ArrayList<String>) usernames, minLikes, maxLikes);
+	}
+
+
+
+	@GetMapping("/search/byLikeRange/{groupId}")
+	public List<PostIndex> searchPostsByLikeRangeAndGroup(Authentication authentication,@RequestParam(required = false) Long minLikes,
+												  @RequestParam(required = false) Long maxLikes,																		@PathVariable("groupId") Long groupId) {
+
+		User userLogged = null;
+		String username = authentication.getName();
+
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+
+		return searchService.findByGroupPostedAndPostLikesBetween(groupId, minLikes, maxLikes);
+	}
+
 	@GetMapping("/{postId}")
 	public Object getPostDetails(Authentication authentication, @PathVariable("postId") Long postId) {
 	    String username = authentication.getName();
@@ -312,11 +353,36 @@ public class PostController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		List<PostIndex> searchResults = searchService.searchPostByTitle(title);
+
+		List<FriendRequest> friendRequestsSentBy;
+		friendRequestsSentBy = friendRequestService.findAllByApprovedTrueAndSentBy(userLogged);
+		List<String> usernames = friendRequestsSentBy.stream().map(FriendRequest::getSentFor).collect(Collectors.toList());
+		List<FriendRequest> friendRequestsSentFor;
+		friendRequestsSentFor = friendRequestService.findAllByApprovedTrueAndSentFor(userLogged);
+		usernames.addAll(friendRequestsSentFor.stream().map(FriendRequest::getSentBy).collect(Collectors.toList()));
+		usernames.add(username);
+
+		List<PostIndex> searchResults = searchService.findAllByUserInAndTitle((ArrayList<String>) usernames, title);
 		return new ResponseEntity<>(searchResults, HttpStatus.OK);
 	}
 
-	@GetMapping("/searchByContentOrPdfContentAndGroupId")
+	@GetMapping("/searchByTitle/{groupId}")
+	public ResponseEntity<List<PostIndex>> searchPostsByTitleAndGroupId(Authentication authentication,
+															  @RequestParam(required = true) String title,
+																		@PathVariable("groupId") Long groupId) {
+
+		String username = authentication.getName();
+		User userLogged = null;
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		List<PostIndex> searchResults = searchService.findByTitleAndGroupPosted(title, groupId);
+		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+	}
+
+	@GetMapping("/searchByContentOrPdfContent")
 	public ResponseEntity<List<PostIndex>> searchPostsByContent(Authentication authentication,
 																	 @RequestParam(required = false) String content,
 																	 @RequestParam(required = false) String pdfContent
@@ -328,8 +394,20 @@ public class PostController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		List<PostIndex> searchResults = searchService.searchPostsByContentOrPdfContent(content,pdfContent);
-		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+
+		List<FriendRequest> friendRequestsSentBy;
+		friendRequestsSentBy = friendRequestService.findAllByApprovedTrueAndSentBy(userLogged);
+		List<String> usernames = friendRequestsSentBy.stream().map(FriendRequest::getSentFor).collect(Collectors.toList());
+		List<FriendRequest> friendRequestsSentFor;
+		friendRequestsSentFor = friendRequestService.findAllByApprovedTrueAndSentFor(userLogged);
+		usernames.addAll(friendRequestsSentFor.stream().map(FriendRequest::getSentBy).collect(Collectors.toList()));
+		usernames.add(username);
+
+		Set<PostIndex> searchResults = new HashSet<>();
+		List<PostIndex> tmp1 = searchService.findAllByUserInAndContent((ArrayList<String>) usernames, content);
+		tmp1.addAll(searchService.findAllByUserInAndPdfContent((ArrayList<String>) usernames, pdfContent));
+		searchResults.addAll(tmp1);
+		return new ResponseEntity<>(new ArrayList<>(searchResults), HttpStatus.OK);
 	}
 
 
@@ -346,8 +424,12 @@ public class PostController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		List<PostIndex> searchResults = searchService.searchPostsByContentOrPdfContent(content,pdfContent);
-		return new ResponseEntity<>(searchResults, HttpStatus.OK);
+		Set<PostIndex> searchResults = new HashSet<>();
+		List<PostIndex> tmp1 = searchService.findByContentAndGroupPosted(content, groupId);
+		tmp1.addAll(searchService.findByPdfContentAndGroupPosted(pdfContent, groupId));
+		searchResults.addAll(tmp1);
+
+		return new ResponseEntity<>(new ArrayList<>(searchResults), HttpStatus.OK);
 	}
 
 
@@ -386,13 +468,20 @@ public class PostController {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not admin/you are not the creator of those posts.");
 		}
 
+		List<FriendRequest> friendRequestsSentBy;
+		friendRequestsSentBy = friendRequestService.findAllByApprovedTrueAndSentBy(userLogged);
+		List<String> usernames = friendRequestsSentBy.stream().map(FriendRequest::getSentFor).collect(Collectors.toList());
+		List<FriendRequest> friendRequestsSentFor;
+		friendRequestsSentFor = friendRequestService.findAllByApprovedTrueAndSentFor(userLogged);
+		usernames.addAll(friendRequestsSentFor.stream().map(FriendRequest::getSentBy).collect(Collectors.toList()));
+		usernames.add(userUsername);
 		List<PostIndex> postIndexes;
+
 		if (userLogged.getRole().toString().equals("ADMIN")) {
 			postIndexes = searchService.getAllPostIndexes();
 		} else {
-			postIndexes = searchService.findByUserAndIsDeletedIsFalse(userLogged.getUsername());
+			postIndexes = searchService.findAllByUserIn((ArrayList<String>) usernames);
 		}
-
 		if (sort.equalsIgnoreCase("asc")) {
 			postIndexes.sort(Comparator.comparing(PostIndex::getCreationDate));
 		} else if (sort.equalsIgnoreCase("desc")) {

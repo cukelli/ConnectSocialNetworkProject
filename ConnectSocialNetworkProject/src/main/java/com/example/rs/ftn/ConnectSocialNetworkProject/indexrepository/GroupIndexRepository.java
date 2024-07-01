@@ -8,8 +8,10 @@ import java.util.List;
 @Repository
 public interface GroupIndexRepository extends ElasticsearchRepository<GroupIndex, String> {
     List<GroupIndex> findByName(String name);
+    GroupIndex getByDatabaseId(Long databaseId);
     List<GroupIndex> findByDescriptionOrPdfDescription(String description, String pdfDescription);
     List<GroupIndex> findAll();
+    List<GroupIndex> findByPostCountBetween(Long minPosts, Long maxPosts);
     GroupIndex save(GroupIndex groupIndex);
 
 }

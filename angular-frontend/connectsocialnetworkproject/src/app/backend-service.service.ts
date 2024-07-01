@@ -500,7 +500,7 @@ createPostInGroup(post: updatedPostData, postContentPdf: File | null, groupId: n
 
 
 
-searchPostsByTitle(title: string): Observable<PostIndex[]> {
+searchPostsByTitle(title: string, groupId: number = 0): Observable<PostIndex[]> {
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -508,7 +508,14 @@ searchPostsByTitle(title: string): Observable<PostIndex[]> {
 
   let params = new HttpParams()
     .set('title', title)
+  
+  if (groupId !== 0){
+    return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByTitle/${groupId}`, { params, headers });
+
+  } else {
+  
   return this.http.get<PostIndex[]>(`${this.apiUrl}/post/searchByTitle`, { params, headers });
+  }
 }
 
 
@@ -567,5 +574,25 @@ getGroupPostsELastic(groupId: number) {
 
   return this.http.get<Array<PostIndex>>(this.apiUrl + `/group/all/elastic/${groupId}`, { headers });
 }
+
+
+getGroupsByPostRange(minPosts?: number, maxPosts?: number): Observable<Array<GroupIndex>> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams();
+  if (minPosts !== null && minPosts !== undefined) {
+    params = params.append('minPosts', minPosts.toString());
+  }
+  if (maxPosts !== null && maxPosts !== undefined) {
+    params = params.append('maxPosts', maxPosts.toString());
+  }
+
+  return this.http.get<Array<GroupIndex>>(`${this.apiUrl}/group/search/byPostRange`, { headers, params });
+}
+
+
 
 }

@@ -40,11 +40,9 @@
         <input type="text" name="content" [(ngModel)]="content" placeholder="Search by content"> <input type="text" [(ngModel)]="pdfContent" name="pdfContent" placeholder="Search by pdf content">
         <button (click)="searchPostsByContent()">Search groups by content</button>
       </div>
-      <button (click)="getAllPostsGroup()">Refresh</button>
+     
       <br>
       <br>
-
-
         <div *ngFor="let post of postIndexes" class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
                 <div class="col-md-4">
@@ -61,6 +59,15 @@
             </div>
         </div>
 </div>
+
+
+<div>
+    <button (click)="getAllPostsGroup()">Refresh</button>
+  </div>
+
+  <br>
+  <br>
+
 
 
     <button type="submit" class="btn btn-primary" (click)="updateGroup()">Edit group </button> 

@@ -31,6 +31,9 @@ public class GroupIndex {
     @Field(type = FieldType.Date, store = true, name = "created_at")
     private LocalDate createdAt;
 
+    @Field(type = FieldType.Long, store = true, name = "post_count")
+    private Long postCount;
+
     @Field(type = FieldType.Boolean, store = true, name = "is_suspended")
     private boolean isSuspended;
 

@@ -3,6 +3,8 @@ package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,15 +40,17 @@ public class ReactionController {
 	
 	private final ReactionService reactionService;
 	private final UserService userService;
+	private final SearchService searchService;
 	private final PostService postService;
 	private final CommentService commentService;
 	private final JwtUtil jwtUtil;
 	
-	public ReactionController(ReactionService reactionService,UserService userService,PostService postService,
-			CommentService commentService,JwtUtil jwtUtil) {
+	public ReactionController(ReactionService reactionService, UserService userService, SearchService searchService, PostService postService,
+                              CommentService commentService, JwtUtil jwtUtil) {
 		this.reactionService = reactionService;
 		this.userService = userService;
-		this.postService = postService;
+        this.searchService = searchService;
+        this.postService = postService;
 		this.commentService = commentService;
 		this.jwtUtil = jwtUtil;
 	}
@@ -114,6 +118,12 @@ public class ReactionController {
 	    newReaction.setCommentReactedTo(null);
 	    newReaction.setUserReacted(userLogged);
 
+		if (newReaction.getType().equals(ReactionType.LIKE)) {
+			PostIndex postIndex = searchService.findPostByDatabaseId(post.getId());
+			postIndex.setPostLikes(postIndex.getPostLikes() + 1);
+			searchService.save(postIndex);
+		}
+
 	    return new ResponseEntity<>(reactionService.addReaction(newReaction), HttpStatus.OK);
 	}
 
@@ -131,16 +141,12 @@ public class ReactionController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		
-		
 		 Comment comment = null;
 		    try {
 		        comment = commentService.findOne(commentId);
 		    } catch (PostNotFoundException e) {
 		        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found.");
 		    }
-		    
-		    
 		    Reaction existingReaction = reactionService.findByCommentReactedToAndUserReacted(comment, userLogged);
 		    if (existingReaction != null) {
 		        ReactionType existingType = existingReaction.getType();
@@ -161,7 +167,12 @@ public class ReactionController {
 		newReaction.setType(reaction.getType());
 		newReaction.setTimestamp(LocalDate.now());
 		newReaction.setUserReacted(userLogged);
-		
+
+		if (newReaction.getType().equals(ReactionType.LIKE)) {
+			PostIndex postIndex = searchService.findPostByDatabaseId(comment.getCommentedPost());
+			postIndex.setPostLikes(postIndex.getPostLikes() + 1);
+			searchService.save(postIndex);
+		}
 		return new ResponseEntity<>(reactionService.addReaction(newReaction),HttpStatus.OK);
 	}
 	

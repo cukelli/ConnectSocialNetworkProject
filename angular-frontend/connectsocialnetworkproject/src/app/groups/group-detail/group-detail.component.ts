@@ -113,6 +113,7 @@ export class GroupDetailComponent implements OnInit {
         };
         this.imageToShow = compressedImage;
         this.createPostWithImage(postForCreation);
+        this.getAllPostsGroup();
 
       });
     };
@@ -127,8 +128,6 @@ export class GroupDetailComponent implements OnInit {
     this.getAllPostsGroup();
   
   }
-
-
     }
     
   
@@ -174,7 +173,7 @@ export class GroupDetailComponent implements OnInit {
 
 
   searchPostsByTitle(): void {
-    this.backendService.searchPostsByTitle(this.title).subscribe(
+    this.backendService.searchPostsByTitle(this.title, this.group['groupId']).subscribe(
       (data: PostIndex[]) => {
         this.postsSearch = data;
         this.postIndexes = data; 

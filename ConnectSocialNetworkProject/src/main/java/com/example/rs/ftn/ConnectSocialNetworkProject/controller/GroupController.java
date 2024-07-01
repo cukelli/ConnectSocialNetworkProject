@@ -46,8 +46,6 @@ public class GroupController {
 	private final IndexingServiceImpl indexingServiceImpl;
 
 	private final FileService fileService;
-
-
 	public GroupController(GroupService groupService,UserService userService,GroupAdminService
 			groupAdminService,PostService
 			postService, SearchService searchService, ElasticsearchOperations elasticOperations,
@@ -97,6 +95,7 @@ public class GroupController {
 		groupIndex.setDatabaseId(newGroup.getGroupId());
 		groupIndex.setDescription(newGroup.getDescription());
 		groupIndex.setCreatedAt(newGroup.getCreatedAt());
+		groupIndex.setPostCount(0L);
 		groupIndex.setDeleted(newGroup.isDeleted());
 
 		if (groupDescriptionPdf != null && !groupDescriptionPdf.isEmpty()) {
@@ -228,6 +227,9 @@ public class GroupController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
 		Group group = groupService.findOne(groupId);
+		GroupIndex groupIndex = searchService.findGroupByDatabaseId(group.getGroupId());
+		groupIndex.setPostCount(groupIndex.getPostCount() + 1);
+		searchService.save(groupIndex);
 
 		boolean isMemberOrAdmin = false;
 
@@ -275,6 +277,7 @@ public class GroupController {
 		postIndex.setGroupPosted(newPost.getGroupPosted());
 		postIndex.setDeleted(newPost.isDeleted());
 		postIndex.setUser(newPost.getUser());
+		postIndex.setPostLikes(0L);
 
 		if (postContentPdf != null && !postContentPdf.isEmpty()) {
 			try {
@@ -295,10 +298,18 @@ public class GroupController {
 
 	}
 
-	@GetMapping("/search/groups/byPostRange")
-	public List<GroupIndex> searchGroupsByPostRange(@RequestParam(required = false) Integer minPosts,
-													@RequestParam(required = false) Integer maxPosts) {
-		return searchService.searchGroupsByPostRange(minPosts, maxPosts);
+	@GetMapping("/search/byPostRange")
+	public List<GroupIndex> searchGroupsByPostRange(Authentication authentication,@RequestParam(required = false) Long minPosts,
+													@RequestParam(required = false) Long maxPosts) {
+		User userLogged = null;
+		String username = authentication.getName();
+
+		try {
+			userLogged = userService.findOne(username);
+		} catch (UserNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		return searchService.findByPostCountBetween(minPosts, maxPosts);
 	}
 
 	@GetMapping("/all/elastic/{groupId}")

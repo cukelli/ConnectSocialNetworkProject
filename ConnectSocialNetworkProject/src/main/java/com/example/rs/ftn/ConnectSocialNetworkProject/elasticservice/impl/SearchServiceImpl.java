@@ -1,19 +1,13 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.impl;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexrepository.GroupIndexRepository;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexrepository.PostIndexRepository;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.client.elc.QueryBuilders;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -46,23 +40,6 @@ public class SearchServiceImpl implements SearchService {
         return groupIndexes;
     }
 
-    @Override
-    public List<GroupIndex> searchGroupsByPostRange(Integer minPosts, Integer maxPosts) {
-        Query query = new NativeSearchQueryBuilder()                       // we build a Elasticsearch native query
-                .addAggregation(terms("groupPosted").field("groupPosted").size(10000)) // add the aggregation
-                .build();
-
-        SearchHits<PostIndex> searchHits = operations.search(query, PostIndex.class);
-        System.out.println(searchHits.getTotalHits());
-        return null;
-    }
-
-    @Override
-    public List<PostIndex> findByContentAndGroupPostedOrPdfContentAndGroupPosted(String content, String pdfContent,Long groupId) {
-        return postIndexRepository.findByContentAndGroupPostedOrPdfContentAndGroupPosted(content,pdfContent,groupId);
-
-    }
-
 
 
     @Override
@@ -78,6 +55,11 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<PostIndex> findAllByUserInAndTitle(ArrayList<String> usernameList, String title) {
+        return postIndexRepository.findAllByUserInAndTitle(usernameList, title);
+        }
+
+    @Override
     public List<PostIndex> searchPostByTitle(String title) {
         List<PostIndex> postIndexes = postIndexRepository.findByTitle(title);
         return postIndexes;
@@ -86,6 +68,26 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<GroupIndex> getAllGroupIndexes() {
         return groupIndexRepository.findAll();
+    }
+
+    @Override
+    public GroupIndex findGroupByDatabaseId(Long databaseId) {
+       return groupIndexRepository.getByDatabaseId(databaseId);
+    }
+
+    @Override
+    public PostIndex findPostByDatabaseId(Long databaseId) {
+        return postIndexRepository.getByDatabaseId(databaseId);
+    }
+
+    @Override
+    public List<PostIndex> findByPostLikesBetween(ArrayList<String> usernameList, Long minLikes, Long maxLikes) {
+        return postIndexRepository.findAllByUserInAndPostLikesBetween(usernameList, minLikes,maxLikes);
+    }
+
+    @Override
+    public List<PostIndex> findByGroupPostedAndPostLikesBetween(Long groupId, Long minLikes, Long maxLikes) {
+        return postIndexRepository.findByGroupPostedAndPostLikesBetween(groupId, minLikes,maxLikes);
     }
 
 //    @Override
@@ -105,9 +107,46 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<PostIndex> findByContentAndGroupPosted(String content, Long groupId) {
+        return postIndexRepository.findByContentAndGroupPosted(content, groupId);
+    }
+
+    @Override
+    public List<PostIndex> findByPdfContentAndGroupPosted(String pdfContent, Long groupId) {
+        return postIndexRepository.findByPdfContentAndGroupPosted(pdfContent, groupId);
+    }
+
+    @Override
+    public List<PostIndex> findByTitleAndGroupPosted(String title, Long groupId) {
+        return postIndexRepository.findByTitleAndGroupPosted(title, groupId);
+    }
+
+
+    @Override
     public List<PostIndex> findByUserAndIsDeletedIsFalse(String user) {
         return postIndexRepository.findByUserAndIsDeletedIsFalse(user);
     }
+
+    @Override
+    public List<GroupIndex> findByPostCountBetween(Long minPosts, Long maxPosts) {
+        return groupIndexRepository.findByPostCountBetween(minPosts,maxPosts);
+    }
+
+    @Override
+    public List<PostIndex> findAllByUserInAndContent(ArrayList<String> usernameList, String content) {
+        return postIndexRepository.findAllByUserInAndContent(usernameList,content);
+    }
+
+    @Override
+    public List<PostIndex> findAllByUserInAndPdfContent(ArrayList<String> usernameList, String pdfContent) {
+        return postIndexRepository.findAllByUserInAndPdfContent(usernameList,pdfContent);
+    }
+
+    @Override
+    public List<PostIndex> findAllByUserIn(ArrayList<String> usernameList) {
+        return  postIndexRepository.findAllByUserIn(usernameList);
+    }
+
 
     public void save(GroupIndex groupIndex) {
         elasticsearchTemplate.save(groupIndex, IndexCoordinates.of("group_index"));

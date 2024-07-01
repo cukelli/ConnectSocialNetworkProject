@@ -1,9 +1,11 @@
 package com.example.rs.ftn.ConnectSocialNetworkProject.controller;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
+import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -41,15 +43,19 @@ public class CommentController {
 	private final CommentService commentService;
 	private final UserService userService;
 	private final PostService postService;
+	private final SearchService searchService;
+	private final ElasticsearchOperations elasticOperations;
 	private final ReactionService reactionService;
 	private final JwtUtil jwtUtil;
 	
-	public CommentController(CommentService commentService,UserService
-			userService,PostService postService,ReactionService reactionService,JwtUtil jwtUtil) {
+	public CommentController(CommentService commentService, UserService
+			userService, PostService postService, SearchService searchService, ElasticsearchOperations elasticOperations, ReactionService reactionService, JwtUtil jwtUtil) {
 		this.commentService = commentService;
 		this.userService = userService;
 		this.postService = postService;
-		this.reactionService = reactionService;
+        this.searchService = searchService;
+        this.elasticOperations = elasticOperations;
+        this.reactionService = reactionService;
 		this.jwtUtil = jwtUtil;
 	}
 	
@@ -86,8 +92,6 @@ public class CommentController {
 		} catch (UserNotFoundException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
-		
-		
 		 Post post = null;
 		    try {
 		        post = postService.findOne(postId);
@@ -100,6 +104,7 @@ public class CommentController {
 		newComment.setTimestamp(LocalDate.now());
 		newComment.setUser(userLogged);
 	    newComment.setCommentedPost(post);
+
 		
 		return new ResponseEntity<>(commentService.addComment(newComment),HttpStatus.OK);
 	}

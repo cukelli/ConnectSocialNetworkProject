@@ -19,6 +19,9 @@ export class GroupsComponent implements OnInit {
   pdfDescription: string = ''
   name: string = '';
   page: number = 0;
+  minValue: number = 0;
+  maxValue: number = 0;
+
   size: number = 10;
   groups!: Array<Group>;
   groupIndexes!: Array<GroupIndex>;
@@ -68,6 +71,18 @@ export class GroupsComponent implements OnInit {
     );
   }
 
+
+  searchGroupsByPostRange(): void {
+    this.backendService.getGroupsByPostRange(this.minValue, this.maxValue).subscribe(
+      (data: GroupIndex[]) => {
+        this.groupsSearch = data;
+        this.groupIndexes = data; 
+      },
+      (error: any) => {
+        console.error('Error occurred:', error);
+      }
+    );
+  }
 
   
   searchGroupsByDescription(): void {

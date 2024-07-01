@@ -44,4 +44,7 @@ private Long groupPosted;
 @Field(type = FieldType.Long, store = true, name = "database_id")
 private Long databaseId;
 
+@Field(type = FieldType.Long, store = true, name="post_likes")
+private Long postLikes;
+
 }
