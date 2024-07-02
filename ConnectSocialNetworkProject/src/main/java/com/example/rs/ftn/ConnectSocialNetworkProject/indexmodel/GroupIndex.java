@@ -34,6 +34,9 @@ public class GroupIndex {
     @Field(type = FieldType.Long, store = true, name = "post_count")
     private Long postCount;
 
+    @Field(type = FieldType.Long, store = true, name = "likes_count")
+    private Long likesCount;
+
     @Field(type = FieldType.Boolean, store = true, name = "is_suspended")
     private boolean isSuspended;
 

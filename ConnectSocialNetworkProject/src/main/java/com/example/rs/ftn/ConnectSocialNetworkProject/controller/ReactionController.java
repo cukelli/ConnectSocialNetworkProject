@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.example.rs.ftn.ConnectSocialNetworkProject.elasticservice.SearchService;
+import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.GroupIndex;
 import com.example.rs.ftn.ConnectSocialNetworkProject.indexmodel.PostIndex;
+import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.*;
+import com.example.rs.ftn.ConnectSocialNetworkProject.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,16 +26,8 @@ import com.example.rs.ftn.ConnectSocialNetworkProject.enumeration.ReactionType;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.PostNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.exception.UserNotFoundException;
 import com.example.rs.ftn.ConnectSocialNetworkProject.message.Message;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Comment;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Post;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.Reaction;
-import com.example.rs.ftn.ConnectSocialNetworkProject.model.entity.User;
 import com.example.rs.ftn.ConnectSocialNetworkProject.requestModels.ReactionRequest;
 import com.example.rs.ftn.ConnectSocialNetworkProject.security.JwtUtil;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.CommentService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.PostService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.ReactionService;
-import com.example.rs.ftn.ConnectSocialNetworkProject.service.UserService;
 
 @RestController
 @RequestMapping("/reaction")
@@ -44,16 +39,18 @@ public class ReactionController {
 	private final PostService postService;
 	private final CommentService commentService;
 	private final JwtUtil jwtUtil;
-	
+	private final GroupService groupService;
+
 	public ReactionController(ReactionService reactionService, UserService userService, SearchService searchService, PostService postService,
-                              CommentService commentService, JwtUtil jwtUtil) {
+                              CommentService commentService, JwtUtil jwtUtil, GroupService groupService) {
 		this.reactionService = reactionService;
 		this.userService = userService;
         this.searchService = searchService;
         this.postService = postService;
 		this.commentService = commentService;
 		this.jwtUtil = jwtUtil;
-	}
+        this.groupService = groupService;
+    }
 	
 	@GetMapping("/all")
 	@ResponseBody
@@ -105,14 +102,38 @@ public class ReactionController {
 	            || (existingType == ReactionType.DISLIKE && newType == ReactionType.DISLIKE)
 	            || (existingType == ReactionType.HEART && newType == ReactionType.HEART)) {
 	            return new ResponseEntity<>(existingReaction, HttpStatus.OK);
-	        } else {
-	            existingReaction.setType(reaction.getType());
-	            return new ResponseEntity<>(reactionService.updateReaction(existingReaction), HttpStatus.OK);
-	        }
+			} else {
+				existingReaction.setType(reaction.getType());
+				PostIndex postIndex = searchService.findPostByDatabaseId(post.getId());
+				Group group = null;
+				GroupIndex groupIndex = null;
+				if (postIndex.getGroupPosted() != null){
+					group = groupService.findOne(postIndex.getGroupPosted());
+					groupIndex = searchService.findGroupByDatabaseId(group.getGroupId());
+
+				}
+
+				if (newType != ReactionType.LIKE)  {
+					postIndex.setPostLikes(postIndex.getPostLikes() - 1);
+					if (postIndex.getGroupPosted() != null) {
+						groupIndex.setLikesCount(groupIndex.getLikesCount() - 1);
+					}
+				} else {
+					postIndex.setPostLikes(postIndex.getPostLikes() +1);
+					if (postIndex.getGroupPosted() != null) {
+						groupIndex.setLikesCount(groupIndex.getLikesCount() - 1);
+					}
+				}
+				if (postIndex.getGroupPosted() != null) {
+					searchService.save(groupIndex);
+				}
+				searchService.save(postIndex);
+				return new ResponseEntity<>(reactionService.updateReaction(existingReaction), HttpStatus.OK);
+			}
 	    }
 
 	    Reaction newReaction = new Reaction();
-	    newReaction.setPostReacted(post);
+			newReaction.setPostReacted(post);
 	    newReaction.setType(reaction.getType());
 	    newReaction.setTimestamp(LocalDate.now());
 	    newReaction.setCommentReactedTo(null);
@@ -122,6 +143,14 @@ public class ReactionController {
 			PostIndex postIndex = searchService.findPostByDatabaseId(post.getId());
 			postIndex.setPostLikes(postIndex.getPostLikes() + 1);
 			searchService.save(postIndex);
+
+			if (postIndex.getGroupPosted() != null){
+			Group group = groupService.findOne(postIndex.getGroupPosted());
+			GroupIndex groupIndex = searchService.findGroupByDatabaseId(group.getGroupId());
+			groupIndex.setLikesCount(groupIndex.getLikesCount() + 1);
+			searchService.save(groupIndex);
+			}
+
 		}
 
 	    return new ResponseEntity<>(reactionService.addReaction(newReaction), HttpStatus.OK);
@@ -157,6 +186,29 @@ public class ReactionController {
 		            return new ResponseEntity<>(existingReaction, HttpStatus.OK);
 		        } else {
 		            existingReaction.setType(reaction.getType());
+					PostIndex postIndex = searchService.findPostByDatabaseId(comment.getCommentedPost());
+					Group group = null;
+					GroupIndex groupIndex = null;
+					if (postIndex.getGroupPosted() != null){
+						group = groupService.findOne(postIndex.getGroupPosted());
+						groupIndex = searchService.findGroupByDatabaseId(group.getGroupId());
+
+					}
+					if (newType != ReactionType.LIKE)  {
+						postIndex.setPostLikes(postIndex.getPostLikes() - 1);
+						 if (postIndex.getGroupPosted() != null) {
+							 groupIndex.setLikesCount(groupIndex.getLikesCount() - 1);
+						 }
+					} else {
+						postIndex.setPostLikes(postIndex.getPostLikes() +1);
+						if (postIndex.getGroupPosted() != null) {
+							groupIndex.setLikesCount(groupIndex.getLikesCount() - 1);
+						}
+					}
+					if (postIndex.getGroupPosted() != null) {
+						searchService.save(groupIndex);
+					}
+					searchService.save(postIndex);
 		            return new ResponseEntity<>(reactionService.updateReaction(existingReaction), HttpStatus.OK);
 		        }
 		    }
@@ -172,6 +224,14 @@ public class ReactionController {
 			PostIndex postIndex = searchService.findPostByDatabaseId(comment.getCommentedPost());
 			postIndex.setPostLikes(postIndex.getPostLikes() + 1);
 			searchService.save(postIndex);
+
+			if (postIndex.getGroupPosted() != null) {
+
+				Group group = groupService.findOne(postIndex.getGroupPosted());
+				GroupIndex groupIndex = searchService.findGroupByDatabaseId(group.getGroupId());
+				groupIndex.setLikesCount(groupIndex.getLikesCount() + 1);
+				searchService.save(groupIndex);
+			}
 		}
 		return new ResponseEntity<>(reactionService.addReaction(newReaction),HttpStatus.OK);
 	}

@@ -97,6 +97,7 @@ public class GroupController {
 		groupIndex.setCreatedAt(newGroup.getCreatedAt());
 		groupIndex.setPostCount(0L);
 		groupIndex.setDeleted(newGroup.isDeleted());
+		groupIndex.setLikesCount(0L);
 
 		if (groupDescriptionPdf != null && !groupDescriptionPdf.isEmpty()) {
 			try {
