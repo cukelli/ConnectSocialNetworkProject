@@ -7,4 +7,7 @@ export interface GroupIndex {
   suspended: boolean,
   deleted: boolean,
   pdfDescription: string;
+  postCount: number;
+  likesCount: number;
+
 }

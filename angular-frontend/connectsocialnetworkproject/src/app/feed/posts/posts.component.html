@@ -1,5 +1,12 @@
 <div>
 
+
+  <div>
+    <input type="number" name="minValue" [(ngModel)]="minValue" placeholder="Search by min value"> <input type="number" [(ngModel)]="maxValue" name="maxValue" placeholder="Search by max value">
+    <button (click)="searchPostsByLikeRange()">Search posts by min/max likes</button>
+  </div>
+  
+
     <div>
         <input type="text" [(ngModel)]="title" placeholder="Search by title">   
         <button (click)="searchPostsByTitle()">Search posts by title</button>

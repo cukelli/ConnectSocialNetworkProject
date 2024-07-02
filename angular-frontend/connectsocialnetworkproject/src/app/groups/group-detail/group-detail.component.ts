@@ -19,6 +19,8 @@ export class GroupDetailComponent implements OnInit {
     postContent!: string;
     postTitle!: string;
     isPostCreated: boolean = false;
+    minValue: number = 0;
+    maxValue: number = 0;
     content: string = '';
     selectedImage!: File;
     title: string = '';
@@ -223,5 +225,19 @@ export class GroupDetailComponent implements OnInit {
       }
   });  }
   
+
+  searchPostsByLikeRange(): void {
+    this.backendService.getPostsByLikeRange(this.minValue, this.maxValue, this.group.groupId).subscribe(
+      (data: PostIndex[]) => {
+        this.postsSearch = data;
+        this.postIndexes = data; 
+      },
+      (error: any) => {
+        console.error('Error occurred:', error);
+      }
+    );
+  }
+
+
 
 }

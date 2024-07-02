@@ -20,6 +20,8 @@ export class PostsComponent implements OnInit {
   postIndexes!: Array<PostIndex>;
   content: string = '';
   pdfContent: string = ''
+  minValue: number = 0;
+  maxValue: number = 0;
   title: string = '';
   post!: Post;
   page: number = 0;
@@ -143,6 +145,20 @@ getAllUserPostElastic() {
        //  console.error(er.error.message);
     }
 });  }
+
+
+searchPostsByLikeRange(): void {
+  this.backendService.getPostsByLikeRange(this.minValue, this.maxValue).subscribe(
+    (data: PostIndex[]) => {
+      this.postsSearch = data;
+      this.postIndexes = data; 
+    },
+    (error: any) => {
+      console.error('Error occurred:', error);
+    }
+  );
+}
+
 
 
 }

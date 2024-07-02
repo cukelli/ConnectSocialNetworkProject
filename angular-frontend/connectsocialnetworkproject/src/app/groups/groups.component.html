@@ -2,16 +2,10 @@
 <br>
 <h2> GROUPS</h2>
 
-
-
-
 <div>
   <input type="number" name="minValue" [(ngModel)]="minValue" placeholder="Search by min value"> <input type="number" [(ngModel)]="maxValue" name="maxValue" placeholder="Search by max value">
   <button (click)="searchGroupsByPostRange()">Search groups by min/max posts</button>
 </div>
-
-
-
 
 <div>
   <input type="text" [(ngModel)]="name" placeholder="Search by name">   
@@ -30,6 +24,12 @@
       <h5 class="card-title">{{ group.name }}</h5>
       <p class="card-text">{{ group.description }}</p>
       <p class="card-text">{{ group.pdfDescription }}</p>
+      <p class="card-text">Number of posts: {{ group.postCount }}</p>
+      
+      <p *ngIf="group.postCount > 0" class="card-text">Average number of likes: {{ group.likesCount/group.postCount }}</p>
+      <!-- <p class="card-text">Post count: {{ group.postCount}}</p> -->
+      <p class="card-text">Likes count: {{ group.likesCount}}</p>
+
 
       <p class="card-text"><small class="text-muted">{{ group.createdAt }}</small></p>
       <button type="button" class="btn btn-info" (click)="isMemberOrAdmin(group)">Info</button>

@@ -4,6 +4,7 @@ import { BackendServiceService } from 'src/app/backend-service.service';
 import { GroupRequest } from 'src/app/groupRequest';
 import { Group } from 'src/group';
 import { ActivatedRoute, Router } from '@angular/router';
+import { GroupIndex } from 'src/app/GroupIndex';
 
 
 
@@ -13,7 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./group-reqest.component.css']
 })
 export class GroupReqestComponent implements OnInit {
-  group!: Group;
+  group!: GroupIndex;
   groupRequest!: GroupRequest;
   isGroupRequestSent: boolean = false;
 
@@ -24,15 +25,16 @@ export class GroupReqestComponent implements OnInit {
     this.router.params.subscribe(params => {
     let obj = JSON.parse(JSON.stringify(params));
     this.group = obj;
-    this.groupRequest = { groupId: this.group.groupId };
+    this.groupRequest = this.group.databaseId !== undefined ?{ groupId: this.group.databaseId } : { groupId: 0};
 
     console.log(obj);
   });  
     }
 
   ngOnInit(): void {
+    if (this.group.databaseId){
 
-    this.backendService.getGroupRequest(this.group.groupId).subscribe({
+    this.backendService.getGroupRequest(this.group.databaseId).subscribe({
        next: (groupRequest: GroupRequest) => {
         if (groupRequest) {
                 this.isGroupRequestSent = true;
@@ -42,6 +44,7 @@ export class GroupReqestComponent implements OnInit {
             console.error('Error occurred while fetching group request:', er);
        }
    });
+  }
     
   }
    joinGroup(): void {     

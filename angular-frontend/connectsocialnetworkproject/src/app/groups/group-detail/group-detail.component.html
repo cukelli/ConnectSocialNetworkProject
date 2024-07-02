@@ -41,6 +41,13 @@
         <button (click)="searchPostsByContent()">Search groups by content</button>
       </div>
      
+
+      <div>
+        <input type="number" name="minValue" [(ngModel)]="minValue" placeholder="Search by min value"> <input type="number" [(ngModel)]="maxValue" name="maxValue" placeholder="Search by max value">
+        <button (click)="searchPostsByLikeRange()">Search posts by min/max likes</button>
+      </div>
+
+
       <br>
       <br>
         <div *ngFor="let post of postIndexes" class="card mb-3" style="max-width: 540px;">

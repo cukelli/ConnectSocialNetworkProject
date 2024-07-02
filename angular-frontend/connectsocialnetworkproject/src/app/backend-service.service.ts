@@ -595,4 +595,23 @@ getGroupsByPostRange(minPosts?: number, maxPosts?: number): Observable<Array<Gro
 
 
 
+getPostsByLikeRange(minLikes?: number, maxLikes?: number, groupId? : number): Observable<Array<PostIndex>> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  });
+
+  let params = new HttpParams();
+  if (minLikes !== null && minLikes !== undefined) {
+    params = params.append('minLikes', minLikes.toString());
+  }
+  if (maxLikes !== null && maxLikes !== undefined) {
+    params = params.append('maxLikes', maxLikes.toString());
+  }
+
+  return this.http.get<Array<PostIndex>>(`${this.apiUrl}/post/search/byLikeRange`, { headers, params });
+}
+
+
+
 }

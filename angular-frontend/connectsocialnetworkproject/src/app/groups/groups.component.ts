@@ -21,7 +21,6 @@ export class GroupsComponent implements OnInit {
   page: number = 0;
   minValue: number = 0;
   maxValue: number = 0;
-
   size: number = 10;
   groups!: Array<Group>;
   groupIndexes!: Array<GroupIndex>;
